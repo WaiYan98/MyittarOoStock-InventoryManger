@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Myittar Oo Stock & Inventory Manger"
