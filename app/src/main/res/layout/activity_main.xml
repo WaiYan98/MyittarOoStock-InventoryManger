@@ -33,6 +33,11 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <FrameLayout
+            android:id="@+id/fragment_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -42,10 +47,13 @@
         android:layout_gravity="start"
         android:background="#F6F6FA"
         android:fitsSystemWindows="true"
+        android:theme="@style/NavigationTheme"
         app:headerLayout="@layout/header_navigation_drawer"
+        app:itemIconPadding="@dimen/nav_menu_icon_space"
         app:itemIconTint="@color/black"
+        app:itemTextAppearance="?attr/textAppearanceSubtitle1"
         app:itemTextColor="@color/black"
-
-        app:menu="@menu/navigation_menu" />
+        app:itemBackground="@drawable/menu_item_selected_drawable"
+        app:menu="@menu/navigation_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

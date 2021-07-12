@@ -1,19 +1,15 @@
 package com.example.myittaroostockinventorymanger;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.PointerIcon;
-import android.widget.SearchView;
-import android.widget.Toolbar;
 
+import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
+import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
+import com.example.myittaroostockinventorymanger.fragments.HomeFragment;
+import com.example.myittaroostockinventorymanger.fragments.TransactionFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -29,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.tool_bar)
     MaterialToolbar toolbar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,26 +33,54 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        HomeFragment hf = new HomeFragment();
+        createFragment(hf);
+
         toolbar.setNavigationOnClickListener(v -> {
             drawerLayout.openDrawer(navView);
         });
+
+
+        navDrawerOnItemSelected();
+    }
+
+    //menu item selected change fragment
+
+    private void navDrawerOnItemSelected() {
 
         navView.setNavigationItemSelectedListener(item -> {
 
             int id = item.getItemId();
 
-            if (id == R.id.nav_home) {
-                Log.d("tag", "onCreate: " + "home");
-            } else if (id == R.id.nav_transaction) {
-                Log.d("tag", "onCreate: " + "transaction");
-            } else if (id == R.id.nav_dashboard) {
-                Log.d("tag", "onCreate: " + "dashboard");
-            } else if (id == R.id.nav_about) {
-                Log.d("tag", "onCreate: " + "about");
+            switch (id) {
+                case R.id.nav_home:
+                    HomeFragment hf = new HomeFragment();
+                    createFragment(hf);
+                    break;
+                case R.id.nav_transaction:
+                    TransactionFragment tf = new TransactionFragment();
+                    createFragment(tf);
+                    break;
+                case R.id.nav_dashboard:
+                    DashboardFragment df = new DashboardFragment();
+                    createFragment(df);
+                    break;
+                case R.id.nav_about:
+                    AboutFragment af = new AboutFragment();
+                    createFragment(af);
+                    break;
             }
-
+            drawerLayout.closeDrawer(navView);
             return false;
         });
+    }
 
+    //fragment create in already defined view
+
+    public void createFragment(Fragment fg) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_view, fg)
+                .commit();
     }
 }

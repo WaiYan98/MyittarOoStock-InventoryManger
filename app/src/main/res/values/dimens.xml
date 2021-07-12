@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="test">28dp</dimen>
+    <dimen name="nav_menu_icon_space">32dp</dimen>
 </resources>
