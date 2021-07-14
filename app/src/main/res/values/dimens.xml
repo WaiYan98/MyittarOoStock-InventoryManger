@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="nav_menu_icon_space">32dp</dimen>
+    <dimen name="card_view_height">120dp</dimen>
+    <dimen name="medium_text_size">18sp</dimen>
+    <dimen name="small_text_size">16sp</dimen>
+    <dimen name="small_img_size">20dp</dimen>
+    <dimen name="oval_card_size">60dp</dimen>
+    <dimen name="medium_margin">8dp</dimen>
+    <dimen name="small_margin">6dp</dimen>
 </resources>

@@ -36,7 +36,60 @@
         <FrameLayout
             android:id="@+id/fragment_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_scan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="244dp"
+                    android:contentDescription="qr_code_scan"
+                    android:src="@drawable/ic_qr_code_scanner"
+                    android:visibility="invisible"
+                    app:backgroundTint="@color/color_blue"
+                    app:tint="@color/white" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_out"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="174dp"
+                    android:contentDescription="product_out"
+                    android:src="@drawable/ic_remove"
+                    android:visibility="invisible"
+                    app:backgroundTint="@color/color_blue"
+                    app:tint="@color/white" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:id="@+id/fab_in"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="100dp"
+                    android:contentDescription="product_in"
+                    android:src="@drawable/ic_add"
+                    android:visibility="invisible"
+                    app:backgroundTint="@color/color_blue"
+                    app:tint="@color/white" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="16dp"
+                    android:contentDescription="menu"
+                    android:src="@drawable/ic_white_menu"
+                    android:transitionName="activity_trans"
+                    app:backgroundTint="@color/color_blue"
+                    app:tint="@color/white" />
+
+        </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
