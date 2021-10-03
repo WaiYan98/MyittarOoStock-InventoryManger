@@ -1,15 +1,19 @@
 package com.example.myittaroostockinventorymanger;
 
+import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
 import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
@@ -18,6 +22,8 @@ import com.example.myittaroostockinventorymanger.fragments.TransactionFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.nambimobile.widgets.efab.ExpandableFab;
+import com.nambimobile.widgets.efab.FabOption;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navView;
     @BindView(R.id.tool_bar)
     MaterialToolbar toolbar;
-    @BindView(R.id.fab_menu)
-    FloatingActionButton fabMenu;
+    @BindView(R.id.e_fab)
+    ExpandableFab eFab;
     @BindView(R.id.fab_in)
-    FloatingActionButton fabIN;
+    FabOption fabIN;
     @BindView(R.id.fab_out)
-    FloatingActionButton fabOut;
+    FabOption fabOut;
     @BindView(R.id.fab_scan)
-    FloatingActionButton fabScan;
+    FabOption fabScan;
     private Animation rotateOpen, rotateClose, fromBottom, toBottom;
     private boolean isOpen = false;
 
@@ -47,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
-        //for expandable fab animation
-        rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_animation);
-        rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_animation);
-        fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_animation);
-        toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_animation);
 
         HomeFragment hf = new HomeFragment();
         createFragment(hf);
@@ -64,40 +64,57 @@ public class MainActivity extends AppCompatActivity {
 
         navDrawerOnItemSelected();
 
-        fabMenu.setOnClickListener(v -> {
-            onFabMenuClicked();
+        eFab.setOnClickListener(v -> {
+            changeFabIcon();
+            isOpen = !isOpen;
         });
+
+        fabIN.setOnClickListener(v -> {
+            changeFabIcon();
+            isOpen = false;
+            goToAddNewItemActivity();
+            Toast.makeText(this, "Item In", Toast.LENGTH_SHORT).show();
+        });
+
+        fabOut.setOnClickListener(v -> {
+            changeFabIcon();
+            isOpen = false;
+            Toast.makeText(this, "Item Out", Toast.LENGTH_SHORT).show();
+        });
+
+        fabScan.setOnClickListener(v -> {
+            changeFabIcon();
+            isOpen = false;
+            Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
-    //menu item selected change fragment
+    // Drawer menu item selected change fragment
 
     private void navDrawerOnItemSelected() {
 
         navView.setNavigationItemSelectedListener(item -> {
 
             int id = item.getItemId();
-            navView.setCheckedItem(item);
+            fabHideAndShow(id);
 
             switch (id) {
                 case R.id.nav_home:
                     HomeFragment hf = new HomeFragment();
                     createFragment(hf);
-                    fabMenu.show();
                     break;
                 case R.id.nav_transaction:
                     TransactionFragment tf = new TransactionFragment();
                     createFragment(tf);
-                    fabMenu.show();
                     break;
                 case R.id.nav_dashboard:
                     DashboardFragment df = new DashboardFragment();
                     createFragment(df);
-                    fabMenu.hide();
                     break;
                 case R.id.nav_about:
                     AboutFragment af = new AboutFragment();
                     createFragment(af);
-                    fabMenu.hide();
                     break;
             }
             drawerLayout.closeDrawer(navView);
@@ -114,47 +131,33 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void onFabMenuClicked() {
-
-        setVisibility();
-        setAnimation();
-        changeFabMenuIcon();
-        isOpen = !isOpen;
-    }
-
-    //animation for floating action button
-    private void setAnimation() {
+    //for changing extendable fab background color and icon After clicked
+    private void changeFabIcon() {
         if (!isOpen) {
-            fabIN.setAnimation(fromBottom);
-            fabOut.setAnimation(fromBottom);
-            fabScan.setAnimation(fromBottom);
-            fabMenu.setAnimation(rotateOpen);
+            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_add));
+            eFab.setEfabColor(ContextCompat.getColor(this, R.color.black));
         } else {
-            fabIN.setAnimation(toBottom);
-            fabOut.setAnimation(toBottom);
-            fabScan.setAnimation(toBottom);
-            fabMenu.setAnimation(rotateClose);
+            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_white_menu));
+            eFab.setEfabColor(ContextCompat.getColor(this, R.color.color_blue));
         }
     }
 
-    //visibility for multi floating action button
-    private void setVisibility() {
-        if (!isOpen) {
-            fabIN.setVisibility(View.VISIBLE);
-            fabOut.setVisibility(View.VISIBLE);
-            fabScan.setVisibility(View.VISIBLE);
+    //for fab hide and show in some fragments
+    private void fabHideAndShow(@IdRes int id) {
+        if (id == R.id.nav_home || id == R.id.nav_transaction) {
+            eFab.show();
         } else {
-            fabIN.setVisibility(View.INVISIBLE);
-            fabOut.setVisibility(View.INVISIBLE);
-            fabScan.setVisibility(View.INVISIBLE);
+            eFab.hide();
         }
     }
 
-    private void changeFabMenuIcon() {
-        if (!isOpen) {
-            fabMenu.setImageResource(R.drawable.ic_add);
-        } else {
-            fabMenu.setImageResource(R.drawable.ic_menu);
-        }
+    private void goToAddNewItemActivity(){
+        Intent intent  = new Intent(this,AddNewItemActivity.class);
+        startActivity(intent);
     }
+
+//    private void fabOptionHide() {
+//        fabOut.hide();
+//        fabScan.hide();
+//    }
 }

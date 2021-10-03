@@ -10,4 +10,9 @@
     <color name="grey">#606674</color>
     <color name="little_dark_white">#F6F6FA</color>
     <color name="color_blue">#5B45FF</color>
+    <color name="light_green">#90F188</color>
+    <color name="light_blue">#72D8EE</color>
+    <color name="light_purple">#767BF4</color>
+    <color name="light_orange">#EFCF7D</color>
+    <color name="light_red">#EE7575</color>
 </resources>

@@ -10,10 +10,11 @@
     tools:context=".MainActivity"
     tools:openDrawer="start">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -24,74 +25,68 @@
                 android:id="@+id/tool_bar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#F6F6FA"
+                android:background="@color/little_dark_white"
                 android:theme="@style/AppTheme.Toolbar"
-                app:menu="@menu/app_bar_menu"
+                app:menu="@menu/main_app_bar_menu"
                 app:navigationIcon="@drawable/ic_menu"
                 app:title="Stock &amp; Inventory List"
                 app:titleCentered="true" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout
-            android:id="@+id/fragment_view"
+        <com.nambimobile.widgets.efab.ExpandableFabLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_scan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="244dp"
-                    android:contentDescription="qr_code_scan"
-                    android:src="@drawable/ic_qr_code_scanner"
-                    android:visibility="invisible"
-                    app:backgroundTint="@color/color_blue"
-                    app:tint="@color/white" />
+            <com.nambimobile.widgets.efab.ExpandableFab
+                android:id="@+id/e_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                app:efab_closingAnimationDurationMs="150"
+                app:efab_closingAnticipateTension="0"
+                app:efab_color="@color/color_blue"
+                app:efab_icon="@drawable/ic_white_menu"
+                app:efab_iconAnimationRotationDeg="45"
+                app:efab_openingAnimationDurationMs="300"/>
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_out"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="174dp"
-                    android:contentDescription="product_out"
-                    android:src="@drawable/ic_remove"
-                    android:visibility="invisible"
-                    app:backgroundTint="@color/color_blue"
-                    app:tint="@color/white" />
+            <com.nambimobile.widgets.efab.FabOption
+                android:id="@+id/fab_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_color="@color/color_blue"
+                app:fab_icon="@drawable/ic_add"
+                app:label_backgroundColor="@color/color_blue"
+                app:label_text="New Item" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:id="@+id/fab_in"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="100dp"
-                    android:contentDescription="product_in"
-                    android:src="@drawable/ic_add"
-                    android:visibility="invisible"
-                    app:backgroundTint="@color/color_blue"
-                    app:tint="@color/white" />
+            <com.nambimobile.widgets.efab.FabOption
+                android:id="@+id/fab_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_color="@color/color_blue"
+                app:fab_icon="@drawable/ic_remove"
+                app:label_backgroundColor="@color/color_blue"
+                app:label_text="Item Out" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="16dp"
-                    android:contentDescription="menu"
-                    android:src="@drawable/ic_white_menu"
-                    android:transitionName="activity_trans"
-                    app:backgroundTint="@color/color_blue"
-                    app:tint="@color/white" />
+            <com.nambimobile.widgets.efab.FabOption
+                android:id="@+id/fab_scan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_color="@color/color_blue"
+                app:fab_icon="@drawable/ic_qr_code_scanner"
+                app:label_backgroundColor="@color/color_blue"
+                app:label_text="Scan" />
 
-        </FrameLayout>
+            <FrameLayout
+                android:id="@+id/fragment_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"/>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </com.nambimobile.widgets.efab.ExpandableFabLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
@@ -102,11 +97,11 @@
         android:fitsSystemWindows="true"
         android:theme="@style/NavigationTheme"
         app:headerLayout="@layout/header_navigation_drawer"
+        app:itemBackground="@drawable/menu_item_selected_drawable"
         app:itemIconPadding="@dimen/nav_menu_icon_space"
         app:itemIconTint="@color/black"
         app:itemTextAppearance="?attr/textAppearanceSubtitle1"
         app:itemTextColor="@color/black"
-        app:itemBackground="@drawable/menu_item_selected_drawable"
-        app:menu="@menu/navigation_menu"/>
+        app:menu="@menu/navigation_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -8,4 +8,6 @@
     <dimen name="oval_card_size">85dp</dimen>
     <dimen name="medium_margin">8dp</dimen>
     <dimen name="small_margin">6dp</dimen>
+    <dimen name="large_margin">16</dimen>
+    <dimen name="edt_height">64dp</dimen>
 </resources>

@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        StockListRecycleViewAdapter stockListAdapter = new StockListRecycleViewAdapter();
+        StockListRecycleViewAdapter stockListAdapter = new StockListRecycleViewAdapter(getContext());
         recyStockList.setAdapter(stockListAdapter);
         recyStockList.setLayoutManager(new LinearLayoutManager(getContext()));
         recyStockList.addItemDecoration(new VerticalSpaceItemDecoration(24));
