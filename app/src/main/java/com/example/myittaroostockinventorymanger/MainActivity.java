@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,11 +20,18 @@ import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
 import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
 import com.example.myittaroostockinventorymanger.fragments.HomeFragment;
 import com.example.myittaroostockinventorymanger.fragments.TransactionFragment;
+import com.example.myittaroostockinventorymanger.local.Batch;
+import com.example.myittaroostockinventorymanger.local.Dao;
+import com.example.myittaroostockinventorymanger.local.Product;
+import com.example.myittaroostockinventorymanger.local.StockDataBase;
+import com.example.myittaroostockinventorymanger.local.Transaction;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.nambimobile.widgets.efab.ExpandableFab;
 import com.nambimobile.widgets.efab.FabOption;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,6 +96,25 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
         });
 
+        //For Test
+
+        StockDataBase stockDataBase = Room.databaseBuilder(this, StockDataBase.class,
+                "stock_db")
+                .allowMainThreadQueries()
+                .build();
+
+        Dao dao = stockDataBase.dao();
+
+//        dao.insertProduct(new Product("Oramin-G"),
+//                new Product("Grovit"),
+//                new Product("Colicaid"));
+//
+//        dao.insertBatch(new Batch(1, 300, 600, 50, new Date()),
+//                new Batch(2, 400, 800, 50, new Date()),
+//                new Batch(3, 400, 800, 50, new Date()));
+//
+//        dao.insertTransaction(new Transaction(1,10,0,0,new Date()));
+
     }
 
     // Drawer menu item selected change fragment
@@ -151,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void goToAddNewItemActivity(){
-        Intent intent  = new Intent(this,AddNewItemActivity.class);
+    private void goToAddNewItemActivity() {
+        Intent intent = new Intent(this, AddNewItemActivity.class);
         startActivity(intent);
     }
 
