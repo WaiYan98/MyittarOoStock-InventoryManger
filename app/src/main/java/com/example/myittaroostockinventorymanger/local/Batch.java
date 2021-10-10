@@ -12,8 +12,8 @@ public class Batch {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "batch_id")
     private long batchId;
-    @ColumnInfo(name = "product_id")
-    private long productId;
+    @ColumnInfo(name = "stock_id")
+    private long stockId;
     @ColumnInfo(name = "original_price")
     private double originalPrice;
     @ColumnInfo(name = "sale_price")
@@ -23,8 +23,8 @@ public class Batch {
     @ColumnInfo(name = "exp_date")
     private Date expDate;
 
-    public Batch(long productId, double originalPrice, double salePrice, int totalStock, Date expDate) {
-        this.productId = productId;
+    public Batch(long stockId, double originalPrice, double salePrice, int totalStock, Date expDate) {
+        this.stockId = stockId;
         this.originalPrice = originalPrice;
         this.salePrice = salePrice;
         this.totalStock = totalStock;
@@ -39,12 +39,12 @@ public class Batch {
         this.batchId = batchId;
     }
 
-    public long getProductId() {
-        return productId;
+    public long getStockId() {
+        return stockId;
     }
 
-    public void setProductId(long productId) {
-        this.productId = productId;
+    public void setStockId(long stockId) {
+        this.stockId = stockId;
     }
 
     public double getOriginalPrice() {
@@ -83,7 +83,7 @@ public class Batch {
     public String toString() {
         return "Batch{" +
                 "batchId=" + batchId +
-                ", productId=" + productId +
+                ", productId=" + stockId +
                 ", originalPrice=" + originalPrice +
                 ", salePrice=" + salePrice +
                 ", totalStock=" + totalStock +

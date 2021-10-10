@@ -3,14 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/nav_home"
-        android:icon="@drawable/ic_home"
-        android:title="Home" />
-
-    <item
         android:id="@+id/nav_transaction"
         android:icon="@drawable/ic_transaction"
         android:title="Transactions" />
+
+    <item
+        android:id="@+id/stock_name"
+        android:icon="@drawable/ic_about"
+        android:title="Stock Name" />
+
+    <item
+        android:id="@+id/batch"
+        android:icon="@drawable/ic_home"
+        android:title="Batch" />
 
     <item
         android:id="@+id/nav_dashboard"

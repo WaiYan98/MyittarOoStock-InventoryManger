@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 @Database(entities = {
-        Product.class,
+        Stock.class,
         Batch.class,
         Transaction.class},
         version = 1)

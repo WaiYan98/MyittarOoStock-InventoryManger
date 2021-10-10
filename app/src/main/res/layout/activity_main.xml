@@ -19,7 +19,8 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            android:layout_marginBottom="4dp">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/tool_bar"

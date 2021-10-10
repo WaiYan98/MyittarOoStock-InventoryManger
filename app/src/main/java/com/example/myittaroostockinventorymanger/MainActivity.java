@@ -5,33 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
+import com.example.myittaroostockinventorymanger.fragments.BatchFragment;
 import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
-import com.example.myittaroostockinventorymanger.fragments.HomeFragment;
+import com.example.myittaroostockinventorymanger.stock_name_fragment.StockNameFragment;
 import com.example.myittaroostockinventorymanger.fragments.TransactionFragment;
-import com.example.myittaroostockinventorymanger.local.Batch;
 import com.example.myittaroostockinventorymanger.local.Dao;
-import com.example.myittaroostockinventorymanger.local.Product;
 import com.example.myittaroostockinventorymanger.local.StockDataBase;
-import com.example.myittaroostockinventorymanger.local.Transaction;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.nambimobile.widgets.efab.ExpandableFab;
 import com.nambimobile.widgets.efab.FabOption;
-
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        HomeFragment hf = new HomeFragment();
+        BatchFragment hf = new BatchFragment();
         createFragment(hf);
 
         toolbar.setNavigationOnClickListener(v -> {
@@ -105,15 +97,15 @@ public class MainActivity extends AppCompatActivity {
 
         Dao dao = stockDataBase.dao();
 
-//        dao.insertProduct(new Product("Oramin-G"),
-//                new Product("Grovit"),
-//                new Product("Colicaid"));
+//        dao.insertStock(new Stock("colicaid"));
 //
 //        dao.insertBatch(new Batch(1, 300, 600, 50, new Date()),
 //                new Batch(2, 400, 800, 50, new Date()),
 //                new Batch(3, 400, 800, 50, new Date()));
 //
-//        dao.insertTransaction(new Transaction(1,10,0,0,new Date()));
+//        dao.insertTransaction(new Transaction(1, 10, 0, 0, new Date()));
+
+        Log.d("tag", "onCreate: "+dao.getAllStockWithBatch());
 
     }
 
@@ -127,13 +119,17 @@ public class MainActivity extends AppCompatActivity {
             fabHideAndShow(id);
 
             switch (id) {
-                case R.id.nav_home:
-                    HomeFragment hf = new HomeFragment();
-                    createFragment(hf);
-                    break;
                 case R.id.nav_transaction:
                     TransactionFragment tf = new TransactionFragment();
                     createFragment(tf);
+                    break;
+                case R.id.stock_name:
+                    StockNameFragment sf = new StockNameFragment();
+                    createFragment(sf);
+                    break;
+                case R.id.batch:
+                    BatchFragment hf = new BatchFragment();
+                    createFragment(hf);
                     break;
                 case R.id.nav_dashboard:
                     DashboardFragment df = new DashboardFragment();
@@ -154,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     public void createFragment(Fragment fg) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_view, fg)
+                .replace(R.id.fragment_view, fg)
                 .commit();
     }
 
@@ -171,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     //for fab hide and show in some fragments
     private void fabHideAndShow(@IdRes int id) {
-        if (id == R.id.nav_home || id == R.id.nav_transaction) {
+        if (id == R.id.batch || id == R.id.nav_transaction) {
             eFab.show();
         } else {
             eFab.hide();

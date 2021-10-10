@@ -5,23 +5,23 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Product {
+public class Stock {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "product_id")
-    private long productId;
+    @ColumnInfo(name = "stock_id")
+    private long stockId;
     private String name;
 
-    public Product(String name) {
+    public Stock(String name) {
         this.name = name;
     }
 
-    public long getProductId() {
-        return productId;
+    public long getStockId() {
+        return stockId;
     }
 
-    public void setProductId(long productId) {
-        this.productId = productId;
+    public void setStockId(long stockId) {
+        this.stockId = stockId;
     }
 
     public String getName() {
@@ -35,7 +35,7 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "productId=" + productId +
+                "productId=" + stockId +
                 ", name='" + name + '\'' +
                 '}';
     }

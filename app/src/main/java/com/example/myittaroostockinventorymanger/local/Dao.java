@@ -1,24 +1,31 @@
 package com.example.myittaroostockinventorymanger.local;
 
 import androidx.room.Insert;
+import androidx.room.Query;
 
-import io.reactivex.Completable;
+import java.util.List;
 
 @androidx.room.Dao
 public interface Dao {
 
     /**
-     * @param product return type is void for testing;
-     *                Change completable later;
+     * @param stock return type is void for testing;
+     *              Change completable later;
      */
 
     @Insert
-    void insertProduct(Product... product);
+    void insertStock(Stock... stock);
 
     @Insert
     void insertBatch(Batch... batch);
 
     @Insert
     void insertTransaction(Transaction... transaction);
+
+    @Query("SELECT * FROM Stock")
+    List<Stock> getAllStockName();
+
+    @Query("SELECT * FROM Stock")
+    List<StockWithBatch> getAllStockWithBatch();
 
 }
