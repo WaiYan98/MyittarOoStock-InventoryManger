@@ -88,25 +88,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
         });
 
-        //For Test
-
-        StockDataBase stockDataBase = Room.databaseBuilder(this, StockDataBase.class,
-                "stock_db")
-                .allowMainThreadQueries()
-                .build();
-
-        Dao dao = stockDataBase.dao();
-
-//        dao.insertStock(new Stock("colicaid"));
-//
-//        dao.insertBatch(new Batch(1, 300, 600, 50, new Date()),
-//                new Batch(2, 400, 800, 50, new Date()),
-//                new Batch(3, 400, 800, 50, new Date()));
-//
-//        dao.insertTransaction(new Transaction(1, 10, 0, 0, new Date()));
-
-        Log.d("tag", "onCreate: "+dao.getAllStockWithBatch());
-
     }
 
     // Drawer menu item selected change fragment

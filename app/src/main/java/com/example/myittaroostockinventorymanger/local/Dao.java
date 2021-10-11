@@ -1,9 +1,12 @@
 package com.example.myittaroostockinventorymanger.local;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Insert;
 import androidx.room.Query;
 
 import java.util.List;
+
+import io.reactivex.Completable;
 
 @androidx.room.Dao
 public interface Dao {
@@ -14,18 +17,18 @@ public interface Dao {
      */
 
     @Insert
-    void insertStock(Stock... stock);
+    Completable insertStock(Stock stock);
 
     @Insert
-    void insertBatch(Batch... batch);
+    Completable insertBatch(Batch batch);
 
     @Insert
-    void insertTransaction(Transaction... transaction);
+    Completable insertTransaction(Transaction transaction);
 
     @Query("SELECT * FROM Stock")
-    List<Stock> getAllStockName();
+    LiveData<List<Stock>> getAllStockName();
 
     @Query("SELECT * FROM Stock")
-    List<StockWithBatch> getAllStockWithBatch();
+    LiveData<List<StockWithBatch>> getAllStockWithBatch();
 
 }
