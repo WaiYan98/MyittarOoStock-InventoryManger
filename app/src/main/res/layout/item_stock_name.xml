@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linear_layout_stock_name"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -52,14 +52,6 @@
                    android:textSize="@dimen/medium_text_size"
                    android:textStyle="bold"
                    android:layout_marginStart="@dimen/medium_margin"/>
-
-
-               <ImageView
-                   android:layout_width="@dimen/small_img_size"
-                   android:layout_height="@dimen/small_img_size"
-                   android:src="@drawable/ic_more"
-                   android:layout_gravity="center_vertical|end"
-                   android:layout_marginEnd="@dimen/small_margin"/>
 
            </FrameLayout>
 

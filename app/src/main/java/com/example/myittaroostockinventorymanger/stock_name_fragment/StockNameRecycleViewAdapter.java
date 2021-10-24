@@ -1,13 +1,17 @@
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myittaroostockinventorymanger.Application;
 import com.example.myittaroostockinventorymanger.R;
 import com.example.myittaroostockinventorymanger.local.Stock;
 
@@ -19,6 +23,11 @@ import butterknife.ButterKnife;
 public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameRecycleViewAdapter.ViewHolder> {
 
     private List<Stock> stockList;
+    private CallBack callBack;
+
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
+    }
 
     public StockNameRecycleViewAdapter(List<Stock> stockList) {
         this.stockList = stockList;
@@ -38,6 +47,14 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
 
         holder.txtStockName.setText(currentStock.getName());
 
+        holder.linearLayoutStockName.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+               callBack.onLongClickItem(v,currentStock);
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -46,11 +63,9 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
     }
 
     /**
-     *
-     * @param stockList
-     * To update data by observer
+     * @param stockList To update data by observer
      */
-    public void insertItem(List<Stock> stockList){
+    public void insertItem(List<Stock> stockList) {
         this.stockList.clear();
         this.stockList.addAll(stockList);
         notifyDataSetChanged();
@@ -58,6 +73,8 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.linear_layout_stock_name)
+        LinearLayout linearLayoutStockName;
         @BindView(R.id.txt_stock_name)
         TextView txtStockName;
 
@@ -66,4 +83,9 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
             ButterKnife.bind(this, itemView);
         }
     }
+
+    public interface CallBack {
+        void onLongClickItem(View v, Stock stock);
+    }
+
 }

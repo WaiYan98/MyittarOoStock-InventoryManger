@@ -19,8 +19,8 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="4dp"
+            android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/tool_bar"
@@ -50,7 +50,7 @@
                 app:efab_color="@color/color_blue"
                 app:efab_icon="@drawable/ic_white_menu"
                 app:efab_iconAnimationRotationDeg="45"
-                app:efab_openingAnimationDurationMs="300"/>
+                app:efab_openingAnimationDurationMs="300" />
 
             <com.nambimobile.widgets.efab.FabOption
                 android:id="@+id/fab_in"
@@ -83,7 +83,7 @@
                 android:id="@+id/fragment_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal" />
 
         </com.nambimobile.widgets.efab.ExpandableFabLayout>
 

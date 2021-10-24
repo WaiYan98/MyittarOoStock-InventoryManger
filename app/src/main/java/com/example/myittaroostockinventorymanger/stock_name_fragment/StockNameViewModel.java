@@ -1,3 +1,4 @@
+
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
 import androidx.lifecycle.LiveData;
@@ -11,6 +12,7 @@ import com.example.myittaroostockinventorymanger.repository.Repository;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -20,7 +22,7 @@ public class StockNameViewModel extends ViewModel {
     private MutableLiveData<Event<String>> message;
     private MutableLiveData<Boolean> isLoading;
     private Repository repository;
-    private Disposable disposable;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public StockNameViewModel() {
         repository = new Repository();
@@ -29,7 +31,7 @@ public class StockNameViewModel extends ViewModel {
     }
 
     public void insertStock(Stock stock) {
-        disposable = repository.insertStock(stock)
+        Disposable disposable = repository.insertStock(stock)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
@@ -37,6 +39,7 @@ public class StockNameViewModel extends ViewModel {
                 }, error -> {
                     message.setValue(new Event<>("unexpected error"));
                 });
+        compositeDisposable.add(disposable);
     }
 
     public LiveData<List<Stock>> getAllStockName() {
@@ -60,7 +63,37 @@ public class StockNameViewModel extends ViewModel {
         return message;
     }
 
-    public LiveData<Boolean> getLoading(){
+    public LiveData<Boolean> getLoading() {
         return isLoading;
+    }
+
+    public void deleteStock(Stock stock) {
+        Disposable disposable = repository.deleteStock(stock)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    message.setValue(new Event<>("Deleted"));
+                }, error -> {
+                    message.setValue(new Event<>("Cannot delete"));
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    public void updateStockName(Stock stock) {
+        Disposable disposable = repository.updateStockName(stock)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    message.setValue(new Event<>("Renamed"));
+                }, error -> {
+                    message.setValue(new Event<>("Cannot Renamed"));
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        compositeDisposable.dispose();
     }
 }

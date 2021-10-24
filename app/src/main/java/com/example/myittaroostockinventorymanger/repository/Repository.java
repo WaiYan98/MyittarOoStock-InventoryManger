@@ -41,4 +41,12 @@ public class Repository {
     public LiveData<List<StockWithBatch>> getAllStockWithBatch() {
         return dao.getAllStockWithBatch();
     }
+
+    public Completable deleteStock(Stock stock) {
+        return dao.deleteStock(stock);
+    }
+
+    public Completable updateStockName(Stock stock) {
+        return dao.updateStockName(stock);
+    }
 }

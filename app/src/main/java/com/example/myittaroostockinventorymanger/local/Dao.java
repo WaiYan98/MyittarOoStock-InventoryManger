@@ -1,8 +1,10 @@
 package com.example.myittaroostockinventorymanger.local;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -30,5 +32,11 @@ public interface Dao {
 
     @Query("SELECT * FROM Stock")
     LiveData<List<StockWithBatch>> getAllStockWithBatch();
+
+    @Delete
+    Completable deleteStock(Stock stock);
+
+    @Update
+    Completable updateStockName(Stock stock);
 
 }

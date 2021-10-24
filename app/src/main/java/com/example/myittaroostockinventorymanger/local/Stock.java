@@ -34,8 +34,8 @@ public class Stock {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "productId=" + stockId +
+        return "Stock{" +
+                "stockId=" + stockId +
                 ", name='" + name + '\'' +
                 '}';
     }

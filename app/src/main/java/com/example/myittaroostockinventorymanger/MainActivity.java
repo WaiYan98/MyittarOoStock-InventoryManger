@@ -10,6 +10,9 @@ import androidx.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     FabOption fabScan;
     private Animation rotateOpen, rotateClose, fromBottom, toBottom;
     private boolean isOpen = false;
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
             isOpen = false;
             Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
         });
+
+
 
     }
 
@@ -160,8 +166,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
 //    private void fabOptionHide() {
 //        fabOut.hide();
 //        fabScan.hide();
 //    }
+
 }
