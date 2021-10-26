@@ -2,9 +2,12 @@ package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myittaroostockinventorymanger.R;
 import com.example.myittaroostockinventorymanger.local.Stock;
@@ -33,6 +38,9 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
 
     private CallBack callBack;
     private String option;
+    private AddAndRenameStockViewModel addAndRenameStockViewModel;
+    private AlertDialog alertDialog;
+    private Context context;
 
     public void setCallBack(CallBack callBack) {
         this.callBack = callBack;
@@ -41,6 +49,7 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     private AddAndRenameStockDialogFragment() {
 
     }
+
 
     @NonNull
     @Override
@@ -60,59 +69,67 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         changeTitleAndBtn();
 
 
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        alertDialog = new AlertDialog.Builder(getContext())
                 .setView(view)
                 .create();
 
         alertDialog.getWindow().
                 setBackgroundDrawableResource(R.drawable.rounded_rectangle_white);
 
+        return alertDialog;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        Log.d("tag", "onCreateView: ");
+
+
+        addAndRenameStockViewModel = new ViewModelProvider(requireActivity())
+                .get(AddAndRenameStockViewModel.class);
+
         btnSave.setOnClickListener(v -> {
-            try {
 
-                if (option.equals(StockNameFragment.ADD)) {
-                    onClickBtnSave();
-                    alertDialog.cancel();
-                } else {
-                    onClickBtnRename();
-                    alertDialog.cancel();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            String stockName = edtStockName.getText().toString();
+            addAndRenameStockViewModel.onClickSave(new Stock(stockName));
         });
 
         btnCancel.setOnClickListener(v -> {
             alertDialog.cancel();
         });
 
-        return alertDialog;
+        addAndRenameStockViewModel.getStock()
+                .observe(getParentFragment().getViewLifecycleOwner(), s -> {
+
+                    Stock stock = s.getContentIfNotHandle();
+
+                    if (stock != null) {
+
+                        if (option.equals(StockNameFragment.ADD)) {
+                            callBack.onClickSave(stock);
+                        } else {
+                            callBack.onClickRename(stock);
+                        }
+                    }
+                    alertDialog.cancel();
+                });
+
+        addAndRenameStockViewModel.getMessage()
+                .observe(getParentFragment().getViewLifecycleOwner(), message -> {
+
+                    String notify = message.getContentIfNotHandle();
+
+                    if (notify != null) {
+                        Toast.makeText(context, notify, Toast.LENGTH_SHORT).show();
+                    }
+
+                });
+
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    public void onClickBtnSave() {
 
-        String stockName = edtStockName.getText().toString();
-
-        if (!stockName.equals("")) {
-
-            callBack.onClickSave(new Stock(stockName));
-        } else {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-    }
-
-    public void onClickBtnRename() {
-
-        String stockName = edtStockName.getText().toString();
-
-        if (!stockName.equals("")) {
-
-            callBack.onClickRename(new Stock(stockName));
-        } else {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-    }
 
     public static AddAndRenameStockDialogFragment getNewInstance(String key, String option) {
         AddAndRenameStockDialogFragment addAndRenameStockDialogFragment = new AddAndRenameStockDialogFragment();
@@ -137,5 +154,11 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
             txtTitle.setText("Rename the Stock");
             btnSave.setText("Rename");
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 }

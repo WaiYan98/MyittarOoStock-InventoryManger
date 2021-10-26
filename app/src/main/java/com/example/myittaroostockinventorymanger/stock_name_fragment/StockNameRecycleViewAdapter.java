@@ -1,5 +1,6 @@
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,16 +45,20 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Stock currentStock = stockList.get(position);
+        String initialWord = Character.toString(currentStock.getName().charAt(0)).
+                toUpperCase();
 
         holder.txtStockName.setText(currentStock.getName());
 
         holder.linearLayoutStockName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-               callBack.onLongClickItem(v,currentStock);
+                callBack.onLongClickItem(v, currentStock);
                 return true;
             }
         });
+
+        holder.txtNameInitialWord.setText(initialWord);
 
     }
 
@@ -77,6 +82,8 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
         LinearLayout linearLayoutStockName;
         @BindView(R.id.txt_stock_name)
         TextView txtStockName;
+        @BindView(R.id.txt_name_initial_word)
+        TextView txtNameInitialWord;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

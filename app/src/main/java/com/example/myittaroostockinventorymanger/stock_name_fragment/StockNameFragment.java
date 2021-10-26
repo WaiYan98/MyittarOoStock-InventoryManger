@@ -88,7 +88,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         });
 
         fabAddItem.setOnClickListener(v -> {
-            setUpAddAndRenameStockDialogFragment(ADD);
+            showAddAndRenameStockDialogFragment(ADD);
         });
     }
 
@@ -105,13 +105,13 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         recyStockName.addItemDecoration(new VerticalSpaceItemDecoration(8));
     }
 
-    private void setUpAddAndRenameStockDialogFragment(String option) {
+    private void showAddAndRenameStockDialogFragment(String option) {
         addAndRenameStockDialogFragment = AddAndRenameStockDialogFragment.getNewInstance(EXTRA_KEY, option);
         addAndRenameStockDialogFragment.show(getChildFragmentManager(), "");
         addAndRenameStockDialogFragment.setCallBack(this);
     }
 
-    private void setUpConfirmDialogFragment(){
+    private void setUpConfirmDialogFragment() {
         ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
         confirmDialogFragment.show(getChildFragmentManager(), "");
         confirmDialogFragment.setCallBack(this);
@@ -152,10 +152,10 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
 
             switch (item.getItemId()) {
                 case R.id.rename:
-                    setUpAddAndRenameStockDialogFragment("");
+                    showAddAndRenameStockDialogFragment("");
                     break;
                 case R.id.delete:
-                   setUpConfirmDialogFragment();
+                    setUpConfirmDialogFragment();
                     break;
             }
             return false;
