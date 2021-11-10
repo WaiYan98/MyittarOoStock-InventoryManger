@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.openDrawer(navView);
         });
 
-
         navDrawerOnItemSelected();
 
         eFab.setOnClickListener(v -> {

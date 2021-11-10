@@ -18,6 +18,7 @@
     <style name="AppTheme.Toolbar" parent="Theme.AppCompat">
         <item name="android:textColorPrimary">@color/grey</item>
         <item name="android:textColorSecondary">@color/grey</item>
+        <item name="android:textColorHint">#A1AAA7</item>
     </style>
 
     <style name="NavigationTheme" parent="Theme.AppCompat">

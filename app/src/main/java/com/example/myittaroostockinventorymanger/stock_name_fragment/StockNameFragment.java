@@ -1,17 +1,23 @@
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +28,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.myittaroostockinventorymanger.R;
 import com.example.myittaroostockinventorymanger.local.Stock;
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,10 +48,13 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     FloatingActionButton fabAddItem;
     @BindView(R.id.refresh)
     SwipeRefreshLayout refresh;
+    SearchView searchView;
+    MaterialToolbar toolbar;
     private StockNameViewModel viewModel;
     private StockNameRecycleViewAdapter adapter;
     private AddAndRenameStockDialogFragment addAndRenameStockDialogFragment;
     private PopupMenu popupMenu;
+    private List<Stock> stockList = new ArrayList<>();
 
     public static final String ADD = "ADD";
     public static final String RENAME = "RENAME";
@@ -55,7 +68,14 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stock_name, container, false);
         ButterKnife.bind(this, view);
+        toolbar = getActivity().findViewById(R.id.tool_bar);
 
+        MenuItem menuItem = toolbar.getMenu().findItem(R.id.app_bar_search);
+
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Type Stock Name");
+
+        changeToolBarName();
         setUpViewModel();
         setUpRecycleView();
 
@@ -66,8 +86,26 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                adapter.insertItem(filterName(newText));
+
+                return false;
+            }
+        });
+
         viewModel.getAllStockName()
                 .observe(getViewLifecycleOwner(), stockList -> {
+                    this.stockList = stockList;
                     adapter.insertItem(stockList);
                 });
 
@@ -169,5 +207,18 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     @Override
     public void onClickYes() {
         viewModel.deleteStock(this.stock);
+    }
+
+    private void changeToolBarName() {
+        toolbar.setTitle("Stock Name List");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private List<Stock> filterName(String text) {
+
+        List<Stock> resultList = stockList.stream()
+                .filter(stock -> stock.getName().toUpperCase().startsWith(text.toUpperCase()))
+                .collect(Collectors.toList());
+        return resultList;
     }
 }
