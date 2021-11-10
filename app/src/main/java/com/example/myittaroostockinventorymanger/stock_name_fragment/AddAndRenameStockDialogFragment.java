@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myittaroostockinventorymanger.R;
@@ -41,6 +41,7 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     private AddAndRenameStockViewModel addAndRenameStockViewModel;
     private AlertDialog alertDialog;
     private Context context;
+    private Stock stock;
 
     public void setCallBack(CallBack callBack) {
         this.callBack = callBack;
@@ -59,14 +60,21 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         View view = layoutInflater.inflate(R.layout.stock_dialog_fragment, null, false);
         ButterKnife.bind(this, view);
 
+        Log.d("tag", "onCreateDialog: ");
+
         Bundle bundle = getArguments();
 
         if (bundle != null) {
 
-            option = bundle.getString(StockNameFragment.EXTRA_KEY);
+            option = bundle.getString(StockNameFragment.EXTRA_OPTION);
+            stock = bundle.getParcelable(StockNameFragment.EXTRA_STOCK);
         }
 
         changeTitleAndBtn();
+
+        if (!option.equals(StockNameFragment.ADD)) {
+            edtStockName.setText(stock.getName());
+        }
 
 
         alertDialog = new AlertDialog.Builder(getContext())
@@ -83,34 +91,46 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Log.d("tag", "onCreateView: ");
-
-
         addAndRenameStockViewModel = new ViewModelProvider(requireActivity())
                 .get(AddAndRenameStockViewModel.class);
 
         btnSave.setOnClickListener(v -> {
 
             String stockName = edtStockName.getText().toString();
-            addAndRenameStockViewModel.onClickSave(new Stock(stockName));
+
+            if (option.equals(StockNameFragment.ADD)) {
+                addAndRenameStockViewModel.onClickSave(new Stock(stockName));
+            } else {
+                this.stock.setName(stockName);
+                addAndRenameStockViewModel.onClickRename(this.stock);
+            }
         });
 
         btnCancel.setOnClickListener(v -> {
             alertDialog.cancel();
         });
 
-        addAndRenameStockViewModel.getStock()
+        //this is boilerplate code
+
+        addAndRenameStockViewModel.getAddStock()
                 .observe(getParentFragment().getViewLifecycleOwner(), s -> {
 
                     Stock stock = s.getContentIfNotHandle();
 
                     if (stock != null) {
+                        callBack.onClickSave(stock);
+                    }
 
-                        if (option.equals(StockNameFragment.ADD)) {
-                            callBack.onClickSave(stock);
-                        } else {
-                            callBack.onClickRename(stock);
-                        }
+                    alertDialog.cancel();
+                });
+
+        addAndRenameStockViewModel.getRenameStock()
+                .observe(getParentFragment().getViewLifecycleOwner(), s -> {
+
+                    Stock stock = s.getContentIfNotHandle();
+
+                    if (stock != null) {
+                        callBack.onClickRename(stock);
                     }
                     alertDialog.cancel();
                 });
@@ -130,11 +150,13 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     }
 
 
-
-    public static AddAndRenameStockDialogFragment getNewInstance(String key, String option) {
+    public static AddAndRenameStockDialogFragment getNewInstance(String key1, String key2,
+                                                                 String option,
+                                                                 Stock stockForRename) {
         AddAndRenameStockDialogFragment addAndRenameStockDialogFragment = new AddAndRenameStockDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(key, option);
+        bundle.putString(key1, option);
+        bundle.putParcelable(key2, stockForRename);
         addAndRenameStockDialogFragment.setArguments(bundle);
         return addAndRenameStockDialogFragment;
     }

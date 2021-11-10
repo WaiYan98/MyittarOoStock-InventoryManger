@@ -1,6 +1,7 @@
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -43,7 +44,9 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     private PopupMenu popupMenu;
 
     public static final String ADD = "ADD";
-    public static final String EXTRA_KEY = "EXTRA_KEY";
+    public static final String RENAME = "RENAME";
+    public static final String EXTRA_OPTION = "EXTRA_OPTION";
+    public static final String EXTRA_STOCK = "EXTRA_STOCK";
 
     private Stock stock;
 
@@ -88,7 +91,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         });
 
         fabAddItem.setOnClickListener(v -> {
-            showAddAndRenameStockDialogFragment(ADD);
+            showAddAndRenameStockDialogFragment(ADD, null);
         });
     }
 
@@ -105,8 +108,9 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         recyStockName.addItemDecoration(new VerticalSpaceItemDecoration(8));
     }
 
-    private void showAddAndRenameStockDialogFragment(String option) {
-        addAndRenameStockDialogFragment = AddAndRenameStockDialogFragment.getNewInstance(EXTRA_KEY, option);
+    private void showAddAndRenameStockDialogFragment(String option, Stock stockForRename) {
+        addAndRenameStockDialogFragment = AddAndRenameStockDialogFragment.getNewInstance(EXTRA_OPTION, EXTRA_STOCK,
+                option, stockForRename);
         addAndRenameStockDialogFragment.show(getChildFragmentManager(), "");
         addAndRenameStockDialogFragment.setCallBack(this);
     }
@@ -124,8 +128,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
 
     @Override
     public void onClickRename(Stock stock) {
-        //for test
-        stock.setStockId(this.stock.getStockId());
+        Log.d("tag", "onClickRename: " + stock.getStockId() + " " + stock.getName());
         viewModel.updateStockName(stock);
     }
 
@@ -134,7 +137,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         //for test
         this.stock = stock;
         createPopupMenu(v);
-        popupMenuItemClick();
+        popupMenuItemClick(stock);
     }
 
 //show popup menu for rename and delete
@@ -146,13 +149,13 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         popupMenu.show();
     }
 
-    private void popupMenuItemClick() {
+    private void popupMenuItemClick(Stock stock) {
 
         popupMenu.setOnMenuItemClickListener(item -> {
 
             switch (item.getItemId()) {
                 case R.id.rename:
-                    showAddAndRenameStockDialogFragment("");
+                    showAddAndRenameStockDialogFragment(RENAME, stock);
                     break;
                 case R.id.delete:
                     setUpConfirmDialogFragment();
