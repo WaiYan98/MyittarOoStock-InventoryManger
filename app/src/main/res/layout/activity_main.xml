@@ -19,7 +19,6 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
             android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -35,57 +34,57 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.nambimobile.widgets.efab.ExpandableFabLayout
+<!--        <com.nambimobile.widgets.efab.ExpandableFabLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <com.nambimobile.widgets.efab.ExpandableFab-->
+<!--                android:id="@+id/e_fab"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="bottom|end"-->
+<!--                android:layout_margin="16dp"-->
+<!--                app:efab_closingAnimationDurationMs="150"-->
+<!--                app:efab_closingAnticipateTension="0"-->
+<!--                app:efab_color="@color/color_blue"-->
+<!--                app:efab_icon="@drawable/ic_white_menu"-->
+<!--                app:efab_iconAnimationRotationDeg="45"-->
+<!--                app:efab_openingAnimationDurationMs="300" />-->
+
+<!--            <com.nambimobile.widgets.efab.FabOption-->
+<!--                android:id="@+id/fab_in"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:fab_color="@color/color_blue"-->
+<!--                app:fab_icon="@drawable/ic_add"-->
+<!--                app:label_backgroundColor="@color/color_blue"-->
+<!--                app:label_text="New Item" />-->
+
+<!--            <com.nambimobile.widgets.efab.FabOption-->
+<!--                android:id="@+id/fab_out"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:fab_color="@color/color_blue"-->
+<!--                app:fab_icon="@drawable/ic_remove"-->
+<!--                app:label_backgroundColor="@color/color_blue"-->
+<!--                app:label_text="Item Out" />-->
+
+<!--            <com.nambimobile.widgets.efab.FabOption-->
+<!--                android:id="@+id/fab_scan"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:fab_color="@color/color_blue"-->
+<!--                app:fab_icon="@drawable/ic_qr_code_scanner"-->
+<!--                app:label_backgroundColor="@color/color_blue"-->
+<!--                app:label_text="Scan" />-->
+
+<!--        </com.nambimobile.widgets.efab.ExpandableFabLayout>-->
+
+        <FrameLayout
+            android:id="@+id/fragment_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.nambimobile.widgets.efab.ExpandableFab
-                android:id="@+id/e_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                app:efab_closingAnimationDurationMs="150"
-                app:efab_closingAnticipateTension="0"
-                app:efab_color="@color/color_blue"
-                app:efab_icon="@drawable/ic_white_menu"
-                app:efab_iconAnimationRotationDeg="45"
-                app:efab_openingAnimationDurationMs="300" />
-
-            <com.nambimobile.widgets.efab.FabOption
-                android:id="@+id/fab_in"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_color="@color/color_blue"
-                app:fab_icon="@drawable/ic_add"
-                app:label_backgroundColor="@color/color_blue"
-                app:label_text="New Item" />
-
-            <com.nambimobile.widgets.efab.FabOption
-                android:id="@+id/fab_out"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_color="@color/color_blue"
-                app:fab_icon="@drawable/ic_remove"
-                app:label_backgroundColor="@color/color_blue"
-                app:label_text="Item Out" />
-
-            <com.nambimobile.widgets.efab.FabOption
-                android:id="@+id/fab_scan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_color="@color/color_blue"
-                app:fab_icon="@drawable/ic_qr_code_scanner"
-                app:label_backgroundColor="@color/color_blue"
-                app:label_text="Scan" />
-
-            <FrameLayout
-                android:id="@+id/fragment_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal" />
-
-        </com.nambimobile.widgets.efab.ExpandableFabLayout>
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
 
     </LinearLayout>
 

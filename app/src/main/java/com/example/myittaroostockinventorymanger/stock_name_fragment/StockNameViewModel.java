@@ -1,6 +1,9 @@
 
 package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,6 +13,7 @@ import com.example.myittaroostockinventorymanger.local.Stock;
 import com.example.myittaroostockinventorymanger.repository.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -21,6 +25,7 @@ public class StockNameViewModel extends ViewModel {
     private LiveData<List<Stock>> mutStockList;
     private MutableLiveData<Event<String>> message;
     private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<List<Stock>> mutFilterNames;
     private Repository repository;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -28,6 +33,7 @@ public class StockNameViewModel extends ViewModel {
         repository = new Repository();
         message = new MutableLiveData<>();
         isLoading = new MutableLiveData<>(false);
+        mutFilterNames = new MutableLiveData<>();
     }
 
     public void insertStock(Stock stock) {
@@ -89,6 +95,18 @@ public class StockNameViewModel extends ViewModel {
                     message.setValue(new Event<>("Cannot Renamed"));
                 });
         compositeDisposable.add(disposable);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void filterName(List<Stock> stockList, String text) {
+        List<Stock> resultList = stockList.stream()
+                .filter(stock -> stock.getName().toUpperCase().startsWith(text.toUpperCase()))
+                .collect(Collectors.toList());
+        mutFilterNames.setValue(resultList);
+    }
+
+    public LiveData<List<Stock>> getFilterNames() {
+        return mutFilterNames;
     }
 
     @Override

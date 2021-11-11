@@ -1,4 +1,4 @@
-package com.example.myittaroostockinventorymanger.adapters;
+package com.example.myittaroostockinventorymanger.batch_fragment;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,11 +16,11 @@ import com.example.myittaroostockinventorymanger.util.AutoNumGenerator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StockListRecycleViewAdapter extends RecyclerView.Adapter<StockListRecycleViewAdapter.ViewHolder> {
+public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListRecycleViewAdapter.ViewHolder> {
 
     private Context context;
 
-    public StockListRecycleViewAdapter(Context context) {
+    public BatchListRecycleViewAdapter(Context context) {
         this.context = context;
     }
 

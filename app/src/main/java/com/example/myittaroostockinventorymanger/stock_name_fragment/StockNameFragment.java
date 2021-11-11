@@ -97,8 +97,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                adapter.insertItem(filterName(newText));
-
+                viewModel.filterName(stockList, newText);
                 return false;
             }
         });
@@ -127,6 +126,11 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         refresh.setOnRefreshListener(() -> {
             viewModel.loadStockName();
         });
+
+        viewModel.getFilterNames()
+                .observe(getViewLifecycleOwner(), stockList -> {
+                    adapter.insertItem(stockList);
+                });
 
         fabAddItem.setOnClickListener(v -> {
             showAddAndRenameStockDialogFragment(ADD, null);
@@ -203,7 +207,6 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         });
     }
 
-
     @Override
     public void onClickYes() {
         viewModel.deleteStock(this.stock);
@@ -213,12 +216,4 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         toolbar.setTitle("Stock Name List");
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private List<Stock> filterName(String text) {
-
-        List<Stock> resultList = stockList.stream()
-                .filter(stock -> stock.getName().toUpperCase().startsWith(text.toUpperCase()))
-                .collect(Collectors.toList());
-        return resultList;
-    }
 }

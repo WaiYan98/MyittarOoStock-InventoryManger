@@ -1,32 +1,22 @@
 package com.example.myittaroostockinventorymanger;
 
-import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.animation.Animation;
-import android.widget.Toast;
 
+import com.example.myittaroostockinventorymanger.batch_fragment.AddNewBatchActivity;
+import com.example.myittaroostockinventorymanger.batch_fragment.BatchFragment;
 import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
-import com.example.myittaroostockinventorymanger.fragments.BatchFragment;
 import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
 import com.example.myittaroostockinventorymanger.stock_name_fragment.StockNameFragment;
 import com.example.myittaroostockinventorymanger.fragments.TransactionFragment;
-import com.example.myittaroostockinventorymanger.local.Dao;
-import com.example.myittaroostockinventorymanger.local.StockDataBase;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
-import com.nambimobile.widgets.efab.ExpandableFab;
-import com.nambimobile.widgets.efab.FabOption;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,14 +29,14 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navView;
     @BindView(R.id.tool_bar)
     MaterialToolbar toolbar;
-    @BindView(R.id.e_fab)
-    ExpandableFab eFab;
-    @BindView(R.id.fab_in)
-    FabOption fabIN;
-    @BindView(R.id.fab_out)
-    FabOption fabOut;
-    @BindView(R.id.fab_scan)
-    FabOption fabScan;
+//    @BindView(R.id.e_fab)
+//    ExpandableFab eFab;
+//    @BindView(R.id.fab_in)
+//    FabOption fabIN;
+//    @BindView(R.id.fab_out)
+//    FabOption fabOut;
+//    @BindView(R.id.fab_scan)
+//    FabOption fabScan;
     private Animation rotateOpen, rotateClose, fromBottom, toBottom;
     private boolean isOpen = false;
     private ActionMode actionMode;
@@ -67,29 +57,29 @@ public class MainActivity extends AppCompatActivity {
 
         navDrawerOnItemSelected();
 
-        eFab.setOnClickListener(v -> {
-            changeFabIcon();
-            isOpen = !isOpen;
-        });
-
-        fabIN.setOnClickListener(v -> {
-            changeFabIcon();
-            isOpen = false;
-            goToAddNewItemActivity();
-            Toast.makeText(this, "Item In", Toast.LENGTH_SHORT).show();
-        });
-
-        fabOut.setOnClickListener(v -> {
-            changeFabIcon();
-            isOpen = false;
-            Toast.makeText(this, "Item Out", Toast.LENGTH_SHORT).show();
-        });
-
-        fabScan.setOnClickListener(v -> {
-            changeFabIcon();
-            isOpen = false;
-            Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
-        });
+//        eFab.setOnClickListener(v -> {
+//            changeFabIcon();
+//            isOpen = !isOpen;
+//        });
+//
+//        fabIN.setOnClickListener(v -> {
+//            changeFabIcon();
+//            isOpen = false;
+//            goToAddNewItemActivity();
+//            Toast.makeText(this, "Item In", Toast.LENGTH_SHORT).show();
+//        });
+//
+//        fabOut.setOnClickListener(v -> {
+//            changeFabIcon();
+//            isOpen = false;
+//            Toast.makeText(this, "Item Out", Toast.LENGTH_SHORT).show();
+//        });
+//
+//        fabScan.setOnClickListener(v -> {
+//            changeFabIcon();
+//            isOpen = false;
+//            Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
+//        });
 
 
 
@@ -102,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(item -> {
 
             int id = item.getItemId();
-            fabHideAndShow(id);
+//            fabHideAndShow(id);
 
             switch (id) {
                 case R.id.nav_transaction:
@@ -141,27 +131,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //for changing extendable fab background color and icon After clicked
-    private void changeFabIcon() {
-        if (!isOpen) {
-            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_add));
-            eFab.setEfabColor(ContextCompat.getColor(this, R.color.black));
-        } else {
-            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_white_menu));
-            eFab.setEfabColor(ContextCompat.getColor(this, R.color.color_blue));
-        }
-    }
-
-    //for fab hide and show in some fragments
-    private void fabHideAndShow(@IdRes int id) {
-        if (id == R.id.batch || id == R.id.nav_transaction) {
-            eFab.show();
-        } else {
-            eFab.hide();
-        }
-    }
+//    private void changeFabIcon() {
+//        if (!isOpen) {
+//            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_add));
+//            eFab.setEfabColor(ContextCompat.getColor(this, R.color.black));
+//        } else {
+//            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_white_menu));
+//            eFab.setEfabColor(ContextCompat.getColor(this, R.color.color_blue));
+//        }
+//    }
+//
+//    //for fab hide and show in some fragments
+//    private void fabHideAndShow(@IdRes int id) {
+//        if (id == R.id.batch || id == R.id.nav_transaction) {
+//            eFab.show();
+//        } else {
+//            eFab.hide();
+//        }
+//    }
 
     private void goToAddNewItemActivity() {
-        Intent intent = new Intent(this, AddNewItemActivity.class);
+        Intent intent = new Intent(this, AddNewBatchActivity.class);
         startActivity(intent);
     }
 
