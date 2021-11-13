@@ -60,7 +60,7 @@ public class StockNameViewModel extends ViewModel {
 
     public void loadStockName() {
         isLoading.setValue(true);
-        mutStockList = repository.getAllStockName();
+        mutStockList = repository.getAllStock();
         isLoading.setValue(false);
         message.setValue(new Event<>("updated"));
     }

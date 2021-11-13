@@ -1,10 +1,11 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
-import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +36,11 @@ class BatchFragment : Fragment() {
 
         setUpRecycleView()
 
+        fabAddBatch.setOnClickListener {
+
+            goToAddNewBatchActivity()
+        }
+
     }
 
     private fun setUpRecycleView() {
@@ -43,4 +49,10 @@ class BatchFragment : Fragment() {
         recyBatchList.layoutManager = LinearLayoutManager(context)
         recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))
     }
+
+    private fun goToAddNewBatchActivity() {
+        val intent: Intent = Intent(context, AddNewBatchActivity::class.java)
+        startActivity(intent)
+    }
+
 }

@@ -28,7 +28,7 @@ public interface Dao {
     Completable insertTransaction(Transaction transaction);
 
     @Query("SELECT * FROM Stock")
-    LiveData<List<Stock>> getAllStockName();
+    LiveData<List<Stock>> getAllStock();
 
     @Query("SELECT * FROM Stock")
     LiveData<List<StockWithBatch>> getAllStockWithBatch();
@@ -38,5 +38,8 @@ public interface Dao {
 
     @Update
     Completable updateStockName(Stock stock);
+
+    @Query("SElECT name FROM Stock")
+    LiveData<List<String>> getAllStockNames();
 
 }

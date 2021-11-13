@@ -47,8 +47,8 @@
                     android:textSize="@dimen/small_text_size"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/edt_stock_name"
+                <AutoCompleteTextView
+                    android:id="@+id/act_stock_name"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edt_height"
                     android:layout_marginStart="@dimen/large_margin"

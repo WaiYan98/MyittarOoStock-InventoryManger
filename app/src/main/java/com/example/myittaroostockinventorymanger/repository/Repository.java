@@ -34,8 +34,8 @@ public class Repository {
         return dao.insertTransaction(transaction);
     }
 
-    public LiveData<List<Stock>> getAllStockName() {
-        return dao.getAllStockName();
+    public LiveData<List<Stock>> getAllStock() {
+        return dao.getAllStock();
     }
 
     public LiveData<List<StockWithBatch>> getAllStockWithBatch() {
@@ -48,5 +48,9 @@ public class Repository {
 
     public Completable updateStockName(Stock stock) {
         return dao.updateStockName(stock);
+    }
+
+    public LiveData<List<String>> getAllStockNames() {
+        return dao.getAllStockNames();
     }
 }
