@@ -36,18 +36,6 @@ public class StockNameViewModel extends ViewModel {
         mutFilterNames = new MutableLiveData<>();
     }
 
-    public void insertStock(Stock stock) {
-        Disposable disposable = repository.insertStock(stock)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    message.setValue(new Event<>("Added"));
-                }, error -> {
-                    message.setValue(new Event<>("unexpected error"));
-                });
-        compositeDisposable.add(disposable);
-    }
-
     public LiveData<List<Stock>> getAllStockName() {
 
         if (mutStockList == null) {
@@ -73,30 +61,7 @@ public class StockNameViewModel extends ViewModel {
         return isLoading;
     }
 
-    public void deleteStock(Stock stock) {
-        Disposable disposable = repository.deleteStock(stock)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    message.setValue(new Event<>("Deleted"));
-                }, error -> {
-                    message.setValue(new Event<>("Cannot delete"));
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    public void updateStockName(Stock stock) {
-        Disposable disposable = repository.updateStockName(stock)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    message.setValue(new Event<>("Renamed"));
-                }, error -> {
-                    message.setValue(new Event<>("Cannot Renamed"));
-                });
-        compositeDisposable.add(disposable);
-    }
-
+    //for autoCompleteTextView to find Name
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void filterName(List<Stock> stockList, String text) {
         List<Stock> resultList = stockList.stream()

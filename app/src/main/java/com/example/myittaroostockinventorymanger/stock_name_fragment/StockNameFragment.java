@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StockNameFragment extends Fragment implements AddAndRenameStockDialogFragment.CallBack,
-        StockNameRecycleViewAdapter.CallBack, ConfirmDialogFragment.CallBack {
+public class StockNameFragment extends Fragment implements
+        StockNameRecycleViewAdapter.CallBack {
 
     @BindView(R.id.recy_stock_name)
     RecyclerView recyStockName;
@@ -60,6 +60,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
     public static final String RENAME = "RENAME";
     public static final String EXTRA_OPTION = "EXTRA_OPTION";
     public static final String EXTRA_STOCK = "EXTRA_STOCK";
+    public static final String EXTRA_DELETE = "EXTRA_DELETE";
 
     private Stock stock;
 
@@ -154,32 +155,20 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         addAndRenameStockDialogFragment = AddAndRenameStockDialogFragment.getNewInstance(EXTRA_OPTION, EXTRA_STOCK,
                 option, stockForRename);
         addAndRenameStockDialogFragment.show(getChildFragmentManager(), "");
-        addAndRenameStockDialogFragment.setCallBack(this);
     }
 
-    private void setUpConfirmDialogFragment() {
-        ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
+    private void setUpConfirmDialogFragment(Stock stock) {
+        ConfirmDialogFragment confirmDialogFragment = ConfirmDialogFragment.getNewInstance(EXTRA_DELETE, stock);
         confirmDialogFragment.show(getChildFragmentManager(), "");
-        confirmDialogFragment.setCallBack(this);
     }
 
-    @Override
-    public void onClickSave(Stock stock) {
-        viewModel.insertStock(stock);
-    }
-
-    @Override
-    public void onClickRename(Stock stock) {
-        Log.d("tag", "onClickRename: " + stock.getStockId() + " " + stock.getName());
-        viewModel.updateStockName(stock);
-    }
-
+    //recycle view onLongClick stock
     @Override
     public void onLongClickItem(View v, Stock stock) {
         //for test
         this.stock = stock;
         createPopupMenu(v);
-        popupMenuItemClick(stock);
+        popupMenuItemClick();
     }
 
 //show popup menu for rename and delete
@@ -191,7 +180,7 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
         popupMenu.show();
     }
 
-    private void popupMenuItemClick(Stock stock) {
+    private void popupMenuItemClick() {
 
         popupMenu.setOnMenuItemClickListener(item -> {
 
@@ -200,16 +189,11 @@ public class StockNameFragment extends Fragment implements AddAndRenameStockDial
                     showAddAndRenameStockDialogFragment(RENAME, stock);
                     break;
                 case R.id.delete:
-                    setUpConfirmDialogFragment();
+                    setUpConfirmDialogFragment(stock);
                     break;
             }
             return false;
         });
-    }
-
-    @Override
-    public void onClickYes() {
-        viewModel.deleteStock(this.stock);
     }
 
     private void changeToolBarName() {

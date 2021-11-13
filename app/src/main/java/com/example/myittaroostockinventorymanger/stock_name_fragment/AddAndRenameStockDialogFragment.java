@@ -36,16 +36,11 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     @BindView(R.id.btn_cancel)
     Button btnCancel;
 
-    private CallBack callBack;
     private String option;
     private AddAndRenameStockViewModel addAndRenameStockViewModel;
     private AlertDialog alertDialog;
     private Context context;
     private Stock stock;
-
-    public void setCallBack(CallBack callBack) {
-        this.callBack = callBack;
-    }
 
     private AddAndRenameStockDialogFragment() {
 
@@ -59,8 +54,6 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         View view = layoutInflater.inflate(R.layout.stock_dialog_fragment, null, false);
         ButterKnife.bind(this, view);
-
-        Log.d("tag", "onCreateDialog: ");
 
         Bundle bundle = getArguments();
 
@@ -99,10 +92,10 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
             String stockName = edtStockName.getText().toString();
 
             if (option.equals(StockNameFragment.ADD)) {
-                addAndRenameStockViewModel.onClickSave(new Stock(stockName));
+                addAndRenameStockViewModel.onClickBtn(new Stock(stockName), option);
             } else {
                 this.stock.setName(stockName);
-                addAndRenameStockViewModel.onClickRename(this.stock);
+                addAndRenameStockViewModel.onClickBtn(this.stock, option);
             }
         });
 
@@ -110,31 +103,24 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
             alertDialog.cancel();
         });
 
-        //this is boilerplate code
-
-        addAndRenameStockViewModel.getAddStock()
+        //add and rename stock to database
+        addAndRenameStockViewModel.getStock()
                 .observe(getParentFragment().getViewLifecycleOwner(), s -> {
 
                     Stock stock = s.getContentIfNotHandle();
+                    String option = addAndRenameStockViewModel.getOption();
 
                     if (stock != null) {
-                        callBack.onClickSave(stock);
-                    }
-
-                    alertDialog.cancel();
-                });
-
-        addAndRenameStockViewModel.getRenameStock()
-                .observe(getParentFragment().getViewLifecycleOwner(), s -> {
-
-                    Stock stock = s.getContentIfNotHandle();
-
-                    if (stock != null) {
-                        callBack.onClickRename(stock);
+                        if (option.equals(StockNameFragment.ADD)) {
+                            addAndRenameStockViewModel.insertStock(stock);
+                        } else {
+                            addAndRenameStockViewModel.updateStockName(stock);
+                        }
                     }
                     alertDialog.cancel();
                 });
 
+        //to show message update,added or error
         addAndRenameStockViewModel.getMessage()
                 .observe(getParentFragment().getViewLifecycleOwner(), message -> {
 
@@ -143,7 +129,6 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
                     if (notify != null) {
                         Toast.makeText(context, notify, Toast.LENGTH_SHORT).show();
                     }
-
                 });
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -161,13 +146,7 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         return addAndRenameStockDialogFragment;
     }
 
-    public interface CallBack {
-
-        void onClickSave(Stock stock);
-
-        void onClickRename(Stock stock);
-    }
-
+    //change dialogFragment title and button
     private void changeTitleAndBtn() {
         if (option.equals(StockNameFragment.ADD)) {
             txtTitle.setText("Add New Stock Name");
@@ -178,6 +157,7 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         }
     }
 
+    //this need context for toast
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

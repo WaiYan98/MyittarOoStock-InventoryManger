@@ -49,7 +49,6 @@ public class AddNewBatchActivity extends AppCompatActivity {
 
         addNewBatchViewModel.getAllStockNames()
                 .observe(this, stockNameList -> {
-//                    this.stockNameList = stockNameList;
                     setUpAutoCompleteTextView(stockNameList);
                 });
 
