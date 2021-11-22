@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +12,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BatchFragment : Fragment() {
@@ -25,9 +25,16 @@ class BatchFragment : Fragment() {
 
     lateinit var adapter: BatchListRecycleViewAdapter
 
+    lateinit var toolbar: MaterialToolbar;
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_batch, container, false);
         ButterKnife.bind(this, view)
+
+        toolbar = activity?.findViewById(R.id.tool_bar)!!
+
+        setToolbarTitle()
+
         return view;
     }
 
@@ -53,6 +60,11 @@ class BatchFragment : Fragment() {
     private fun goToAddNewBatchActivity() {
         val intent: Intent = Intent(context, AddNewBatchActivity::class.java)
         startActivity(intent)
+    }
+
+    //to change toolbar title
+    private fun setToolbarTitle() {
+        toolbar.title = "Batch List"
     }
 
 }

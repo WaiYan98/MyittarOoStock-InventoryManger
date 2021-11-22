@@ -15,10 +15,7 @@ import com.example.myittaroostockinventorymanger.repository.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class StockNameViewModel extends ViewModel {
 
@@ -36,17 +33,17 @@ public class StockNameViewModel extends ViewModel {
         mutFilterNames = new MutableLiveData<>();
     }
 
-    public LiveData<List<Stock>> getAllStockName() {
+    public LiveData<List<Stock>> getAllStocks() {
 
         if (mutStockList == null) {
             mutStockList = new MutableLiveData<>();
-            loadStockName();
+            loadStocks();
         }
 
         return mutStockList;
     }
 
-    public void loadStockName() {
+    public void loadStocks() {
         isLoading.setValue(true);
         mutStockList = repository.getAllStock();
         isLoading.setValue(false);

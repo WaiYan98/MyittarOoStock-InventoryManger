@@ -2,22 +2,20 @@ package com.example.myittaroostockinventorymanger.stock_name_fragment;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,8 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,6 +67,7 @@ public class StockNameFragment extends Fragment implements
         ButterKnife.bind(this, view);
         toolbar = getActivity().findViewById(R.id.tool_bar);
 
+        //Bind SearchView form toolBar
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.app_bar_search);
 
         searchView = (SearchView) menuItem.getActionView();
@@ -103,7 +100,7 @@ public class StockNameFragment extends Fragment implements
             }
         });
 
-        viewModel.getAllStockName()
+        viewModel.getAllStocks()
                 .observe(getViewLifecycleOwner(), stockList -> {
                     this.stockList = stockList;
                     adapter.insertItem(stockList);
@@ -125,14 +122,16 @@ public class StockNameFragment extends Fragment implements
                 });
 
         refresh.setOnRefreshListener(() -> {
-            viewModel.loadStockName();
+            viewModel.loadStocks();
         });
 
+        //Search View Find Name list insert to recycleView adapter
         viewModel.getFilterNames()
                 .observe(getViewLifecycleOwner(), stockList -> {
                     adapter.insertItem(stockList);
                 });
 
+        //to add new Stock
         fabAddItem.setOnClickListener(v -> {
             showAddAndRenameStockDialogFragment(ADD, null);
         });

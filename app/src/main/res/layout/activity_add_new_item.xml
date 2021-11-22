@@ -14,11 +14,15 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/little_dark_white"
         android:theme="@style/AppTheme.Toolbar"
-        app:menu="@menu/add_new_item_app_bar"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="Add New Item"
+        app:menu="@menu/add_new_item_app_bar"
         app:titleCentered="true"
-        app:titleTextColor="@color/grey" />
+        app:titleTextColor="@color/grey">
+
+
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -65,7 +69,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:gravity="center_vertical|start"
                 android:orientation="vertical"
                 android:padding="8dp">
@@ -75,24 +79,40 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Select Exp Date"
+                    android:text="Input Date"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/small_text_size"
                     android:textStyle="bold" />
 
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
                     android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp"
-                    android:gravity="start|center_vertical"
-                    android:paddingStart="8dp"
-                    android:text="8/7/21"
-                    android:textColor="@color/black"
-                    android:textSize="20sp" />
+                    android:elevation="8dp">
+
+                    <com.msa.dateedittext.DateEditText
+                        android:id="@+id/edt_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/rounded_rectangle_white"
+                        android:hint="Date"
+                        android:imeOptions="actionNext"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/black"
+                        app:autoCorrect="false"
+                        app:dateFormat="ddMMyyyy"
+                        app:dividerCharacter="slash"
+                        app:helperTextEnabled="true"
+                        app:helperTextHighlightedColor="@color/light_green"
+                        app:maxDate="01/12/2100"
+                        app:minDate="01/12/1900"
+                        tools:ignore="HardcoreText" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -201,5 +221,6 @@
         </LinearLayout>
 
     </ScrollView>
+
 
 </LinearLayout>

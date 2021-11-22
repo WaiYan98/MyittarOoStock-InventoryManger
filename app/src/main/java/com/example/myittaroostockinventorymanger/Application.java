@@ -9,7 +9,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        INSTANCE = this;
+            INSTANCE = this;
     }
 
     public static Context getContext() {

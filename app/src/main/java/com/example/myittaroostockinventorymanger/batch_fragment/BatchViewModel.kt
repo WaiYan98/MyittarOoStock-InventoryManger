@@ -7,6 +7,5 @@ import com.example.myittaroostockinventorymanger.repository.Repository
 class BatchViewModel : ViewModel() {
 
     private val repository: Repository = Repository()
-    private var navigateToAddNewBatchActivity: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
 }

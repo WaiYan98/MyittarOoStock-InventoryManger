@@ -69,6 +69,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         ConfirmDialogFragmentViewModel confirmDialogFragmentViewModel = new ViewModelProvider(requireActivity())
                 .get(ConfirmDialogFragmentViewModel.class);
 
+        //to delete stock
         btnYes.setOnClickListener(v -> {
             confirmDialogFragmentViewModel.deleteStock(stock);
             alertDialog.cancel();
@@ -78,6 +79,7 @@ public class ConfirmDialogFragment extends DialogFragment {
             alertDialog.cancel();
         });
 
+        //to show message
         confirmDialogFragmentViewModel.getMessage()
                 .observe(getParentFragment().getViewLifecycleOwner(), m -> {
 
@@ -99,6 +101,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         return confirmDialogFragment;
     }
 
+    //context for toast
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

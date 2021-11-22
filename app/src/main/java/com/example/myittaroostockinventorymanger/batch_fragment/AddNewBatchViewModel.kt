@@ -1,5 +1,6 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +18,16 @@ class AddNewBatchViewModel : ViewModel() {
             mutStockNames = repository.allStockNames
         }
         return mutStockNames
+    }
+
+    fun onClickSave(edtDate: String) {
+
+        val dateSplitList = edtDate.split("/")
+        val day = dateSplitList[0]
+        val month = dateSplitList[1]
+        val year = dateSplitList[2]
+
+
     }
 
 }

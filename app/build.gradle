@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.myittaroostockinventorymanger"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -37,6 +37,10 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -73,5 +77,9 @@ dependencies {
     kapt 'com.jakewharton:butterknife-compiler:10.2.0'
 
     kapt "androidx.room:room-compiler:$room_version"
+
+    implementation 'com.github.santalu:maskara:1.0.0'
+
+    implementation 'com.github.salahamassi:android-mask-date-editText:v1.02'
 
 }
