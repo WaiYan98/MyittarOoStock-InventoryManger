@@ -17,6 +17,7 @@ import android.widget.EditText;
 import com.example.myittaroostockinventorymanger.MainActivity;
 import com.example.myittaroostockinventorymanger.R;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.msa.dateedittext.DateEditText;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import kotlin.jvm.functions.Function1;
 
 public class AddNewBatchActivity extends AppCompatActivity {
 
@@ -37,6 +39,8 @@ public class AddNewBatchActivity extends AppCompatActivity {
     EditText edtCostPrice;
     @BindView(R.id.edt_sale_price)
     EditText edtSalePrice;
+    @BindView(R.id.txt_input_layout)
+    TextInputLayout txtInputLayout;
     @BindView(R.id.edt_date)
     DateEditText edtDate;
     private AddNewBatchViewModel addNewBatchViewModel;
@@ -53,6 +57,7 @@ public class AddNewBatchActivity extends AppCompatActivity {
         //test
 
         edtDate.listen();
+
 
         addNewBatchViewModel.getAllStockNames()
                 .observe(this, stockNameList -> {
@@ -72,7 +77,9 @@ public class AddNewBatchActivity extends AppCompatActivity {
         toolBar.setOnMenuItemClickListener(item -> {
 
             if (item.getItemId() == R.id.save) {
-                addNewBatchViewModel.onClickSave("12/31/2010");
+
+                Log.d("tag", "onCreate: " + edtDate.isValidDate());
+
             }
 
             return false;
@@ -96,5 +103,6 @@ public class AddNewBatchActivity extends AppCompatActivity {
         addNewBatchViewModel = new ViewModelProvider(this)
                 .get(AddNewBatchViewModel.class);
     }
+
 
 }

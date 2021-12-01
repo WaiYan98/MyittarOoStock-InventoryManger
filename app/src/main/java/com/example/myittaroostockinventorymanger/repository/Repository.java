@@ -53,4 +53,8 @@ public class Repository {
     public LiveData<List<String>> getAllStockNames() {
         return dao.getAllStockNames();
     }
+
+    public Integer findStockIdByName(String stockName) {
+        return dao.findStockIdByName(stockName);
+    }
 }

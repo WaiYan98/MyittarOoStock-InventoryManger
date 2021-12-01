@@ -42,4 +42,7 @@ public interface Dao {
     @Query("SElECT name FROM Stock")
     LiveData<List<String>> getAllStockNames();
 
+    @Query("SELECT stock_id FROM Stock WHERE Stock.name = :stockName")
+    Integer findStockIdByName(String stockName);
+
 }

@@ -1,15 +1,19 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.myittaroostockinventorymanger.event.Event
+import com.example.myittaroostockinventorymanger.local.Batch
 import com.example.myittaroostockinventorymanger.repository.Repository
+import java.util.*
 
 class AddNewBatchViewModel : ViewModel() {
 
     private var repository: Repository = Repository()
     private var mutStockNames: LiveData<List<String>>? = null
+    private var mutErrorMessage: MutableLiveData<Event<String>> = MutableLiveData()
+
 
     fun getAllStockNames(): LiveData<List<String>>? {
 
@@ -20,14 +24,15 @@ class AddNewBatchViewModel : ViewModel() {
         return mutStockNames
     }
 
-    fun onClickSave(edtDate: String) {
+    fun onClickSave(batch: Batch, isValidDate: Boolean, itemName: String) {
 
-        val dateSplitList = edtDate.split("/")
-        val day = dateSplitList[0]
-        val month = dateSplitList[1]
-        val year = dateSplitList[2]
-
+        if (itemName.isNotEmpty() && isValidDate && batch.totalStock > 0) {
+            var stockId =
+            var batch  = Batch()
+            repository.insertBatch()
+        }
 
     }
+
 
 }

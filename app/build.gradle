@@ -80,6 +80,5 @@ dependencies {
 
     implementation 'com.github.santalu:maskara:1.0.0'
 
-    implementation 'com.github.salahamassi:android-mask-date-editText:v1.02'
-
+    implementation project(':dateedittext')
 }
