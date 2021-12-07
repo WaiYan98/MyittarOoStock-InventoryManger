@@ -9,6 +9,7 @@ import androidx.room.Update;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 
 @androidx.room.Dao
 public interface Dao {
@@ -43,6 +44,6 @@ public interface Dao {
     LiveData<List<String>> getAllStockNames();
 
     @Query("SELECT stock_id FROM Stock WHERE Stock.name = :stockName")
-    Integer findStockIdByName(String stockName);
+    Observable<Long> findStockIdByName(String stockName);
 
 }

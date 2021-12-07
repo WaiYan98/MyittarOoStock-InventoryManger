@@ -13,14 +13,19 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.myittaroostockinventorymanger.MainActivity;
 import com.example.myittaroostockinventorymanger.R;
+import com.example.myittaroostockinventorymanger.local.Batch;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.msa.dateedittext.DateEditText;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -78,12 +83,49 @@ public class AddNewBatchActivity extends AppCompatActivity {
 
             if (item.getItemId() == R.id.save) {
 
-                Log.d("tag", "onCreate: " + edtDate.isValidDate());
+//                String stockName = actStockName.getEditableText().toString();
+//                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+//                Date expDate = null;
+//                try {
+//                    expDate = format.parse(edtDate.getText().toString());
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //this will be repair
+//                int amount = Integer.parseInt(edtAmount.getText().toString());
+//                double costPrice = Integer.parseInt(edtCostPrice.getText().toString());
+//                double salePrice = Integer.parseInt(edtSalePrice.getText().toString());
+//
+//                Batch batch = new Batch(0, costPrice, salePrice, amount, expDate);
+
+                addNewBatchViewModel.onClickSave(actStockName, edtDate
+                        , edtAmount, edtCostPrice
+                        , edtSalePrice, edtDate.isValidDate());
 
             }
 
             return false;
         });
+
+        addNewBatchViewModel.getMessage()
+                .observe(this, mEvent -> {
+                    String notify = mEvent.getContentIfNotHandle();
+
+                    if (notify != null) {
+                        Toast.makeText(this, notify, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        addNewBatchViewModel.getNavigateToMainActivity()
+                .observe(this, navigateEvent -> {
+
+                    Boolean navigate = navigateEvent.getContentIfNotHandle();
+
+                    if (navigate != null) {
+                        goToMainActivity();
+                    }
+                });
     }
 
     private void goToMainActivity() {

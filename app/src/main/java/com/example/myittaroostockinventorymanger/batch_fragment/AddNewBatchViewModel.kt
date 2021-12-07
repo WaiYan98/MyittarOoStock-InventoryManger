@@ -1,11 +1,21 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
+import android.util.Log
+import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.local.Batch
 import com.example.myittaroostockinventorymanger.repository.Repository
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.schedulers.IoScheduler
+import io.reactivex.schedulers.Schedulers.computation
+import io.reactivex.schedulers.Schedulers.io
 import java.util.*
 
 class AddNewBatchViewModel : ViewModel() {
@@ -13,6 +23,8 @@ class AddNewBatchViewModel : ViewModel() {
     private var repository: Repository = Repository()
     private var mutStockNames: LiveData<List<String>>? = null
     private var mutErrorMessage: MutableLiveData<Event<String>> = MutableLiveData()
+    private var navigateToMainActivity: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    private lateinit var disposable: Disposable
 
 
     fun getAllStockNames(): LiveData<List<String>>? {
@@ -24,14 +36,127 @@ class AddNewBatchViewModel : ViewModel() {
         return mutStockNames
     }
 
-    fun onClickSave(batch: Batch, isValidDate: Boolean, itemName: String) {
+    //check the batch is valid and then save batch to database
+//    fun onClickSave(batch: Batch, isValidDate: Boolean, itemName: String) {
+//
+//        if (itemName.isNotEmpty() && isValidDate && batch.totalStock > 0) {
+//
+//            val batch = Batch(0, batch.originalPrice, batch.salePrice, batch.totalStock, batch.expDate)
+//
+//            disposable = repository.findStockIdByName(itemName)
+//                    .flatMap {
+//                        batch.stockId = it
+//                        repository.insertBatch(batch)
+//                                .andThen(Observable.just(Unit))
+//                    }
+//                    .subscribeOn(io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe({
+//                        mutErrorMessage.value = Event("Save")
+//                        navigateToMainActivity.value = Event(true)
+//                    }) {
+//                        mutErrorMessage.value = Event("Cannot Save")
+//                    }
+//        } else {
+//            mutErrorMessage.value = Event("Invalid")
+//        }
+//
+//    }
 
-        if (itemName.isNotEmpty() && isValidDate && batch.totalStock > 0) {
-            var stockId =
-            var batch  = Batch()
-            repository.insertBatch()
+    fun onClickSave(edtStockName: EditText, edtExpDate: EditText,
+                    edtAmount: EditText, edtCostPrice: EditText,
+                    edtSalePrice: EditText, isValidDate: Boolean) {
+
+        isValidInput(edtStockName, edtAmount, edtCostPrice, edtSalePrice, isValidDate)
+
+    }
+
+    //to check the user input is valid or not
+    fun isValidInput(edtStockName: EditText,
+                     edtAmount: EditText, edtCostPrice: EditText,
+                     edtSalePrice: EditText, isValidDate: Boolean): Boolean {
+
+        var isNameValid = false
+        var isAmountValid = false
+        var isCostPriceValid = false
+        var isSalePriceValid = false
+        var errorMessage = ""
+
+        //check stock name is valid
+        if (edtStockName.text.isNotEmpty()) {
+            isNameValid = true
+        } else {
+            isNameValid = false
+            errorMessage += "Please fill the name\n"
         }
 
+        //check amount is valid
+        if (edtAmount.text.isNotEmpty()) {
+            var amount = edtAmount.text.toString().toInt()
+            if (amount > 0) {
+                isAmountValid = true
+            } else {
+                isAmountValid = false
+                errorMessage += "Amount cannot be less than 0\n"
+            }
+        } else {
+            isAmountValid = false
+            errorMessage += "Amount is empty\n"
+        }
+
+        //check costPrice is valid
+        if (edtCostPrice.text.isNotEmpty()) {
+            var costPrice = edtCostPrice.text.toString().toInt()
+            if (costPrice > 0) {
+                isCostPriceValid = true
+            } else {
+                isCostPriceValid = false
+                errorMessage += "Cost price cannot be less than 0\n"
+            }
+
+        } else {
+            isCostPriceValid = false
+            errorMessage += "Cost price is empty\n"
+        }
+
+        //check salePrice is valid
+        if (edtSalePrice.text.isNotEmpty()) {
+            var salePrice = edtSalePrice.text.toString().toInt()
+            if (salePrice > 0) {
+                isSalePriceValid = true
+            } else {
+                isSalePriceValid = false
+                errorMessage += "Sale price cannot be less than 0\n"
+            }
+
+        } else {
+            isSalePriceValid = false
+            errorMessage += "Sale price is empty\n"
+        }
+
+        if (!isValidDate) {
+            errorMessage += "Invalid date\n"
+        }
+
+        return if (isNameValid && isAmountValid && isCostPriceValid && isSalePriceValid && isValidDate) {
+            true
+        } else {
+            mutErrorMessage.value = Event(errorMessage)
+            false
+        }
+
+    }
+
+    fun getMessage(): LiveData<Event<String>> {
+        return mutErrorMessage
+    }
+
+    fun getNavigateToMainActivity(): LiveData<Event<Boolean>> {
+        return navigateToMainActivity
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 
 

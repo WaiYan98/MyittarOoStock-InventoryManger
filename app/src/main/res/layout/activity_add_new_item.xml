@@ -14,12 +14,11 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/little_dark_white"
         android:theme="@style/AppTheme.Toolbar"
+        app:menu="@menu/add_new_item_app_bar"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="Add New Item"
-        app:menu="@menu/add_new_item_app_bar"
         app:titleCentered="true"
         app:titleTextColor="@color/grey">
-
 
 
     </com.google.android.material.appbar.MaterialToolbar>

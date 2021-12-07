@@ -12,6 +12,7 @@ import com.example.myittaroostockinventorymanger.local.Transaction;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 
 public class Repository {
 
@@ -54,7 +55,7 @@ public class Repository {
         return dao.getAllStockNames();
     }
 
-    public Integer findStockIdByName(String stockName) {
+    public Observable<Long> findStockIdByName(String stockName) {
         return dao.findStockIdByName(stockName);
     }
 }
