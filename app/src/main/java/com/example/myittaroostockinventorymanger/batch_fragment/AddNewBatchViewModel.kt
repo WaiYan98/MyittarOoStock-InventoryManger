@@ -16,6 +16,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.internal.schedulers.IoScheduler
 import io.reactivex.schedulers.Schedulers.computation
 import io.reactivex.schedulers.Schedulers.io
+import java.text.SimpleDateFormat
 import java.util.*
 
 class AddNewBatchViewModel : ViewModel() {
@@ -36,45 +37,36 @@ class AddNewBatchViewModel : ViewModel() {
         return mutStockNames
     }
 
-    //check the batch is valid and then save batch to database
-//    fun onClickSave(batch: Batch, isValidDate: Boolean, itemName: String) {
-//
-//        if (itemName.isNotEmpty() && isValidDate && batch.totalStock > 0) {
-//
-//            val batch = Batch(0, batch.originalPrice, batch.salePrice, batch.totalStock, batch.expDate)
-//
-//            disposable = repository.findStockIdByName(itemName)
-//                    .flatMap {
-//                        batch.stockId = it
-//                        repository.insertBatch(batch)
-//                                .andThen(Observable.just(Unit))
-//                    }
-//                    .subscribeOn(io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe({
-//                        mutErrorMessage.value = Event("Save")
-//                        navigateToMainActivity.value = Event(true)
-//                    }) {
-//                        mutErrorMessage.value = Event("Cannot Save")
-//                    }
-//        } else {
-//            mutErrorMessage.value = Event("Invalid")
-//        }
-//
-//    }
-
+    //Batch save to database
     fun onClickSave(edtStockName: EditText, edtExpDate: EditText,
                     edtAmount: EditText, edtCostPrice: EditText,
                     edtSalePrice: EditText, isValidDate: Boolean) {
 
-        isValidInput(edtStockName, edtAmount, edtCostPrice, edtSalePrice, isValidDate)
+        if (isValidInput(edtStockName, edtAmount, edtCostPrice, edtSalePrice, isValidDate)) {
+            val batch = createBatch(edtStockName, edtExpDate, edtAmount, edtCostPrice, edtSalePrice)
+
+            disposable = repository.findStockIdByName(edtStockName.text.toString())
+                    .flatMap {
+                        batch.stockId = it
+                        repository.insertBatch(batch)
+                                .andThen(Observable.just(Unit))
+                    }
+                    .subscribeOn(io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        mutErrorMessage.value = Event("Save")
+                        navigateToMainActivity.value = Event(true)
+                    }) {
+                        mutErrorMessage.value = Event("Cannot Save")
+                    }
+        }
 
     }
 
     //to check the user input is valid or not
-    fun isValidInput(edtStockName: EditText,
-                     edtAmount: EditText, edtCostPrice: EditText,
-                     edtSalePrice: EditText, isValidDate: Boolean): Boolean {
+    private fun isValidInput(edtStockName: EditText,
+                             edtAmount: EditText, edtCostPrice: EditText,
+                             edtSalePrice: EditText, isValidDate: Boolean): Boolean {
 
         var isNameValid = false
         var isAmountValid = false
@@ -144,6 +136,22 @@ class AddNewBatchViewModel : ViewModel() {
             mutErrorMessage.value = Event(errorMessage)
             false
         }
+
+    }
+
+    private fun createBatch(edtStockName: EditText, edtExpDate: EditText,
+                            edtAmount: EditText, edtCostPrice: EditText,
+                            edtSalePrice: EditText): Batch {
+
+        val stockName = edtStockName.text.toString()
+        var expDate: Date
+        val format = SimpleDateFormat("dd/MM/yyyy")
+        expDate = format.parse(edtExpDate.text.toString())
+        val amount = edtAmount.text.toString().toInt()
+        val costPrice = edtCostPrice.text.toString().toDouble()
+        val salePrice = edtSalePrice.text.toString().toDouble()
+
+        return Batch(0, costPrice, salePrice, amount, expDate);
 
     }
 

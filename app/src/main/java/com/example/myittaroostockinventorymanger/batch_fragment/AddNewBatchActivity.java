@@ -83,22 +83,6 @@ public class AddNewBatchActivity extends AppCompatActivity {
 
             if (item.getItemId() == R.id.save) {
 
-//                String stockName = actStockName.getEditableText().toString();
-//                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-//                Date expDate = null;
-//                try {
-//                    expDate = format.parse(edtDate.getText().toString());
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                //this will be repair
-//                int amount = Integer.parseInt(edtAmount.getText().toString());
-//                double costPrice = Integer.parseInt(edtCostPrice.getText().toString());
-//                double salePrice = Integer.parseInt(edtSalePrice.getText().toString());
-//
-//                Batch batch = new Batch(0, costPrice, salePrice, amount, expDate);
-
                 addNewBatchViewModel.onClickSave(actStockName, edtDate
                         , edtAmount, edtCostPrice
                         , edtSalePrice, edtDate.isValidDate());
