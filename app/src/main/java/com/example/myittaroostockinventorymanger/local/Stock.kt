@@ -14,5 +14,4 @@ data class Stock(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "stock_id")
      var stockId: Int =0
-
 }

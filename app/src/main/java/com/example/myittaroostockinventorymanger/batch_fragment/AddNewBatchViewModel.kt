@@ -37,7 +37,7 @@ class AddNewBatchViewModel : ViewModel() {
         return mutStockNames
     }
 
-    //Batch save to database
+    //to save in local database
     fun onClickSave(edtStockName: EditText, edtExpDate: EditText,
                     edtAmount: EditText, edtCostPrice: EditText,
                     edtSalePrice: EditText, isValidDate: Boolean) {

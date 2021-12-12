@@ -60,9 +60,7 @@ public class AddNewBatchActivity extends AppCompatActivity {
         setUpViewModel();
 
         //test
-
         edtDate.listen();
-
 
         addNewBatchViewModel.getAllStockNames()
                 .observe(this, stockNameList -> {

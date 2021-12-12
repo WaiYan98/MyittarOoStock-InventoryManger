@@ -2,15 +2,22 @@ package com.example.myittaroostockinventorymanger.batch_fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.local.Batch
+import com.example.myittaroostockinventorymanger.local.StockWithBatch
+import com.example.myittaroostockinventorymanger.pojo.StockBatch
+import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,10 +55,23 @@ class BatchFragment : Fragment() {
             goToAddNewBatchActivity()
         }
 
+        val batchViewModel = ViewModelProvider(this)
+                .get(BatchViewModel::class.java)
+
+        batchViewModel.getAllStockWithBatches()
+                ?.observe(viewLifecycleOwner) {
+
+                    //covert nested list into one list
+                    var stockBatchList = ListCreator.createStockBatchList(it)
+
+                    adapter.insertItem(stockBatchList)
+                }
+
+
     }
 
     private fun setUpRecycleView() {
-        adapter = BatchListRecycleViewAdapter(context)
+        adapter = BatchListRecycleViewAdapter(context, arrayListOf())
         recyBatchList.adapter = adapter
         recyBatchList.layoutManager = LinearLayoutManager(context)
         recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))

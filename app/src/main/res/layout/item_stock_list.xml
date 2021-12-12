@@ -32,6 +32,7 @@
                 app:cardElevation="4dp">
 
                 <TextView
+                    android:id="@+id/txt_name_initial_word"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -50,6 +51,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txt_stock_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/small_margin"
@@ -85,6 +87,7 @@
                         android:layout_weight="1">
 
                         <TextView
+                            android:id="@+id/txt_cost_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
@@ -122,6 +125,7 @@
                         android:layout_weight="1">
 
                         <TextView
+                            android:id="@+id/txt_sale_price"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
@@ -169,10 +173,11 @@
                         android:layout_weight="1">
 
                         <TextView
+                            android:id="@+id/txt_exp_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
-                            android:text="-12/7/21"
+                            android:text="-12/07/21"
                             android:textColor="@color/black"
                             android:textSize="@dimen/small_text_size"
                             android:textStyle="bold" />
@@ -208,6 +213,7 @@
                         android:layout_weight="1">
 
                         <TextView
+                            android:id="@+id/txt_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
@@ -233,7 +239,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
-                            android:text="In Hand"
+                            android:text=""
                             android:textColor="@color/black"
                             android:textSize="@dimen/small_text_size" />
 
@@ -248,7 +254,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="start"
-                            android:text="-250"
                             android:textColor="@color/black"
                             android:textSize="@dimen/small_text_size" />
 
@@ -257,13 +262,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <ImageView
-                android:layout_width="@dimen/small_img_size"
-                android:layout_height="@dimen/small_img_size"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/ic_more" />
 
         </LinearLayout>
 
