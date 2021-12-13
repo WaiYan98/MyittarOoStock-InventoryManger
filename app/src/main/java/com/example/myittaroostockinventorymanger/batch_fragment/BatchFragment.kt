@@ -6,11 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.myittaroostockinventorymanger.R
@@ -24,6 +27,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BatchFragment : Fragment() {
 
+    private lateinit var searchView: SearchView
+
+    @BindView(R.id.swipe_refresh_loading)
+    lateinit var swipeRefreshLoading: SwipeRefreshLayout
+
     @BindView(R.id.recy_batch_list)
     lateinit var recyBatchList: RecyclerView
 
@@ -34,13 +42,19 @@ class BatchFragment : Fragment() {
 
     lateinit var toolbar: MaterialToolbar;
 
+    private val batchViewModel: BatchViewModel by lazy { setUpViewModel() }
+    private lateinit var stockBatchList: List<StockBatch>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_batch, container, false);
         ButterKnife.bind(this, view)
 
         toolbar = activity?.findViewById(R.id.tool_bar)!!
+        val menuItem = toolbar.menu.findItem(R.id.app_bar_search)
+        searchView = menuItem.actionView as SearchView
 
         setToolbarTitle()
+        setUpRecycleView()
 
         return view;
     }
@@ -48,23 +62,55 @@ class BatchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setUpRecycleView()
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+                batchViewModel.searchBatchByName(stockBatchList, newText)
+
+                return false
+            }
+        })
 
         fabAddBatch.setOnClickListener {
 
             goToAddNewBatchActivity()
         }
 
-        val batchViewModel = ViewModelProvider(this)
-                .get(BatchViewModel::class.java)
-
         batchViewModel.getAllStockWithBatches()
                 ?.observe(viewLifecycleOwner) {
 
                     //covert nested list into one list
-                    var stockBatchList = ListCreator.createStockBatchList(it)
+                    stockBatchList = ListCreator.createStockBatchList(it)
 
                     adapter.insertItem(stockBatchList)
+                }
+
+        batchViewModel.getSearchResult()
+                .observe(viewLifecycleOwner) {
+                    adapter.insertItem(it)
+                }
+
+        swipeRefreshLoading.setOnRefreshListener {
+            batchViewModel.loadStockWithBatches()
+        }
+
+        batchViewModel.isLoading()
+                .observe(viewLifecycleOwner) {
+                    swipeRefreshLoading.isRefreshing = it
+                }
+
+        batchViewModel.getMessage()
+                .observe(viewLifecycleOwner) {
+
+                    val message = it?.contentIfNotHandle
+
+                    if (message != null) {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                 }
 
 
@@ -87,4 +133,5 @@ class BatchFragment : Fragment() {
         toolbar.title = "Batch List"
     }
 
+    private fun setUpViewModel() = ViewModelProvider(this).get(BatchViewModel::class.java)
 }

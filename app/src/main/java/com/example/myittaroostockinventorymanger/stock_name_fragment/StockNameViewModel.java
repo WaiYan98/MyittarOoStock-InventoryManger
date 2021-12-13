@@ -58,7 +58,7 @@ public class StockNameViewModel extends ViewModel {
         return isLoading;
     }
 
-    //for autoCompleteTextView to find Name
+    //for SearchView to find Name
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void filterName(List<Stock> stockList, String text) {
         List<Stock> resultList = stockList.stream()

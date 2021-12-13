@@ -10,5 +10,4 @@ import com.example.myittaroostockinventorymanger.Application
 @RequiresApi(Build.VERSION_CODES.N)
 class InputDatePicker  {
 
-
 }

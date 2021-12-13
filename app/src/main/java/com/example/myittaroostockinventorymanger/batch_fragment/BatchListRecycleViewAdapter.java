@@ -55,7 +55,7 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         changeCardViewColor(cardView);
 
         holder.txtStockName.setText(current.getStock().getName());
-        holder.txtNameInitialWord.setText(current.getStock().getName().substring(0, 2));
+        holder.txtNameInitialWord.setText(current.getStock().getName().substring(0, 1).toUpperCase());
         holder.txtCostPrice.setText(String.valueOf(current.getBatch().getOriginalPrice()));
         holder.txtSalePrice.setText(String.valueOf(current.getBatch().getSalePrice()));
         holder.txtExpDate.setText(df.format(current.getBatch().getExpDate()));
