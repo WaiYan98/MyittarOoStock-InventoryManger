@@ -30,10 +30,15 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
     private Context context;
     private List<StockBatch> stockBatchList;
+    private CallBack callBack;
 
     public BatchListRecycleViewAdapter(Context context, List<StockBatch> stockBatchList) {
         this.context = context;
         this.stockBatchList = stockBatchList;
+    }
+
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
     }
 
     @NonNull
@@ -61,6 +66,8 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         holder.txtExpDate.setText(df.format(current.getBatch().getExpDate()));
         holder.txtAmount.setText(String.valueOf(current.getBatch().getTotalStock()));
 
+        //when batch item onLongClicked sent current batch data to batch fragment
+        holder.cardViewBatch.setOnClickListener(v -> callBack.onLongClicked(v, current));
     }
 
     @Override
@@ -70,6 +77,8 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.card_view_batch)
+        CardView cardViewBatch;
         @BindView(R.id.card_view_item_name_container)
         CardView cardViewItemNameContainer;
         @BindView(R.id.txt_stock_name)
@@ -118,5 +127,10 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
                 cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_purple));
                 break;
         }
+    }
+
+    public interface CallBack {
+
+        void onLongClicked(View v, StockBatch stockBatch);
     }
 }

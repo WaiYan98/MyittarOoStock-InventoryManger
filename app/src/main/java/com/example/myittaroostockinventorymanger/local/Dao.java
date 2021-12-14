@@ -46,4 +46,7 @@ public interface Dao {
     @Query("SELECT stock_id FROM Stock WHERE Stock.name = :stockName")
     Observable<Long> findStockIdByName(String stockName);
 
+    @Query("DELETE FROM Batch WHERE Batch.batch_id=:id")
+    Completable deleteBatchById(long id);
+
 }

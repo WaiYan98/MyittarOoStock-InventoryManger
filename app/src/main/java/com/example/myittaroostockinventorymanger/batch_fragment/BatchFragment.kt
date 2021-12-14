@@ -3,9 +3,8 @@ package com.example.myittaroostockinventorymanger.batch_fragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -25,7 +24,7 @@ import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoratio
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class BatchFragment : Fragment() {
+class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack {
 
     private lateinit var searchView: SearchView
 
@@ -44,6 +43,9 @@ class BatchFragment : Fragment() {
 
     private val batchViewModel: BatchViewModel by lazy { setUpViewModel() }
     private lateinit var stockBatchList: List<StockBatch>
+
+    private lateinit var popupMenu: PopupMenu
+    private lateinit var stockBatch: StockBatch
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_batch, container, false);
@@ -121,6 +123,7 @@ class BatchFragment : Fragment() {
         recyBatchList.adapter = adapter
         recyBatchList.layoutManager = LinearLayoutManager(context)
         recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))
+        adapter.setCallBack(this)
     }
 
     private fun goToAddNewBatchActivity() {
@@ -134,4 +137,31 @@ class BatchFragment : Fragment() {
     }
 
     private fun setUpViewModel() = ViewModelProvider(this).get(BatchViewModel::class.java)
+
+    override fun onLongClicked(view: View, stockBatch: StockBatch) {
+        this.stockBatch = stockBatch
+        createPopupMenu(view)
+        popupMenuOnItemClick()
+    }
+
+    //To show rename and delete PopupMenu
+    private fun createPopupMenu(view: View) {
+        val contextThemeWrapper = ContextThemeWrapper(context, R.style.PopupMenuOverlapAnchor)
+        popupMenu = PopupMenu(contextThemeWrapper, view, Gravity.END)
+        popupMenu.inflate(R.menu.contexual_menu)
+        popupMenu.show()
+    }
+
+    private fun popupMenuOnItemClick() {
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+
+            when (menuItem.itemId) {
+                R.id.rename -> Log.d("tag", "popupMenuOnItemClick:")
+                R.id.delete -> ""
+            }
+
+            false
+        }
+    }
 }

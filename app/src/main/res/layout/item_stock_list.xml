@@ -6,6 +6,7 @@
     android:background="@color/white">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_batch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/card_view_height"
         android:layout_marginStart="@dimen/medium_margin"

@@ -7,6 +7,10 @@ import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.local.StockWithBatch
 import com.example.myittaroostockinventorymanger.pojo.StockBatch
 import com.example.myittaroostockinventorymanger.repository.Repository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.internal.schedulers.IoScheduler
+import io.reactivex.schedulers.Schedulers.io
 
 class BatchViewModel : ViewModel() {
 
@@ -15,6 +19,7 @@ class BatchViewModel : ViewModel() {
     private var isLoading: MutableLiveData<Boolean> = MutableLiveData()
     private var searchBatchResultList: MutableLiveData<List<StockBatch>> = MutableLiveData()
     private var message: MutableLiveData<Event<String>> = MutableLiveData()
+    private lateinit var disposable: Disposable
 
     fun getAllStockWithBatches(): LiveData<List<StockWithBatch>>? {
 
@@ -34,9 +39,20 @@ class BatchViewModel : ViewModel() {
 
     fun searchBatchByName(stockBatchList: List<StockBatch>, newText: String) {
 
-        val resultList = stockBatchList.filter { it.stock.name.startsWith( newText, ignoreCase = true) }
+        val resultList = stockBatchList.filter { it.stock.name.startsWith(newText, ignoreCase = true) }
 
         searchBatchResultList.value = resultList
+    }
+
+    fun deleteBatchById(id: Long) {
+        disposable = repository.deleteBatchById(id)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    message.value = Event("deleted")
+                }) {
+                    it.printStackTrace()
+                }
     }
 
     fun isLoading(): LiveData<Boolean> {
@@ -51,5 +67,9 @@ class BatchViewModel : ViewModel() {
         return searchBatchResultList
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
+    }
 
 }

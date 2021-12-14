@@ -58,4 +58,8 @@ public class Repository {
     public Observable<Long> findStockIdByName(String stockName) {
         return dao.findStockIdByName(stockName);
     }
+
+    public Completable deleteBatchById(long id) {
+        return dao.deleteBatchById(id);
+    }
 }
