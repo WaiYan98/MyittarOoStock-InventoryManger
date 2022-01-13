@@ -1,7 +1,6 @@
 package com.example.myittaroostockinventorymanger.batch_fragment;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +12,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.local.Stock;
-import com.example.myittaroostockinventorymanger.local.StockWithBatch;
 import com.example.myittaroostockinventorymanger.pojo.StockBatch;
 import com.example.myittaroostockinventorymanger.util.AutoNumGenerator;
-import com.example.myittaroostockinventorymanger.util.ListCreator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +26,10 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
     private Context context;
     private List<StockBatch> stockBatchList;
+    private boolean isSelectedMode = false;
+    private List<Long> selectedBatchIdList = new ArrayList<>();
     private CallBack callBack;
+    private ViewHolder holder;
 
     public BatchListRecycleViewAdapter(Context context, List<StockBatch> stockBatchList) {
         this.context = context;
@@ -53,6 +52,7 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        this.holder = holder;
         StockBatch current = stockBatchList.get(position);
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
 
@@ -66,14 +66,100 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         holder.txtExpDate.setText(df.format(current.getBatch().getExpDate()));
         holder.txtAmount.setText(String.valueOf(current.getBatch().getTotalStock()));
 
-        //when batch item onLongClicked sent current batch data to batch fragment
-        holder.cardViewBatch.setOnClickListener(v -> callBack.onLongClicked(v, current));
+        //when batch item onLongClicked show contextual action mode
+        holder.cardViewBatch.setOnLongClickListener(v -> {
+            callBack.onLongClicked();
+            isSelectedMode = true;
+            return false;
+        });
+
+        //to insert selected Batch id to selectedBatchIdList
+        holder.cardViewBatch.setOnClickListener(v -> {
+            if (isSelectedMode) {
+                itemAddToSelectedList(current.getBatch().getBatchId(), current);
+                callBack.onItemsSelected(selectedBatchIdList);
+                notifyItemChanged(position);
+            }
+        });
+
+
+        changeSelectedItemColor(holder, current);
+    }
+
+    private void changeSelectedItemColor(ViewHolder holder, StockBatch current) {
+        if (current.isSelected()) {
+            holder.cardViewBatch.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
+        } else {
+            holder.cardViewBatch.setBackgroundColor(ContextCompat.getColor(context, R.color.little_dark_white));
+        }
     }
 
     @Override
     public int getItemCount() {
         return stockBatchList.size();
     }
+
+    //when item click itemId save to selectedList and id is equal remove from list
+    private void itemAddToSelectedList(Long id, StockBatch current) {
+
+        if (!selectedBatchIdList.contains(id)) {
+            selectedBatchIdList.add(id);
+            current.setSelected(true);
+        } else {
+            selectedBatchIdList.remove(id);
+            current.setSelected(false);
+        }
+    }
+
+    //if tap actionbar close button following logic work
+    public void contextualActionBarClose() {
+        isSelectedMode = false;
+        selectedBatchIdList.clear();
+        importSelectedFalse();
+        notifyDataSetChanged();
+    }
+
+    public void selectAllItems() {
+
+        boolean isAllSelected = false;
+
+        for (StockBatch stockBatch : stockBatchList) {
+
+            if (!stockBatch.isSelected()) {
+                isAllSelected = false;
+                break;
+            } else {
+                isAllSelected = true;
+            }
+        }
+
+        if (isAllSelected) {
+            importSelectedFalse();
+            this.selectedBatchIdList.clear();
+        } else {
+            importSelectedTrue();
+            insertAllBatchId();
+        }
+        callBack.onItemsSelected(selectedBatchIdList);
+
+        notifyDataSetChanged();
+    }
+
+    private void insertAllBatchId() {
+
+        selectedBatchIdList.clear();
+
+        for (StockBatch stockBatch : stockBatchList) {
+            this.selectedBatchIdList.add(stockBatch.getBatch().getBatchId());
+        }
+    }
+
+    private void importSelectedTrue() {
+        for (StockBatch stockBatch : stockBatchList) {
+            stockBatch.setSelected(true);
+        }
+    }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -106,6 +192,16 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         notifyDataSetChanged();
     }
 
+    //Assign allStockBatches isSelected property to false
+    private void importSelectedFalse() {
+
+        for (StockBatch stockBatch : stockBatchList) {
+
+            stockBatch.setSelected(false);
+        }
+
+    }
+
     //for change card view color by random
     private void changeCardViewColor(CardView cardView) {
         int randomNum = AutoNumGenerator.generateNum();
@@ -131,6 +227,8 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
     public interface CallBack {
 
-        void onLongClicked(View v, StockBatch stockBatch);
+        void onLongClicked();
+
+        void onItemsSelected(List<Long> selectedBatchIdList);
     }
 }

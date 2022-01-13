@@ -59,7 +59,7 @@ public class Repository {
         return dao.findStockIdByName(stockName);
     }
 
-    public Completable deleteBatchById(long id) {
-        return dao.deleteBatchById(id);
+    public Completable deleteBatchesById(List<Long> ids) {
+        return dao.deleteBatchesByIds(ids);
     }
 }

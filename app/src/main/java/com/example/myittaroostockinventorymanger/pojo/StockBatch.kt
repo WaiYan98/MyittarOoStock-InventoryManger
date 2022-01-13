@@ -5,6 +5,7 @@ import com.example.myittaroostockinventorymanger.local.Stock
 
 data class StockBatch(
         val stock: Stock,
-        val batch: Batch
+        val batch: Batch,
+        var isSelected: Boolean
 ) {
 }

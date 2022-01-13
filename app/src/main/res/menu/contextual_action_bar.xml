@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/select_all"
+        android:contentDescription="Select All"
+        android:icon="@drawable/ic_select_all"
+        android:title="Select All"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/edit"
+        android:contentDescription="edit"
+        android:icon="@drawable/ic_edit_file"
+        android:title="Rename"
+        app:showAsAction="ifRoom"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/delete"
+        android:contentDescription="delete"
+        android:icon="@drawable/ic_delete"
+        android:title="Delete"
+        app:showAsAction="ifRoom" />
+
+</menu>

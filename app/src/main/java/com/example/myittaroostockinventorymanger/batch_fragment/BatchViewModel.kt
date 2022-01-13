@@ -1,5 +1,6 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
+import android.view.ActionMode
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +9,6 @@ import com.example.myittaroostockinventorymanger.local.StockWithBatch
 import com.example.myittaroostockinventorymanger.pojo.StockBatch
 import com.example.myittaroostockinventorymanger.repository.Repository
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.internal.schedulers.IoScheduler
 import io.reactivex.schedulers.Schedulers.io
 
 class BatchViewModel : ViewModel() {
@@ -19,7 +18,8 @@ class BatchViewModel : ViewModel() {
     private var isLoading: MutableLiveData<Boolean> = MutableLiveData()
     private var searchBatchResultList: MutableLiveData<List<StockBatch>> = MutableLiveData()
     private var message: MutableLiveData<Event<String>> = MutableLiveData()
-    private lateinit var disposable: Disposable
+    private var contextualTitle: MutableLiveData<String> = MutableLiveData()
+    private var showRenameButton: MutableLiveData<Boolean> = MutableLiveData()
 
     fun getAllStockWithBatches(): LiveData<List<StockWithBatch>>? {
 
@@ -44,16 +44,27 @@ class BatchViewModel : ViewModel() {
         searchBatchResultList.value = resultList
     }
 
-    fun deleteBatchById(id: Long) {
-        disposable = repository.deleteBatchById(id)
-                .subscribeOn(io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    message.value = Event("deleted")
-                }) {
-                    it.printStackTrace()
-                }
+//    //this should implement in confirmDialog
+//    fun deleteBatchById(id: Long) {
+//        val disposable = repository.deleteBatchById(id)
+//                .subscribeOn(io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    message.value = Event("deleted")
+//                }) {
+//                    it.printStackTrace()
+//                }
+//    }
+
+    fun setContextualActionBarTitle(num: Int) {
+        if (num < 2) {
+            contextualTitle.value = "$num Item Selected"
+        } else {
+            contextualTitle.value = "$num Items Selected"
+        }
     }
+
+    fun getContextualActionBarTitle() = contextualTitle
 
     fun isLoading(): LiveData<Boolean> {
         return isLoading
@@ -67,9 +78,26 @@ class BatchViewModel : ViewModel() {
         return searchBatchResultList
     }
 
+    fun deleteBatches(batchesIdList: List<Long>, actionMode: ActionMode) {
+        val disposable = repository.deleteBatchesById(batchesIdList)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    message.value = Event("Delete ${batchesIdList.size} Items ")
+                    actionMode.finish()
+                }) {
+                    it.printStackTrace()
+                }
+    }
+
+    fun showRenameButton(num: Int) {
+        showRenameButton.value = num < 2
+    }
+
+    fun isShowRenameButton() = showRenameButton
+
     override fun onCleared() {
         super.onCleared()
-        disposable.dispose()
     }
 
 }

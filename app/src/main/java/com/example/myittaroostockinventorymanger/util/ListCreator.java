@@ -17,7 +17,7 @@ public class ListCreator {
 
             for (Batch batch : stockWithBatch.getBatchList()) {
 
-                stockBatchList.add(new StockBatch(stockWithBatch.getStock(), batch));
+                stockBatchList.add(new StockBatch(stockWithBatch.getStock(), batch, false));
             }
         }
 
