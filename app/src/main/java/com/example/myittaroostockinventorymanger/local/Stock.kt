@@ -13,5 +13,5 @@ data class Stock(
 ) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "stock_id")
-     var stockId: Int =0
+    var stockId: Long = 0
 }

@@ -78,6 +78,11 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
             if (isSelectedMode) {
                 itemAddToSelectedList(current.getBatch().getBatchId(), current);
                 callBack.onItemsSelected(selectedBatchIdList);
+
+                if (selectedBatchIdList.size() == 1) {
+                    callBack.onSelectedItemIsOne(findStockBatchByBatchId(selectedBatchIdList.get(0)));
+                }
+
                 notifyItemChanged(position);
             }
         });
@@ -160,6 +165,15 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         }
     }
 
+    private StockBatch findStockBatchByBatchId(Long batchId) {
+        for (StockBatch stockBatch : stockBatchList) {
+            if (batchId == stockBatch.getBatch().getBatchId()) {
+                return stockBatch;
+            }
+        }
+        return null;
+    }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -230,5 +244,7 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         void onLongClicked();
 
         void onItemsSelected(List<Long> selectedBatchIdList);
+
+        void onSelectedItemIsOne(StockBatch stockBatch);
     }
 }

@@ -51,6 +51,10 @@ public class Repository {
         return dao.updateStockName(stock);
     }
 
+    public Completable updateBatch(Batch batch) {
+        return dao.updateBatch(batch);
+    }
+
     public LiveData<List<String>> getAllStockNames() {
         return dao.getAllStockNames();
     }

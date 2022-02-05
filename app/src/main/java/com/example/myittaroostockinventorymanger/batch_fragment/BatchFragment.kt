@@ -1,14 +1,11 @@
 package com.example.myittaroostockinventorymanger.batch_fragment
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.core.view.get
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.myittaroostockinventorymanger.dialog.ConfirmDialog
 import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.local.Stock
 import com.example.myittaroostockinventorymanger.pojo.StockBatch
 import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
@@ -26,6 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack {
 
+    private lateinit var stockBatch: StockBatch
     private lateinit var selectedBatchIdList: MutableList<Long>
     private lateinit var searchView: SearchView
 
@@ -47,6 +46,14 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
 
     private lateinit var actionMode: ActionMode
     private lateinit var confirmDialog: ConfirmDialog
+
+    companion object {
+        val EXTRA_STOCK_BATCH = "EXTRA_STOCK_BATCH"
+        val EXTRA_OPTION = "EXTRA_OPTION"
+        val EXTRA_BATCH_ID = "EXTRA_BATCH_ID"
+        val UPDATE = "UPDATE"
+        val ADD_NEW = "ADD_NEW"
+    }
 
     private val EXTRA_DELETE: String = "EXTRA_DELETE"
 
@@ -82,7 +89,7 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
 
         fabAddBatch.setOnClickListener {
 
-            goToAddNewBatchActivity()
+            goToAddNewAndUpdateBatchActivity(ADD_NEW, null, 0)
         }
 
         batchViewModel.getAllStockWithBatches()
@@ -123,6 +130,7 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
                     actionMode.title = it
                 }
 
+        //manage rename button hide or show
         batchViewModel.isShowRenameButton()
                 .observe(viewLifecycleOwner) {
                     actionMode.menu.findItem(R.id.edit).isVisible = it
@@ -137,8 +145,11 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
         recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))
     }
 
-    private fun goToAddNewBatchActivity() {
-        val intent: Intent = Intent(context, AddNewBatchActivity::class.java)
+    private fun goToAddNewAndUpdateBatchActivity(option: String, stockBatch: StockBatch?, batchId: Long) {
+        val intent: Intent = Intent(context, AddNewAndUpdateBatchActivity::class.java)
+        intent.putExtra(EXTRA_OPTION, option)
+        intent.putExtra(EXTRA_STOCK_BATCH, stockBatch)
+        intent.putExtra(EXTRA_BATCH_ID, batchId)
         startActivity(intent)
     }
 
@@ -170,7 +181,7 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
 
                     R.id.delete -> confirmDialog.show(childFragmentManager, "")
 
-                    R.id.edit -> Log.d("tag", "onActionItemClicked: ")
+                    R.id.edit -> goToAddNewAndUpdateBatchActivity(UPDATE, stockBatch, stockBatch.batch.batchId)
 
                     R.id.select_all -> adapter.selectAllItems()
 
@@ -186,12 +197,18 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
         }
     }
 
+    //When onLongClick to start action mode
     override fun onLongClicked() {
         actionMode = activity?.startActionMode(getCallBack())!!
     }
 
+    //to select batch list item
     override fun onItemsSelected(selectedBatchIdList: MutableList<Long>) {
         setUpContextualBarSelection(selectedBatchIdList)
+    }
+
+    override fun onSelectedItemIsOne(stockBatch: StockBatch) {
+        this.stockBatch = stockBatch
     }
 
     private fun setUpConfirmDialog() {
@@ -200,6 +217,7 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
         confirmDialog.setKey(EXTRA_DELETE)
     }
 
+    //This callBack is to delete selectedBatches
     override fun onClickedYes() {
         batchViewModel.deleteBatches(selectedBatchIdList, actionMode)
     }
@@ -218,35 +236,4 @@ class BatchFragment : Fragment(), BatchListRecycleViewAdapter.CallBack, ConfirmD
             actionMode.finish()
         }
     }
-
-
-//    override fun onLongClicked(view: View, stockBatch: StockBatch) {
-//        this.stockBatch = stockBatch
-//
-//        //contextual action bar
-//        val actionMode = activity?.startActionMode(getCallBack())
-//        actionMode?.title = "1 selected"
-//
-//    }
-
-    //To show rename and delete PopupMenu
-//    private fun createPopupMenu(view: View) {
-//        val contextThemeWrapper = ContextThemeWrapper(context, R.style.PopupMenuOverlapAnchor)
-//        popupMenu = PopupMenu(contextThemeWrapper, view, Gravity.END)
-//        popupMenu.inflate(R.menu.contexual_menu)
-//        popupMenu.show()
-//    }
-
-//    private fun popupMenuOnItemClick() {
-//
-//        popupMenu.setOnMenuItemClickListener { menuItem ->
-//
-//            when (menuItem.itemId) {
-//                R.id.rename -> Log.d("tag", "popupMenuOnItemClick:")
-//                R.id.delete -> ""
-//            }
-//
-//            false
-//        }
-//    }
 }

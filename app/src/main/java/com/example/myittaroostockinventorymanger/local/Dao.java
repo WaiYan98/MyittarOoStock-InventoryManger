@@ -40,6 +40,9 @@ public interface Dao {
     @Update
     Completable updateStockName(Stock stock);
 
+    @Update
+    Completable updateBatch(Batch batch);
+
     @Query("SElECT name FROM Stock")
     LiveData<List<String>> getAllStockNames();
 

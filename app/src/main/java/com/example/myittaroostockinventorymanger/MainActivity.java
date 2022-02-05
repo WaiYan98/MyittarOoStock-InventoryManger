@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.animation.Animation;
 
-import com.example.myittaroostockinventorymanger.batch_fragment.AddNewBatchActivity;
+import com.example.myittaroostockinventorymanger.batch_fragment.AddNewAndUpdateBatchActivity;
 import com.example.myittaroostockinventorymanger.batch_fragment.BatchFragment;
 import com.example.myittaroostockinventorymanger.fragments.AboutFragment;
 import com.example.myittaroostockinventorymanger.fragments.DashboardFragment;
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     private void goToAddNewItemActivity() {
-        Intent intent = new Intent(this, AddNewBatchActivity.class);
+        Intent intent = new Intent(this, AddNewAndUpdateBatchActivity.class);
         startActivity(intent);
     }
 

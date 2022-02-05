@@ -8,18 +8,14 @@ import androidx.lifecycle.ViewModel
 import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.local.Batch
 import com.example.myittaroostockinventorymanger.repository.Repository
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.internal.schedulers.IoScheduler
-import io.reactivex.schedulers.Schedulers.computation
 import io.reactivex.schedulers.Schedulers.io
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddNewBatchViewModel : ViewModel() {
+class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     private var repository: Repository = Repository()
     private var mutStockNames: LiveData<List<String>>? = null
@@ -37,8 +33,9 @@ class AddNewBatchViewModel : ViewModel() {
         return mutStockNames
     }
 
-    //to save in local database
-    fun onClickSave(edtStockName: EditText, edtExpDate: EditText,
+    //to save and update in local database
+    fun onClickSave(option: String, updateBatchId: Long,
+                    edtStockName: EditText, edtExpDate: EditText,
                     edtAmount: EditText, edtCostPrice: EditText,
                     edtSalePrice: EditText, isValidDate: Boolean) {
 
@@ -48,8 +45,17 @@ class AddNewBatchViewModel : ViewModel() {
             disposable = repository.findStockIdByName(edtStockName.text.toString())
                     .flatMap {
                         batch.stockId = it
-                        repository.insertBatch(batch)
-                                .andThen(Observable.just(Unit))
+
+                        Log.d("tag", "onClickSave: "+it)
+
+                        if (option == BatchFragment.ADD_NEW) {
+                            Log.d("tag", "onClickSave: " + batch)
+                            repository.insertBatch(batch)
+                        } else {
+                            batch.batchId = updateBatchId
+                            Log.d("tag", "onClickSave: " + batch)
+                            repository.updateBatch(batch)
+                        }.andThen(Observable.just(Unit))
                     }
                     .subscribeOn(io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -60,8 +66,8 @@ class AddNewBatchViewModel : ViewModel() {
                         mutErrorMessage.value = Event("Cannot Save")
                     }
         }
-
     }
+
 
     //to check the user input is valid or not
     private fun isValidInput(edtStockName: EditText,
@@ -98,7 +104,7 @@ class AddNewBatchViewModel : ViewModel() {
 
         //check costPrice is valid
         if (edtCostPrice.text.isNotEmpty()) {
-            var costPrice = edtCostPrice.text.toString().toInt()
+            var costPrice = edtCostPrice.text.toString().toDouble()
             if (costPrice > 0) {
                 isCostPriceValid = true
             } else {
@@ -113,7 +119,7 @@ class AddNewBatchViewModel : ViewModel() {
 
         //check salePrice is valid
         if (edtSalePrice.text.isNotEmpty()) {
-            var salePrice = edtSalePrice.text.toString().toInt()
+            var salePrice = edtSalePrice.text.toString().toDouble()
             if (salePrice > 0) {
                 isSalePriceValid = true
             } else {
@@ -166,6 +172,4 @@ class AddNewBatchViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
     }
-
-
 }

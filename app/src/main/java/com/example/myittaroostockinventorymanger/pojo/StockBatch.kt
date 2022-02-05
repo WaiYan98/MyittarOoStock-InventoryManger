@@ -1,11 +1,13 @@
 package com.example.myittaroostockinventorymanger.pojo
 
+import android.os.Parcelable
 import com.example.myittaroostockinventorymanger.local.Batch
 import com.example.myittaroostockinventorymanger.local.Stock
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class StockBatch(
-        val stock: Stock,
-        val batch: Batch,
+        var stock: Stock,
+        var batch: Batch,
         var isSelected: Boolean
-) {
-}
+):Parcelable
