@@ -1,8 +1,8 @@
 package com.example.myittaroostockinventorymanger.util;
 
-import com.example.myittaroostockinventorymanger.local.Batch;
-import com.example.myittaroostockinventorymanger.local.StockWithBatch;
-import com.example.myittaroostockinventorymanger.pojo.StockBatch;
+import com.example.myittaroostockinventorymanger.data.entities.Batch;
+import com.example.myittaroostockinventorymanger.data.entities.StockWithBatch;
+import com.example.myittaroostockinventorymanger.data.entities.StockBatch;
 
 import java.util.ArrayList;
 import java.util.List;
