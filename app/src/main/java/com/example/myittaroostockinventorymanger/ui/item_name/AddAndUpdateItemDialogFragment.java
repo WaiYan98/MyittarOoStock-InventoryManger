@@ -21,7 +21,7 @@ import com.example.myittaroostockinventorymanger.R;
 import com.example.myittaroostockinventorymanger.data.entities.Stock;
 ;
 
-public class AddAndRenameStockDialogFragment extends DialogFragment {
+public class AddAndUpdateItemDialogFragment extends DialogFragment {
 
     TextView txtTitle;
     EditText edtStockName;
@@ -29,12 +29,12 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     Button btnCancel;
 
     private String option;
-    private AddAndRenameStockViewModel addAndRenameStockViewModel;
+    private AddAndRenameItemViewModel addAndRenameItemViewModel;
     private AlertDialog alertDialog;
     private Context context;
     private Stock stock;
 
-    private AddAndRenameStockDialogFragment() {
+    private AddAndUpdateItemDialogFragment() {
 
     }
 
@@ -44,7 +44,7 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View view = layoutInflater.inflate(R.layout.stock_dialog_fragment, null, false);
+        View view = layoutInflater.inflate(R.layout.item_dialog_fragment, null, false);
 
         txtTitle = view.findViewById(R.id.txt_title);
         edtStockName = view.findViewById(R.id.edt_stock_name);
@@ -55,13 +55,13 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
 
         if (bundle != null) {
 
-            option = bundle.getString(StockNameFragment.EXTRA_OPTION);
-            stock = bundle.getParcelable(StockNameFragment.EXTRA_STOCK);
+            option = bundle.getString(ItemNameFragment.EXTRA_OPTION);
+            stock = bundle.getParcelable(ItemNameFragment.EXTRA_STOCK);
         }
 
         changeTitleAndBtn();
 
-        if (!option.equals(StockNameFragment.ADD)) {
+        if (!option.equals(ItemNameFragment.ADD)) {
             edtStockName.setText(stock.getName());
         }
 
@@ -80,18 +80,18 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        addAndRenameStockViewModel = new ViewModelProvider(requireActivity())
-                .get(AddAndRenameStockViewModel.class);
+        addAndRenameItemViewModel = new ViewModelProvider(requireActivity())
+                .get(AddAndRenameItemViewModel.class);
 
         btnSave.setOnClickListener(v -> {
 
             String stockName = edtStockName.getText().toString();
 
-            if (option.equals(StockNameFragment.ADD)) {
-                addAndRenameStockViewModel.onClickBtn(new Stock(stockName), option);
+            if (option.equals(ItemNameFragment.ADD)) {
+                addAndRenameItemViewModel.onClickBtn(new Stock(stockName), option);
             } else {
                 this.stock.setName(stockName);
-                addAndRenameStockViewModel.onClickBtn(this.stock, option);
+                addAndRenameItemViewModel.onClickBtn(this.stock, option);
             }
         });
 
@@ -100,24 +100,24 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
         });
 
         //add and rename stock to database
-        addAndRenameStockViewModel.getStock()
+        addAndRenameItemViewModel.getStock()
                 .observe(getParentFragment().getViewLifecycleOwner(), s -> {
 
                     Stock stock = s.getContentIfNotHandle();
-                    String option = addAndRenameStockViewModel.getOption();
+                    String option = addAndRenameItemViewModel.getOption();
 
                     if (stock != null) {
-                        if (option.equals(StockNameFragment.ADD)) {
-                            addAndRenameStockViewModel.insertStock(stock);
+                        if (option.equals(ItemNameFragment.ADD)) {
+                            addAndRenameItemViewModel.insertStock(stock);
                         } else {
-                            addAndRenameStockViewModel.updateStockName(stock);
+                            addAndRenameItemViewModel.updateStockName(stock);
                         }
                     }
                     alertDialog.cancel();
                 });
 
         //to show message update,added or error
-        addAndRenameStockViewModel.getMessage()
+        addAndRenameItemViewModel.getMessage()
                 .observe(getParentFragment().getViewLifecycleOwner(), message -> {
 
                     String notify = message.getContentIfNotHandle();
@@ -131,20 +131,20 @@ public class AddAndRenameStockDialogFragment extends DialogFragment {
     }
 
 
-    public static AddAndRenameStockDialogFragment getNewInstance(String key1, String key2,
-                                                                 String option,
-                                                                 Stock stockForRename) {
-        AddAndRenameStockDialogFragment addAndRenameStockDialogFragment = new AddAndRenameStockDialogFragment();
+    public static AddAndUpdateItemDialogFragment getNewInstance(String key1, String key2,
+                                                                String option,
+                                                                Stock stockForRename) {
+        AddAndUpdateItemDialogFragment addAndUpdateItemDialogFragment = new AddAndUpdateItemDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(key1, option);
         bundle.putParcelable(key2, stockForRename);
-        addAndRenameStockDialogFragment.setArguments(bundle);
-        return addAndRenameStockDialogFragment;
+        addAndUpdateItemDialogFragment.setArguments(bundle);
+        return addAndUpdateItemDialogFragment;
     }
 
     //change dialogFragment title and button
     private void changeTitleAndBtn() {
-        if (option.equals(StockNameFragment.ADD)) {
+        if (option.equals(ItemNameFragment.ADD)) {
             txtTitle.setText("Add New Stock Name");
             btnSave.setText("Save");
         } else {

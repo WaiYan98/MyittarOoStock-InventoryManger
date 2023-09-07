@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class AddAndRenameStockViewModel extends ViewModel {
+public class AddAndRenameItemViewModel extends ViewModel {
 
     private Repository repository = new Repository();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();

@@ -2,4 +2,8 @@
     <string name="app_name">Myittar Oo Stock &amp; Inventory Manger</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+    <string name="item_name">Item Names List</string>
+    <string name="add_and_rename_dialog">Add Item</string>
+    <string name="confirm_dialog">Confirm Dialog</string>
+    <string name="batch">Batch</string>
 </resources>

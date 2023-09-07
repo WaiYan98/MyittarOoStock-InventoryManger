@@ -52,7 +52,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         Bundle bundle = getArguments();
 
         if (bundle != null) {
-            stock = bundle.getParcelable(StockNameFragment.EXTRA_DELETE);
+            stock = bundle.getParcelable(ItemNameFragment.EXTRA_DELETE);
         }
 
         return alertDialog;

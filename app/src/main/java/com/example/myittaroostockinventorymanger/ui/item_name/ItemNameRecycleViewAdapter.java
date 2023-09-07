@@ -17,7 +17,7 @@ import com.example.myittaroostockinventorymanger.data.entities.Stock;
 
 import java.util.ArrayList;
 import java.util.List;
-public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameRecycleViewAdapter.ViewHolder> {
+public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRecycleViewAdapter.ViewHolder> {
 
     private List<Stock> stockList;
     private Context context;
@@ -29,7 +29,7 @@ public class StockNameRecycleViewAdapter extends RecyclerView.Adapter<StockNameR
         this.callBack = callBack;
     }
 
-    public StockNameRecycleViewAdapter(Context context, List<Stock> stockList) {
+    public ItemNameRecycleViewAdapter(Context context, List<Stock> stockList) {
         this.context = context;
         this.stockList = stockList;
     }

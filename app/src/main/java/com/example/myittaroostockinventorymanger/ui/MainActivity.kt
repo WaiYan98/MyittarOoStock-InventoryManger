@@ -1,49 +1,58 @@
-package com.example.myittaroostockinventorymanger.ui;
+package com.example.myittaroostockinventorymanger.ui
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import android.os.Bundle
+import android.view.ActionMode
+import android.view.animation.Animation
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.databinding.ActivityMainBinding
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.ActionMode;
-import android.view.animation.Animation;
-
-import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.ui.batch.AddNewAndUpdateBatchActivity;
-import com.example.myittaroostockinventorymanger.ui.batch.BatchFragment;
-import com.example.myittaroostockinventorymanger.databinding.ActivityMainBinding;
-
-public class MainActivity extends AppCompatActivity {
-
-
-
+class MainActivity : AppCompatActivity() {
     //    @BindView(R.id.e_fab)
-//    ExpandableFab eFab;
-//    @BindView(R.id.fab_in)
-//    FabOption fabIN;
-//    @BindView(R.id.fab_out)
-//    FabOption fabOut;
-//    @BindView(R.id.fab_scan)
-//    FabOption fabScan;
-    private Animation rotateOpen, rotateClose, fromBottom, toBottom;
-    private boolean isOpen = false;
-    private ActionMode actionMode;
-    private ActivityMainBinding binding;
+    //    ExpandableFab eFab;
+    //    @BindView(R.id.fab_in)
+    //    FabOption fabIN;
+    //    @BindView(R.id.fab_out)
+    //    FabOption fabOut;
+    //    @BindView(R.id.fab_scan)
+    //    FabOption fabScan;
+    private val rotateOpen: Animation? = null
+    private val rotateClose: Animation? = null
+    private val fromBottom: Animation? = null
+    private val toBottom: Animation? = null
+    private val isOpen = false
+    private val actionMode: ActionMode? = null
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(
+            layoutInflater
+        )
+        setContentView(binding.root)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolBar)
 
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
-        BatchFragment hf = new BatchFragment();
-        createFragment(hf);
+        navController = navHostFragment.findNavController()
 
-        binding.toolBar.setNavigationOnClickListener(v -> {
-            binding.drawerLayout.openDrawer(binding.navView);
-        });
+        binding.navView.setupWithNavController(navController)
+        appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
+    }
 
 //       navDrawerOnItemSelected();
 //
@@ -70,12 +79,9 @@ public class MainActivity extends AppCompatActivity {
 //            isOpen = false;
 //            Toast.makeText(this, "Scan", Toast.LENGTH_SHORT).show();
 //        });
+}
 
-
-    }
-
-    // Drawer menu item selected change fragment
-
+// Drawer menu item selected change fragment
 //    private void navDrawerOnItemSelected() {
 //
 //        binding.navView.setNavigationItemSelectedListener(item -> {
@@ -109,17 +115,14 @@ public class MainActivity extends AppCompatActivity {
 //            return false;
 //        });
 //    }
-
-    //fragment create in already defined view
-
-    public void createFragment(Fragment fg) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_view, fg)
-                .commit();
-    }
-
-    //for changing extendable fab background color and icon After clicked
+//fragment create in already defined view
+//    public void createFragment(Fragment fg) {
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragment_view, fg)
+//                .commit();
+//    }
+//for changing extendable fab background color and icon After clicked
 //    private void changeFabIcon() {
 //        if (!isOpen) {
 //            eFab.setEfabIcon(ContextCompat.getDrawable(this, R.drawable.ic_add));
@@ -138,16 +141,11 @@ public class MainActivity extends AppCompatActivity {
 //            eFab.hide();
 //        }
 //    }
-
-    private void goToAddNewItemActivity() {
-        Intent intent = new Intent(this, AddNewAndUpdateBatchActivity.class);
-        startActivity(intent);
-    }
-
-
-//    private void fabOptionHide() {
-//        fabOut.hide();
-//        fabScan.hide();
-//    }
-
-}
+//private fun goToAddNewItemActivity() {
+//    val intent = Intent(this, AddNewAndUpdateBatchActivity::class.java)
+//    startActivity(intent)
+//} //    private void fabOptionHide() {
+////        fabOut.hide();
+////        fabScan.hide();
+////    }
+//}

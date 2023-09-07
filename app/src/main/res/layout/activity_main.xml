@@ -7,90 +7,35 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.MainActivity"
-    tools:openDrawer="start">
+    tools:context=".ui.MainActivity">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/light_orange"
+            android:textAlignment="center"
+            app:menu="@menu/main_app_bar_menu" />
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/tool_bar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/little_dark_white"
-                android:theme="@style/AppTheme.Toolbar"
-                app:menu="@menu/main_app_bar_menu"
-                app:navigationIcon="@drawable/ic_menu"
-                app:title="Stock &amp; Inventory List"
-                app:titleCentered="true" />
 
-        </com.google.android.material.appbar.AppBarLayout>
-
-<!--        <com.nambimobile.widgets.efab.ExpandableFabLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent">-->
-
-<!--            <com.nambimobile.widgets.efab.ExpandableFab-->
-<!--                android:id="@+id/e_fab"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="bottom|end"-->
-<!--                android:layout_margin="16dp"-->
-<!--                app:efab_closingAnimationDurationMs="150"-->
-<!--                app:efab_closingAnticipateTension="0"-->
-<!--                app:efab_color="@color/color_blue"-->
-<!--                app:efab_icon="@drawable/ic_white_menu"-->
-<!--                app:efab_iconAnimationRotationDeg="45"-->
-<!--                app:efab_openingAnimationDurationMs="300" />-->
-
-<!--            <com.nambimobile.widgets.efab.FabOption-->
-<!--                android:id="@+id/fab_in"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:fab_color="@color/color_blue"-->
-<!--                app:fab_icon="@drawable/ic_add"-->
-<!--                app:label_backgroundColor="@color/color_blue"-->
-<!--                app:label_text="New Item" />-->
-
-<!--            <com.nambimobile.widgets.efab.FabOption-->
-<!--                android:id="@+id/fab_out"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:fab_color="@color/color_blue"-->
-<!--                app:fab_icon="@drawable/ic_remove"-->
-<!--                app:label_backgroundColor="@color/color_blue"-->
-<!--                app:label_text="Item Out" />-->
-
-<!--            <com.nambimobile.widgets.efab.FabOption-->
-<!--                android:id="@+id/fab_scan"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:fab_color="@color/color_blue"-->
-<!--                app:fab_icon="@drawable/ic_qr_code_scanner"-->
-<!--                app:label_backgroundColor="@color/color_blue"-->
-<!--                app:label_text="Scan" />-->
-
-<!--        </com.nambimobile.widgets.efab.ExpandableFabLayout>-->
-
-        <FrameLayout
-            android:id="@+id/fragment_view"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal" />
+            android:background="@color/little_dark_white"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
 
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#F6F6FA"

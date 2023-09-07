@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/item_name_fragment">
+
+    <fragment
+        android:id="@+id/item_name_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.item_name.ItemNameFragment"
+        android:label="@string/item_name"
+        tools:layout="@layout/fragment_item_name">
+
+        <action
+            android:id="@+id/action_itemNameFragment_to_addAndRenameItemDialogFragment"
+            app:destination="@id/add_and_rename_item_dialog_fragment" />
+
+        <action
+            android:id="@+id/action_itemNameFragment_to_confirmDialogFragment"
+            app:destination="@id/confirm_dialog_fragment" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/add_and_rename_item_dialog_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.item_name.AddAndUpdateItemDialogFragment"
+        android:label="@string/add_and_rename_dialog"
+        tools:layout="@layout/item_dialog_fragment">
+
+        <action
+            android:id="@+id/action_addAndRenameItemDialogFragment_To_itemNameFragment"
+            app:destination="@id/item_name_fragment" />
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/confirm_dialog_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.ConfirmDialog"
+        android:label="@string/confirm_dialog"
+        tools:layout="@layout/confirm_dialog_fragment">
+
+        <action
+            android:id="@+id/action_confirmDialogFragment_to_itemNameFragment"
+            app:destination="@id/item_name_fragment" />
+
+    </dialog>
+
+    <fragment
+        android:id="@+id/batch_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.BatchFragment"
+        android:label="@string/batch"
+        tools:layout="@layout/fragment_batch">
+
+        <action
+            android:id="@+id/action_batchFragment_to_addAndUpdateBatchActivity"
+            app:destination="@id/add_and_update_batch_activity" />
+        />
+
+    </fragment>
+
+    <activity
+        android:id="@+id/add_and_update_batch_activity"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.AddNewAndUpdateBatchActivity"
+        android:label="Add and Update Batch"
+        tools:layout="@layout/activity_add_new_item" />
+
+    <fragment
+        android:id="@+id/transaction_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.transactions.TransactionFragment"
+        android:label="@string/batch"
+        tools:layout="@layout/fragment_transaction" />
+
+    <fragment
+        android:id="@+id/dashboard_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.dashboard.DashboardFragment"
+        android:label="@string/batch"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/about_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.about.AboutFragment"
+        android:label="@string/batch"
+        tools:layout="@layout/fragment_about" />
+
+</navigation>
