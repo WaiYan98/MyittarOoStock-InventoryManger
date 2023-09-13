@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.StockBatch;
+import com.example.myittaroostockinventorymanger.data.entities.ItemBatch;
 import com.example.myittaroostockinventorymanger.util.AutoNumGenerator;
 
 import java.text.SimpleDateFormat;
@@ -22,16 +22,16 @@ import java.util.List;
 public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListRecycleViewAdapter.ViewHolder> {
 
     private Context context;
-    private List<StockBatch> stockBatchList;
+    private List<ItemBatch> itemBatchList;
     private boolean isSelectedMode = false;
     private List<Long> selectedBatchIdList = new ArrayList<>();
     private CallBack callBack;
     private ViewHolder holder;
 
 
-    public BatchListRecycleViewAdapter(Context context, List<StockBatch> stockBatchList) {
+    public BatchListRecycleViewAdapter(Context context, List<ItemBatch> itemBatchList) {
         this.context = context;
-        this.stockBatchList = stockBatchList;
+        this.itemBatchList = itemBatchList;
     }
 
     public void setCallBack(CallBack callBack) {
@@ -51,18 +51,18 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         this.holder = holder;
-        StockBatch current = stockBatchList.get(position);
+        ItemBatch current = itemBatchList.get(position);
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
 
         CardView cardView = holder.cardViewItemNameContainer;
         changeCardViewColor(cardView);
 
-        holder.txtStockName.setText(current.getStock().getName());
-        holder.txtNameInitialWord.setText(current.getStock().getName().substring(0, 1).toUpperCase());
+        holder.txtStockName.setText(current.getItem().getName());
+        holder.txtNameInitialWord.setText(current.getItem().getName().substring(0, 1).toUpperCase());
         holder.txtCostPrice.setText(String.valueOf(current.getBatch().getOriginalPrice()));
         holder.txtSalePrice.setText(String.valueOf(current.getBatch().getSalePrice()));
         holder.txtExpDate.setText(df.format(current.getBatch().getExpDate()));
-        holder.txtAmount.setText(String.valueOf(current.getBatch().getTotalStock()));
+        holder.txtAmount.setText(String.valueOf(current.getBatch().getQuantity()));
 
         //when batch item onLongClicked show contextual action mode
         holder.cardViewBatch.setOnLongClickListener(v -> {
@@ -89,7 +89,7 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         changeSelectedItemColor(holder, current);
     }
 
-    private void changeSelectedItemColor(ViewHolder holder, StockBatch current) {
+    private void changeSelectedItemColor(ViewHolder holder, ItemBatch current) {
         if (current.isSelected()) {
             holder.cardViewBatch.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
         } else {
@@ -99,11 +99,11 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
     @Override
     public int getItemCount() {
-        return stockBatchList.size();
+        return itemBatchList.size();
     }
 
     //when item click itemId save to selectedList and id is equal remove from list
-    private void itemAddToSelectedList(Long id, StockBatch current) {
+    private void itemAddToSelectedList(Long id, ItemBatch current) {
 
         if (!selectedBatchIdList.contains(id)) {
             selectedBatchIdList.add(id);
@@ -126,9 +126,9 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
         boolean isAllSelected = false;
 
-        for (StockBatch stockBatch : stockBatchList) {
+        for (ItemBatch itemBatch : itemBatchList) {
 
-            if (!stockBatch.isSelected()) {
+            if (!itemBatch.isSelected()) {
                 isAllSelected = false;
                 break;
             } else {
@@ -152,21 +152,21 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
         selectedBatchIdList.clear();
 
-        for (StockBatch stockBatch : stockBatchList) {
-            this.selectedBatchIdList.add(stockBatch.getBatch().getBatchId());
+        for (ItemBatch itemBatch : itemBatchList) {
+            this.selectedBatchIdList.add(itemBatch.getBatch().getBatchId());
         }
     }
 
     private void importSelectedTrue() {
-        for (StockBatch stockBatch : stockBatchList) {
-            stockBatch.setSelected(true);
+        for (ItemBatch itemBatch : itemBatchList) {
+            itemBatch.setSelected(true);
         }
     }
 
-    private StockBatch findStockBatchByBatchId(Long batchId) {
-        for (StockBatch stockBatch : stockBatchList) {
-            if (batchId == stockBatch.getBatch().getBatchId()) {
-                return stockBatch;
+    private ItemBatch findStockBatchByBatchId(Long batchId) {
+        for (ItemBatch itemBatch : itemBatchList) {
+            if (batchId == itemBatch.getBatch().getBatchId()) {
+                return itemBatch;
             }
         }
         return null;
@@ -197,18 +197,18 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
         }
     }
 
-    public void insertItem(List<StockBatch> stockBatchList) {
-        this.stockBatchList.clear();
-        this.stockBatchList.addAll(stockBatchList);
+    public void insertItem(List<ItemBatch> itemBatchList) {
+        this.itemBatchList.clear();
+        this.itemBatchList.addAll(itemBatchList);
         notifyDataSetChanged();
     }
 
     //Assign allStockBatches isSelected property to false
     private void importSelectedFalse() {
 
-        for (StockBatch stockBatch : stockBatchList) {
+        for (ItemBatch itemBatch : itemBatchList) {
 
-            stockBatch.setSelected(false);
+            itemBatch.setSelected(false);
         }
 
     }
@@ -242,6 +242,6 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
         void onItemsSelected(List<Long> selectedBatchIdList);
 
-        void onSelectedItemIsOne(StockBatch stockBatch);
+        void onSelectedItemIsOne(ItemBatch itemBatch);
     }
 }

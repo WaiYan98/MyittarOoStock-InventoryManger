@@ -18,7 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
+import com.example.myittaroostockinventorymanger.data.entities.Item;
 ;
 
 public class AddAndUpdateItemDialogFragment extends DialogFragment {
@@ -32,7 +32,7 @@ public class AddAndUpdateItemDialogFragment extends DialogFragment {
     private AddAndRenameItemViewModel addAndRenameItemViewModel;
     private AlertDialog alertDialog;
     private Context context;
-    private Stock stock;
+    private Item item;
 
     private AddAndUpdateItemDialogFragment() {
 
@@ -56,13 +56,13 @@ public class AddAndUpdateItemDialogFragment extends DialogFragment {
         if (bundle != null) {
 
             option = bundle.getString(ItemNameFragment.EXTRA_OPTION);
-            stock = bundle.getParcelable(ItemNameFragment.EXTRA_STOCK);
+            item = bundle.getParcelable(ItemNameFragment.EXTRA_STOCK);
         }
 
         changeTitleAndBtn();
 
         if (!option.equals(ItemNameFragment.ADD)) {
-            edtStockName.setText(stock.getName());
+            edtStockName.setText(item.getName());
         }
 
 
@@ -88,10 +88,10 @@ public class AddAndUpdateItemDialogFragment extends DialogFragment {
             String stockName = edtStockName.getText().toString();
 
             if (option.equals(ItemNameFragment.ADD)) {
-                addAndRenameItemViewModel.onClickBtn(new Stock(stockName), option);
+                addAndRenameItemViewModel.onClickBtn(new Item(stockName), option);
             } else {
-                this.stock.setName(stockName);
-                addAndRenameItemViewModel.onClickBtn(this.stock, option);
+                this.item.setName(stockName);
+                addAndRenameItemViewModel.onClickBtn(this.item, option);
             }
         });
 
@@ -103,14 +103,14 @@ public class AddAndUpdateItemDialogFragment extends DialogFragment {
         addAndRenameItemViewModel.getStock()
                 .observe(getParentFragment().getViewLifecycleOwner(), s -> {
 
-                    Stock stock = s.getContentIfNotHandle();
+                    Item item = s.getContentIfNotHandle();
                     String option = addAndRenameItemViewModel.getOption();
 
-                    if (stock != null) {
+                    if (item != null) {
                         if (option.equals(ItemNameFragment.ADD)) {
-                            addAndRenameItemViewModel.insertStock(stock);
+                            addAndRenameItemViewModel.insertStock(item);
                         } else {
-                            addAndRenameItemViewModel.updateStockName(stock);
+                            addAndRenameItemViewModel.updateStockName(item);
                         }
                     }
                     alertDialog.cancel();
@@ -133,11 +133,11 @@ public class AddAndUpdateItemDialogFragment extends DialogFragment {
 
     public static AddAndUpdateItemDialogFragment getNewInstance(String key1, String key2,
                                                                 String option,
-                                                                Stock stockForRename) {
+                                                                Item itemForRename) {
         AddAndUpdateItemDialogFragment addAndUpdateItemDialogFragment = new AddAndUpdateItemDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(key1, option);
-        bundle.putParcelable(key2, stockForRename);
+        bundle.putParcelable(key2, itemForRename);
         addAndUpdateItemDialogFragment.setArguments(bundle);
         return addAndUpdateItemDialogFragment;
     }

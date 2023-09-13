@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myittaroostockinventorymanger.event.Event
-import com.example.myittaroostockinventorymanger.data.entities.StockWithBatch
-import com.example.myittaroostockinventorymanger.data.entities.StockBatch
+import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
+import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.data.repository.Repository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers.io
@@ -15,32 +15,32 @@ class BatchViewModel : ViewModel() {
 
     private val repository: Repository =
         Repository()
-    private var stockWithBatches: LiveData<List<StockWithBatch>>? = null
+    private var itemWithBatches: LiveData<List<ItemWithBatch>>? = null
     private var isLoading: MutableLiveData<Boolean> = MutableLiveData()
-    private var searchBatchResultList: MutableLiveData<List<StockBatch>> = MutableLiveData()
+    private var searchBatchResultList: MutableLiveData<List<ItemBatch>> = MutableLiveData()
     private var message: MutableLiveData<Event<String>> = MutableLiveData()
     private var contextualTitle: MutableLiveData<String> = MutableLiveData()
     private var showRenameButton: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun getAllStockWithBatches(): LiveData<List<StockWithBatch>>? {
+    fun getAllStockWithBatches(): LiveData<List<ItemWithBatch>>? {
 
-        if (stockWithBatches == null) {
-            stockWithBatches = MutableLiveData()
+        if (itemWithBatches == null) {
+            itemWithBatches = MutableLiveData()
             loadStockWithBatches()
         }
-        return stockWithBatches
+        return itemWithBatches
     }
 
     fun loadStockWithBatches() {
         isLoading.value = true
-        stockWithBatches = repository.allStockWithBatch
+        itemWithBatches = repository.allStockWithBatch
         isLoading.value = false
         message.value = Event("updated")
     }
 
-    fun searchBatchByName(stockBatchList: List<StockBatch>, newText: String) {
+    fun searchBatchByName(itemBatchList: List<ItemBatch>, newText: String) {
 
-        val resultList = stockBatchList.filter { it.stock.name.startsWith(newText, ignoreCase = true) }
+        val resultList = itemBatchList.filter { it.item.name.startsWith(newText, ignoreCase = true) }
 
         searchBatchResultList.value = resultList
     }
@@ -75,7 +75,7 @@ class BatchViewModel : ViewModel() {
         return message
     }
 
-    fun getSearchResult(): LiveData<List<StockBatch>> {
+    fun getSearchResult(): LiveData<List<ItemBatch>> {
         return searchBatchResultList
     }
 

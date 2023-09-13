@@ -6,13 +6,13 @@ import com.example.myittaroostockinventorymanger.Application;
 
 public class LocalDataBaseService {
 
-    private static StockDataBase INSTANCE;
+    private static Database INSTANCE;
 
-    public static StockDataBase getDataBase() {
+    public static Database getDataBase() {
 
         if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(Application.getContext(), StockDataBase.class, "stock_db")
-                    .addMigrations(StockDataBase.MIGRATION_1_2)
+            INSTANCE = Room.databaseBuilder(Application.getContext(), Database.class, "stock_db")
+                    .addMigrations(Database.MIGRATION_1_2)
                     .build();
         }
         return INSTANCE;

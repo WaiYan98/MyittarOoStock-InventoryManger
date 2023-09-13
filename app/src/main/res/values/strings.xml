@@ -6,4 +6,5 @@
     <string name="add_and_rename_dialog">Add Item</string>
     <string name="confirm_dialog">Confirm Dialog</string>
     <string name="batch">Batch</string>
+    <string name="search_menu_title">Search</string>
 </resources>

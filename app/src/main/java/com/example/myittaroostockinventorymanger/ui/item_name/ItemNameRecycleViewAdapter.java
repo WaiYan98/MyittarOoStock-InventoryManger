@@ -13,13 +13,13 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
+import com.example.myittaroostockinventorymanger.data.entities.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRecycleViewAdapter.ViewHolder> {
 
-    private List<Stock> stockList;
+    private List<Item> itemList;
     private Context context;
     private CallBack callBack;
     private boolean isSelectedMode = false;
@@ -29,9 +29,9 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
         this.callBack = callBack;
     }
 
-    public ItemNameRecycleViewAdapter(Context context, List<Stock> stockList) {
+    public ItemNameRecycleViewAdapter(Context context, List<Item> itemList) {
         this.context = context;
-        this.stockList = stockList;
+        this.itemList = itemList;
     }
 
     @NonNull
@@ -44,11 +44,11 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Stock currentStock = stockList.get(position);
-        String initialWord = Character.toString(currentStock.getName().charAt(0)).
+        Item currentItem = itemList.get(position);
+        String initialWord = Character.toString(currentItem.getName().charAt(0)).
                 toUpperCase();
 
-        holder.txtStockName.setText(currentStock.getName());
+        holder.txtStockName.setText(currentItem.getName());
 
         holder.linearLayoutStockName.setOnLongClickListener(v -> {
             isSelectedMode = true;
@@ -59,11 +59,11 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
         holder.linearLayoutStockName.setOnClickListener(v -> {
             if (isSelectedMode) {
                 //For test
-                itemAddToSelectedList(currentStock);
+                itemAddToSelectedList(currentItem);
                 callBack.onClickItem(selectedStockIdList);
 
                 if (selectedStockIdList.size() == 1) {
-                    callBack.onSelectedItemIsOne(currentStock);
+                    callBack.onSelectedItemIsOne(currentItem);
                 }
 
                 notifyItemChanged(position);
@@ -72,18 +72,18 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
         holder.txtNameInitialWord.setText(initialWord);
 
-        stockBackgroundColorChange(currentStock, holder);
+        stockBackgroundColorChange(currentItem, holder);
     }
 
-    private void itemAddToSelectedList(Stock currentStock) {
+    private void itemAddToSelectedList(Item currentItem) {
 
-        long stockId = currentStock.getStockId();
+        long stockId = currentItem.getItemId();
 
         if (!selectedStockIdList.contains(stockId)) {
-            currentStock.setSelected(true);
+            currentItem.setSelected(true);
             selectedStockIdList.add(stockId);
         } else {
-            currentStock.setSelected(false);
+            currentItem.setSelected(false);
             selectedStockIdList.remove(stockId);
         }
 
@@ -93,9 +93,9 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
         Boolean isSelectedAll = false;
 
-        for (Stock stock : stockList) {
+        for (Item item : itemList) {
 
-            if (stock.isSelected()) {
+            if (item.isSelected()) {
                 isSelectedAll = true;
             } else {
                 isSelectedAll = false;
@@ -118,8 +118,8 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
         selectedStockIdList.clear();
 
-        for (Stock stock : stockList) {
-            selectedStockIdList.add(stock.getStockId());
+        for (Item item : itemList) {
+            selectedStockIdList.add(item.getItemId());
         }
     }
 
@@ -131,20 +131,20 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
     }
 
     private void importSelectedFalse() {
-        for (Stock stock : stockList) {
-            stock.setSelected(false);
+        for (Item item : itemList) {
+            item.setSelected(false);
         }
     }
 
     private void importSelectedTrue() {
-        for (Stock stock : stockList) {
-            stock.setSelected(true);
+        for (Item item : itemList) {
+            item.setSelected(true);
         }
     }
 
-    private void stockBackgroundColorChange(Stock stock, ViewHolder holder) {
+    private void stockBackgroundColorChange(Item item, ViewHolder holder) {
 
-        if (stock.isSelected()) {
+        if (item.isSelected()) {
             holder.cardViewStock.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
         } else {
             holder.cardViewStock.setBackgroundColor(ContextCompat.getColor(context, R.color.little_dark_white));
@@ -153,15 +153,15 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
     @Override
     public int getItemCount() {
-        return stockList.size();
+        return itemList.size();
     }
 
     /**
-     * @param stockList To update data by observer
+     * @param itemList To update data by observer
      */
-    public void insertItem(List<Stock> stockList) {
-        this.stockList.clear();
-        this.stockList.addAll(stockList);
+    public void insertItem(List<Item> itemList) {
+        this.itemList.clear();
+        this.itemList.addAll(itemList);
         notifyDataSetChanged();
     }
 
@@ -187,7 +187,7 @@ public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRec
 
         void onClickItem(List<Long> selectedStockIdList);
 
-        void onSelectedItemIsOne(Stock stock);
+        void onSelectedItemIsOne(Item item);
     }
 
 }

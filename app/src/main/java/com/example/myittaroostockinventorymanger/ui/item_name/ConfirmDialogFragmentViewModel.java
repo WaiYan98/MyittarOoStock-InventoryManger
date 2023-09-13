@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myittaroostockinventorymanger.event.Event;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
+import com.example.myittaroostockinventorymanger.data.entities.Item;
 import com.example.myittaroostockinventorymanger.data.repository.Repository;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -18,8 +18,8 @@ public class ConfirmDialogFragmentViewModel extends ViewModel {
     Repository repository = new Repository();
     private Disposable disposable;
 
-    public void deleteStock(Stock stock) {
-        disposable = repository.deleteStock(stock)
+    public void deleteStock(Item item) {
+        disposable = repository.deleteItem(item)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {

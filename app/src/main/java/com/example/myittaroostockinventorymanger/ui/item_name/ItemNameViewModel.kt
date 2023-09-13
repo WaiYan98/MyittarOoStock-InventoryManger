@@ -1,12 +1,13 @@
 package com.example.myittaroostockinventorymanger.ui.item_name
 
 import android.os.Build
+import android.util.Log
 import android.view.ActionMode
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myittaroostockinventorymanger.data.entities.Stock
+import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.repository.Repository
 import com.example.myittaroostockinventorymanger.event.Event
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,18 +17,19 @@ import java.util.Locale
 import java.util.stream.Collectors
 
 class ItemNameViewModel : ViewModel() {
-    private var mutStockList: LiveData<List<Stock>>
+    private var mutItemList: LiveData<List<Item>>
     private val message: MutableLiveData<Event<String?>>
     private val isLoading: MutableLiveData<Boolean>
-    private val mutFilterNames: MutableLiveData<List<Stock>>
+    private val mutFilterNames: MutableLiveData<List<Item>>
     private val contextualActionBarTitle: MutableLiveData<String>
     private val repository: Repository
     private val compositeDisposable = CompositeDisposable()
     private val isShowRenameButton: MutableLiveData<Boolean>
     private val isValidDelete: MutableLiveData<Boolean>
+    private var searchItems: LiveData<List<Item>>
 
     init {
-        mutStockList = MutableLiveData()
+        mutItemList = MutableLiveData()
         repository = Repository()
         message = MutableLiveData()
         isLoading = MutableLiveData(false)
@@ -35,16 +37,17 @@ class ItemNameViewModel : ViewModel() {
         contextualActionBarTitle = MutableLiveData()
         isShowRenameButton = MutableLiveData()
         isValidDelete = MutableLiveData()
+        searchItems = MutableLiveData()
+        loadItems()
     }
 
-    fun getAllItems(): LiveData<List<Stock>> {
-        loadItems()
-        return mutStockList
+    fun getAllItems(): LiveData<List<Item>> {
+        return mutItemList
     }
 
     fun loadItems() {
         isLoading.value = true
-        mutStockList = repository.allStock
+        mutItemList = repository.allItem
         isLoading.value = false
         message.value = Event("updated")
     }
@@ -59,9 +62,9 @@ class ItemNameViewModel : ViewModel() {
 
     //for SearchView to find Name
     @RequiresApi(api = Build.VERSION_CODES.N)
-    fun filterName(stockList: List<Stock>, text: String) {
-        val resultList = stockList.stream()
-            .filter { (name): Stock ->
+    fun filterName(itemList: List<Item>, text: String) {
+        val resultList = itemList.stream()
+            .filter { (name): Item ->
                 name.uppercase(Locale.getDefault()).startsWith(
                     text.uppercase(
                         Locale.getDefault()
@@ -69,10 +72,10 @@ class ItemNameViewModel : ViewModel() {
                 )
             }
             .collect(Collectors.toList())
-        mutFilterNames.setValue(resultList)
+        mutFilterNames.value = resultList
     }
 
-    fun filterNames(): LiveData<List<Stock>> = mutFilterNames
+    fun filterNames(): LiveData<List<Item>> = mutFilterNames
 
     override fun onCleared() {
         super.onCleared()
@@ -99,12 +102,12 @@ class ItemNameViewModel : ViewModel() {
         return isShowRenameButton
     }
 
-    fun deleteStocks(selectStockIdList: List<Long?>, actionMode: ActionMode) {
-        val disposable = repository.deleteStocksByIds(selectStockIdList)
+    fun deleteStocks(selectStockIdList: List<Long>, actionMode: ActionMode) {
+        val disposable = repository.deleteItemsById(selectStockIdList)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                message.setValue(Event<String?>("Deleted ${selectStockIdList.size} items"))
+                message.value = Event<String?>("Deleted ${selectStockIdList.size} items")
                 actionMode.finish()
             }) { error: Throwable -> error.printStackTrace() }
 
@@ -115,12 +118,22 @@ class ItemNameViewModel : ViewModel() {
         if (!selectStockIdList.isEmpty()) {
             isValidDelete.setValue(true)
         } else {
-            isValidDelete.setValue(false)
+            isValidDelete.value = false
             message.setValue(Event<String?>("Please select item"))
         }
     }
 
     fun getIsValidDelete(): LiveData<Boolean> {
         return isValidDelete
+    }
+
+    // TODO: repair and check for issue
+    fun searchItemsFromDb(queryText: String) {
+        Log.d("tag", "searchItemsFromDb: $queryText")
+        this.searchItems = repository.searchItems(queryText)
+    }
+
+    fun getSearchItems(): LiveData<List<Item>> {
+        return searchItems
     }
 }

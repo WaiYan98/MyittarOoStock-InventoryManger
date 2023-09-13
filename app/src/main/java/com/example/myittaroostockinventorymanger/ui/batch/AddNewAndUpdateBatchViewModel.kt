@@ -29,7 +29,7 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
         if (mutStockNames == null) {
             mutStockNames = MutableLiveData()
-            mutStockNames = repository.allStockNames
+            mutStockNames = repository.allItemNames
         }
         return mutStockNames
     }
@@ -43,9 +43,9 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
         if (isValidInput(edtStockName, edtAmount, edtCostPrice, edtSalePrice, isValidDate)) {
             val batch = createBatch(edtStockName, edtExpDate, edtAmount, edtCostPrice, edtSalePrice)
 
-            disposable = repository.findStockIdByName(edtStockName.text.toString())
+            disposable = repository.findItemIdByName(edtStockName.text.toString())
                     .flatMap {
-                        batch.stockId = it
+                        batch.itemId = it
 
                         Log.d("tag", "onClickSave: "+it)
 

@@ -4,15 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myittaroostockinventorymanger.ui.ConfirmDialog
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.databinding.FragmentBatchBinding
-import com.example.myittaroostockinventorymanger.data.entities.StockBatch
+import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 import com.google.android.material.appbar.MaterialToolbar
@@ -20,16 +21,16 @@ import com.google.android.material.appbar.MaterialToolbar
 class BatchFragment : Fragment(),
     BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack {
 
-    private lateinit var stockBatch: StockBatch
+    private lateinit var itemBatch: ItemBatch
     private lateinit var selectedBatchIdList: MutableList<Long>
     private lateinit var searchView: SearchView
 
     lateinit var adapter: BatchListRecycleViewAdapter
 
-    lateinit var toolbar: MaterialToolbar;
+    lateinit var toolbar: Toolbar;
 
     private val batchViewModel: BatchViewModel by lazy { setUpViewModel() }
-    private lateinit var stockBatchList: List<StockBatch>
+    private lateinit var itemBatchList: List<ItemBatch>
 
     private lateinit var actionMode: ActionMode
     private lateinit var confirmDialog: ConfirmDialog
@@ -54,12 +55,10 @@ class BatchFragment : Fragment(),
 
         binding = FragmentBatchBinding.inflate(inflater, container, false)
 
-        toolbar = activity?.findViewById(R.id.tool_bar)!!
-        val menuItem = toolbar.menu.findItem(R.id.app_bar_search)
-        searchView = menuItem.actionView as SearchView
+        toolbar = activity?.findViewById(R.id.tool_bar_main) as Toolbar
+//        val menuItem = toolbar.menu.findItem(R.id.menu_search_view)
+//        searchView = menuItem.actionView as SearchView
 
-
-        setToolbarTitle()
         setUpRecycleView()
 
         return binding.root;
@@ -68,18 +67,18 @@ class BatchFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-
-                batchViewModel.searchBatchByName(stockBatchList, newText)
-
-                return false
-            }
-        })
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//
+//                batchViewModel.searchBatchByName(itemBatchList, newText)
+//
+//                return false
+//            }
+//        })
 
         binding.fabAddBatch.setOnClickListener {
 
@@ -90,9 +89,9 @@ class BatchFragment : Fragment(),
             ?.observe(viewLifecycleOwner) {
 
                 //covert nested list into one list
-                stockBatchList = ListCreator.createStockBatchList(it)
+                itemBatchList = ListCreator.createStockBatchList(it)
 
-                adapter.insertItem(stockBatchList)
+                adapter.insertItem(itemBatchList)
             }
 
         batchViewModel.getSearchResult()
@@ -145,19 +144,14 @@ class BatchFragment : Fragment(),
 
     private fun goToAddNewAndUpdateBatchActivity(
         option: String,
-        stockBatch: StockBatch?,
+        itemBatch: ItemBatch?,
         batchId: Long
     ) {
         val intent: Intent = Intent(context, AddNewAndUpdateBatchActivity::class.java)
         intent.putExtra(EXTRA_OPTION, option)
-        intent.putExtra(EXTRA_STOCK_BATCH, stockBatch)
+        intent.putExtra(EXTRA_STOCK_BATCH, itemBatch)
         intent.putExtra(EXTRA_BATCH_ID, batchId)
         startActivity(intent)
-    }
-
-    //to change toolbar title
-    private fun setToolbarTitle() {
-        toolbar.title = "Batch List"
     }
 
     private fun setUpViewModel() = ViewModelProvider(this).get(BatchViewModel::class.java)
@@ -185,8 +179,8 @@ class BatchFragment : Fragment(),
 
                     R.id.edit -> goToAddNewAndUpdateBatchActivity(
                         UPDATE,
-                        stockBatch,
-                        stockBatch.batch.batchId
+                        itemBatch,
+                        itemBatch.batch.batchId
                     )
 
                     R.id.select_all -> adapter.selectAllItems()
@@ -213,8 +207,8 @@ class BatchFragment : Fragment(),
         setUpContextualBarSelection(selectedBatchIdList)
     }
 
-    override fun onSelectedItemIsOne(stockBatch: StockBatch) {
-        this.stockBatch = stockBatch
+    override fun onSelectedItemIsOne(itemBatch: ItemBatch) {
+        this.itemBatch = itemBatch
     }
 
     private fun setUpConfirmDialog() {

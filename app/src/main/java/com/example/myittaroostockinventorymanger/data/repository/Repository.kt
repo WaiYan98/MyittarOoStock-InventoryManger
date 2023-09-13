@@ -1,73 +1,67 @@
-package com.example.myittaroostockinventorymanger.data.repository;
+package com.example.myittaroostockinventorymanger.data.repository
 
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.LiveData
+import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.Item
+import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
+import com.example.myittaroostockinventorymanger.data.entities.Transaction
+import com.example.myittaroostockinventorymanger.data.local.Dao
+import com.example.myittaroostockinventorymanger.data.local.LocalDataBaseService
+import io.reactivex.Completable
+import io.reactivex.Observable
 
-import com.example.myittaroostockinventorymanger.data.entities.Batch;
-import com.example.myittaroostockinventorymanger.data.local.Dao;
-import com.example.myittaroostockinventorymanger.data.local.LocalDataBaseService;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
-import com.example.myittaroostockinventorymanger.data.entities.StockWithBatch;
-import com.example.myittaroostockinventorymanger.data.entities.Transaction;
+class Repository {
+    private val dao: Dao
 
-import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-
-public class Repository {
-
-    private Dao dao;
-
-    public Repository() {
-        this.dao = LocalDataBaseService.getDataBase()
-                .dao();
+    init {
+        dao = LocalDataBaseService.getDataBase()
+            .dao()
     }
 
-    public Completable insertStock(Stock stock) {
-        return dao.insertStock(stock);
+    fun insertItem(item: Item): Completable {
+        return dao.insertItem(item)
     }
 
-    public Completable insertBatch(Batch batch) {
-        return dao.insertBatch(batch);
+    fun insertBatch(batch: Batch): Completable {
+        return dao.insertBatch(batch)
     }
 
-    public Completable insertTransaction(Transaction transaction) {
-        return dao.insertTransaction(transaction);
+    fun insertTransaction(transaction: Transaction): Completable {
+        return dao.insertTransaction(transaction)
     }
 
-    public LiveData<List<Stock>> getAllStock() {
-        return dao.getAllStock();
+    val allItem: LiveData<List<Item>> get() = dao.getAllItems()
+    val allStockWithBatch: LiveData<List<ItemWithBatch>>
+        get() = dao.getAllItemWithBatch()
+
+    fun deleteItem(item: Item): Completable {
+        return dao.deleteItem(item)
     }
 
-    public LiveData<List<StockWithBatch>> getAllStockWithBatch() {
-        return dao.getAllStockWithBatch();
+    fun updateItemName(item: Item): Completable {
+        return dao.updateItemName(item)
     }
 
-    public Completable deleteStock(Stock stock) {
-        return dao.deleteStock(stock);
+    fun updateBatch(batch: Batch): Completable {
+        return dao.updateBatch(batch)
     }
 
-    public Completable updateStockName(Stock stock) {
-        return dao.updateStockName(stock);
+    val allItemNames: LiveData<List<String>>
+        get() = dao.getAllItemNames()
+
+    fun findItemIdByName(stockName: String): Observable<Long> {
+        return dao.findItemIdByName(stockName)
     }
 
-    public Completable updateBatch(Batch batch) {
-        return dao.updateBatch(batch);
+    fun deleteBatchesById(ids: List<Long>): Completable {
+        return dao.deleteBatchesByIds(ids)
     }
 
-    public LiveData<List<String>> getAllStockNames() {
-        return dao.getAllStockNames();
+    fun deleteItemsById(ids: List<Long>): Completable {
+        return dao.deleteItemByIds(ids)
     }
 
-    public Observable<Long> findStockIdByName(String stockName) {
-        return dao.findStockIdByName(stockName);
-    }
-
-    public Completable deleteBatchesById(List<Long> ids) {
-        return dao.deleteBatchesByIds(ids);
-    }
-
-    public Completable deleteStocksByIds(List<Long> ids) {
-        return dao.deleteStocksByIds(ids);
+    fun searchItems(queryText: String): LiveData<List<Item>> {
+        return dao.searchItems(queryText)
     }
 }

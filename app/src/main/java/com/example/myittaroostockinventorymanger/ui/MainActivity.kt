@@ -1,11 +1,13 @@
 package com.example.myittaroostockinventorymanger.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.ActionMode
 import android.view.animation.Animation
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,7 +15,9 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.data.repository.Repository
 import com.example.myittaroostockinventorymanger.databinding.ActivityMainBinding
+import com.example.myittaroostockinventorymanger.ui.item_name.ItemNameViewModel
 
 class MainActivity : AppCompatActivity() {
     //    @BindView(R.id.e_fab)
@@ -34,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    val viewModel: ItemNameViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(
@@ -41,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         )
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolBar)
+        setSupportActionBar(binding.toolBarMain)
 
         navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -50,8 +57,28 @@ class MainActivity : AppCompatActivity() {
 
         binding.navView.setupWithNavController(navController)
         appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
+        binding.toolBarMain.setupWithNavController(navController, appBarConfiguration)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+//        val repository = Repository()
+//        repository.searchItems("%or%")
+//            .observe(this) {
+//                Log.d("tag", "onCreate: $it")
+//            }
+
+//        val queryText = "%or%"
+//        viewModel.searchItemsFromDb(queryText)
+//
+//        viewModel.getAllItems()
+//            .observe(this) {
+//                Log.d("tag", "onCreate: $it")
+//            }
+
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfiguration) ||
+                super.onSupportNavigateUp()
     }
 
 //       navDrawerOnItemSelected();

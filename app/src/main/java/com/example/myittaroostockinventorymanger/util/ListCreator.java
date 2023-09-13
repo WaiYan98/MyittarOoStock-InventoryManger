@@ -1,26 +1,26 @@
 package com.example.myittaroostockinventorymanger.util;
 
 import com.example.myittaroostockinventorymanger.data.entities.Batch;
-import com.example.myittaroostockinventorymanger.data.entities.StockWithBatch;
-import com.example.myittaroostockinventorymanger.data.entities.StockBatch;
+import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch;
+import com.example.myittaroostockinventorymanger.data.entities.ItemBatch;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListCreator {
 
-    public static List<StockBatch> createStockBatchList(List<StockWithBatch> stockWithBatchList) {
+    public static List<ItemBatch> createStockBatchList(List<ItemWithBatch> itemWithBatchList) {
 
-        List<StockBatch> stockBatchList = new ArrayList<>();
+        List<ItemBatch> itemBatchList = new ArrayList<>();
 
-        for (StockWithBatch stockWithBatch : stockWithBatchList) {
+        for (ItemWithBatch itemWithBatch : itemWithBatchList) {
 
-            for (Batch batch : stockWithBatch.getBatchList()) {
+            for (Batch batch : itemWithBatch.getBatchList()) {
 
-                stockBatchList.add(new StockBatch(stockWithBatch.getStock(), batch, false));
+                itemBatchList.add(new ItemBatch(itemWithBatch.getItem(), batch, false));
             }
         }
 
-        return stockBatchList;
+        return itemBatchList;
     }
 }

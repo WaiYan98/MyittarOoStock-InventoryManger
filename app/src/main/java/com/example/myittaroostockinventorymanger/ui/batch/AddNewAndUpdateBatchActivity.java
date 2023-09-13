@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.example.myittaroostockinventorymanger.ui.MainActivity;
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.StockBatch;
+import com.example.myittaroostockinventorymanger.data.entities.ItemBatch;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
 import java.text.DateFormat;
@@ -33,7 +33,7 @@ public class AddNewAndUpdateBatchActivity extends AppCompatActivity {
     private List<String> stockNameList = new ArrayList<String>();
 
     private String option;
-    private StockBatch stockBatch;
+    private ItemBatch itemBatch;
     private Long batchId;
 
     @Override
@@ -60,20 +60,20 @@ public class AddNewAndUpdateBatchActivity extends AppCompatActivity {
 
         if (intent != null) {
             option = intent.getStringExtra(BatchFragment.Companion.getEXTRA_OPTION());
-            stockBatch = intent.getParcelableExtra(BatchFragment.Companion.getEXTRA_STOCK_BATCH());
+            itemBatch = intent.getParcelableExtra(BatchFragment.Companion.getEXTRA_STOCK_BATCH());
             batchId = intent.getLongExtra(BatchFragment.Companion.getEXTRA_BATCH_ID(), 0);
         }
 
         if (option.equals(BatchFragment.Companion.getUPDATE())) {
 
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/YYYY");
-            String expDate = dateFormat.format(stockBatch.getBatch().getExpDate());
+            String expDate = dateFormat.format(itemBatch.getBatch().getExpDate());
 
-            actStockName.setText(stockBatch.getStock().getName());
+            actStockName.setText(itemBatch.getItem().getName());
 //            edtDate.setText(expDate);
-            edtAmount.setText(String.valueOf(stockBatch.getBatch().getTotalStock()));
-            edtCostPrice.setText(String.valueOf(stockBatch.getBatch().getOriginalPrice()));
-            edtSalePrice.setText(String.valueOf(stockBatch.getBatch().getSalePrice()));
+            edtAmount.setText(String.valueOf(itemBatch.getBatch().getQuantity()));
+            edtCostPrice.setText(String.valueOf(itemBatch.getBatch().getOriginalPrice()));
+            edtSalePrice.setText(String.valueOf(itemBatch.getBatch().getSalePrice()));
         }
 
         addNewAndUpdateBatchViewModel.getAllStockNames()

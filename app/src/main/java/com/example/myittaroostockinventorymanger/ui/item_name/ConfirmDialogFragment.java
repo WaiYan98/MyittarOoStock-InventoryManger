@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
+import com.example.myittaroostockinventorymanger.data.entities.Item;
 
 public class ConfirmDialogFragment extends DialogFragment {
 
@@ -27,7 +27,7 @@ public class ConfirmDialogFragment extends DialogFragment {
 
     private AlertDialog alertDialog;
     private Context context;
-    private Stock stock;
+    private Item item;
 
     private ConfirmDialogFragment() {
 
@@ -52,7 +52,7 @@ public class ConfirmDialogFragment extends DialogFragment {
         Bundle bundle = getArguments();
 
         if (bundle != null) {
-            stock = bundle.getParcelable(ItemNameFragment.EXTRA_DELETE);
+            item = bundle.getParcelable(ItemNameFragment.EXTRA_DELETE);
         }
 
         return alertDialog;
@@ -68,7 +68,7 @@ public class ConfirmDialogFragment extends DialogFragment {
 
         //to delete stock
         btnYes.setOnClickListener(v -> {
-            confirmDialogFragmentViewModel.deleteStock(stock);
+            confirmDialogFragmentViewModel.deleteStock(item);
             alertDialog.cancel();
         });
 
@@ -90,10 +90,10 @@ public class ConfirmDialogFragment extends DialogFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    public static ConfirmDialogFragment getNewInstance(String key, Stock stock) {
+    public static ConfirmDialogFragment getNewInstance(String key, Item item) {
         ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(key, stock);
+        bundle.putParcelable(key, item);
         confirmDialogFragment.setArguments(bundle);
         return confirmDialogFragment;
     }

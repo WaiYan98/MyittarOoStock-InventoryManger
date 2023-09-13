@@ -10,20 +10,20 @@ import java.util.*
 @Parcelize
 @Entity
 data class Batch(
-        @ColumnInfo(name = "stock_id")
-        var stockId: Long,
+    @ColumnInfo(name = "item_id")
+    var itemId: Long,
 
-        @ColumnInfo(name = "original_price")
-        var originalPrice: Double,
+    @ColumnInfo(name = "original_price")
+    var originalPrice: Double,
 
-        @ColumnInfo(name = "sale_price")
-        var salePrice: Double,
+    @ColumnInfo(name = "sale_price")
+    var salePrice: Double,
 
-        @ColumnInfo(name = "total_stock")
-        var totalStock: Int,
+    @ColumnInfo(name = "total_stock")
+    var quantity: Int,
 
-        @ColumnInfo(name = "exp_date")
-        var expDate: Date
+    @ColumnInfo(name = "exp_date")
+    var expDate: Date
 ) : Parcelable {
 
     @PrimaryKey(autoGenerate = true)

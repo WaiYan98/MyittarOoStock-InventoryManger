@@ -1,63 +1,62 @@
-package com.example.myittaroostockinventorymanger.data.local;
+package com.example.myittaroostockinventorymanger.data.local
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-import androidx.room.Update;
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.Item
+import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
+import com.example.myittaroostockinventorymanger.data.entities.Transaction
+import io.reactivex.Completable
+import io.reactivex.Observable
 
-import com.example.myittaroostockinventorymanger.data.entities.Batch;
-import com.example.myittaroostockinventorymanger.data.entities.Stock;
-import com.example.myittaroostockinventorymanger.data.entities.StockWithBatch;
-import com.example.myittaroostockinventorymanger.data.entities.Transaction;
-
-import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-
-@androidx.room.Dao
-public interface Dao {
-
+@Dao
+interface Dao {
     /**
-     * @param stock return type is void for testing;
-     *              Change completable later;
+     * @param item return type is void for testing;
+     * Change completable later;
      */
+    @Insert
+    fun insertItem(item: Item): Completable
 
     @Insert
-    Completable insertStock(Stock stock);
+    fun insertBatch(batch: Batch): Completable
 
     @Insert
-    Completable insertBatch(Batch batch);
+    fun insertTransaction(transaction: Transaction?): Completable
 
-    @Insert
-    Completable insertTransaction(Transaction transaction);
+    @Query("SELECT * FROM Item")
+    fun getAllItems(): LiveData<List<Item>>
 
-    @Query("SELECT * FROM Stock")
-    LiveData<List<Stock>> getAllStock();
-
+    @Query("SELECT * FROM Item")
     @androidx.room.Transaction
-    @Query("SELECT * FROM Stock")
-    LiveData<List<StockWithBatch>> getAllStockWithBatch();
+    fun getAllItemWithBatch(): LiveData<List<ItemWithBatch>>
 
     @Delete
-    Completable deleteStock(Stock stock);
+    fun deleteItem(item: Item): Completable
 
     @Update
-    Completable updateStockName(Stock stock);
+    fun updateItemName(item: Item): Completable
 
     @Update
-    Completable updateBatch(Batch batch);
+    fun updateBatch(batch: Batch): Completable
 
-    @Query("SElECT name FROM Stock")
-    LiveData<List<String>> getAllStockNames();
 
-    @Query("SELECT stock_id FROM Stock WHERE Stock.name = :stockName")
-    Observable<Long> findStockIdByName(String stockName);
+    @Query("SElECT name FROM Item")
+    fun getAllItemNames(): LiveData<List<String>>
+
+    @Query("SELECT item_id FROM Item WHERE Item.name = :itemName")
+    fun findItemIdByName(itemName: String): Observable<Long>
 
     @Query("DELETE FROM Batch WHERE batch_id IN(:ids)")
-    Completable deleteBatchesByIds(List<Long> ids);
+    fun deleteBatchesByIds(ids: List<Long>): Completable
 
-    @Query("DELETE FROM Stock WHERE stock_id IN(:ids)")
-    Completable deleteStocksByIds(List<Long> ids);
+    @Query("DELETE FROM Item WHERE item_id IN(:ids)")
+    fun deleteItemByIds(ids: List<Long>): Completable
+
+    @Query("SELECT * FROM Item Where name LIKE :queryText")
+    fun searchItems(queryText: String):LiveData<List<Item>>
 }
