@@ -14,5 +14,4 @@ data class Item(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "item_id")
     var itemId: Long = 0
-    var isSelected: Boolean = false
 }

@@ -1,107 +1,79 @@
-package com.example.myittaroostockinventorymanger.ui.item_name;
+package com.example.myittaroostockinventorymanger.ui.item_name
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
+import com.example.myittaroostockinventorymanger.Application
+import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.databinding.ConfirmDialogFragmentBinding
+import com.example.myittaroostockinventorymanger.event.Event
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
+class ConfirmDialogFragment : DialogFragment() {
 
-import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Item;
-
-public class ConfirmDialogFragment extends DialogFragment {
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var context: Context
+    private lateinit var selectedIdList: List<Long>
+    private lateinit var binding: ConfirmDialogFragmentBinding
+    private val arg: ConfirmDialogFragmentArgs by navArgs()
 
 
-    Button btnYes;
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val layoutInflater = layoutInflater
+        binding = ConfirmDialogFragmentBinding.inflate(layoutInflater, null, false)
+        val view = binding.root
 
-    Button btnNo;
+        context = Application.getContext()
+        selectedIdList = arg.selectedIdList.toList()
 
-    private AlertDialog alertDialog;
-    private Context context;
-    private Item item;
-
-    private ConfirmDialogFragment() {
-
+        alertDialog = AlertDialog.Builder(getContext())
+            .setView(view)
+            .create()
+        alertDialog.window
+            ?.setBackgroundDrawableResource(R.drawable.rounded_rectangle_white)
+        return alertDialog
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        LayoutInflater layoutInflater = getLayoutInflater();
-        View view = layoutInflater.inflate(R.layout.confirm_dialog_fragment, null, false);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val viewModel = ViewModelProvider(requireActivity())
+            .get(ConfirmDialogFragmentViewModel::class.java)
 
-        btnYes = view.findViewById(R.id.btn_yes);
-        btnNo = view.findViewById(R.id.btn_no);
+        //set num of delete item
+        viewModel.numOfDeleteItems(selectedIdList.size)
 
-        alertDialog = new AlertDialog.Builder(getContext())
-                .setView(view)
-                .create();
-
-        alertDialog.getWindow()
-                .setBackgroundDrawableResource(R.drawable.rounded_rectangle_white);
-
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            item = bundle.getParcelable(ItemNameFragment.EXTRA_DELETE);
-        }
-
-        return alertDialog;
-
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        ConfirmDialogFragmentViewModel confirmDialogFragmentViewModel = new ViewModelProvider(requireActivity())
-                .get(ConfirmDialogFragmentViewModel.class);
+        viewModel.getNumOfDeleteItem()
+            .observe(this) {
+                binding.txtTitle.text = it
+            }
 
         //to delete stock
-        btnYes.setOnClickListener(v -> {
-            confirmDialogFragmentViewModel.deleteStock(item);
-            alertDialog.cancel();
-        });
+        binding.btnYes.setOnClickListener { v: View ->
+            viewModel.checkIsValidDelete(selectedIdList)
+            alertDialog.cancel()
+        }
 
-        btnNo.setOnClickListener(v -> {
-            alertDialog.cancel();
-        });
+        binding.btnNo.setOnClickListener { v: View -> alertDialog.cancel() }
+
 
         //to show message
-        confirmDialogFragmentViewModel.getMessage()
-                .observe(getParentFragment().getViewLifecycleOwner(), m -> {
-
-                    String message = m.getContentIfNotHandle();
-
-                    if (message != null) {
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    public static ConfirmDialogFragment getNewInstance(String key, Item item) {
-        ConfirmDialogFragment confirmDialogFragment = new ConfirmDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(key, item);
-        confirmDialogFragment.setArguments(bundle);
-        return confirmDialogFragment;
-    }
-
-    //context for toast
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
+        viewModel.getMessage()
+            .observe(this) { m: Event<String> ->
+                val message = m.contentIfNotHandle
+                if (message != null) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 }

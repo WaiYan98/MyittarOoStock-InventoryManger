@@ -1,61 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linear_layout_stock_name"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linear_layout_stock_name"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_view_stock"
+        android:id="@+id/card_view_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/little_dark_white"
-        app:cardCornerRadius="10dp"
-        android:elevation="4dp"
         android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginEnd="@dimen/medium_margin"
-        android:layout_marginBottom="@dimen/medium_margin">
+        android:layout_marginBottom="@dimen/medium_margin"
+        android:elevation="4dp"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
+            android:id="@+id/linear_layout_item_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/card_view_selector"
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:layout_margin="@dimen/medium_margin"
                 app:cardBackgroundColor="@color/light_red"
-                app:cardCornerRadius="104dp"
-                android:layout_margin="@dimen/medium_margin">
+                app:cardCornerRadius="104dp">
 
                 <TextView
                     android:id="@+id/txt_name_initial_word"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="E"
                     android:textColor="@color/white"
-                    android:layout_gravity="center"
                     android:textSize="@dimen/medium_text_size"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </androidx.cardview.widget.CardView>
 
-           <FrameLayout
-               android:layout_width="match_parent"
-               android:layout_height="match_parent">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-               <TextView
-                   android:id="@+id/txt_stock_name"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center_vertical|start"
-                   android:text="Enervon-C"
-                   android:textColor="@color/black"
-                   android:textSize="@dimen/medium_text_size"
-                   android:textStyle="bold"
-                   android:layout_marginStart="@dimen/medium_margin"/>
+                <TextView
+                    android:id="@+id/txt_stock_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="@dimen/medium_margin"
+                    android:text="Enervon-C"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/medium_text_size"
+                    android:textStyle="bold" />
 
-           </FrameLayout>
+            </FrameLayout>
 
         </LinearLayout>
 

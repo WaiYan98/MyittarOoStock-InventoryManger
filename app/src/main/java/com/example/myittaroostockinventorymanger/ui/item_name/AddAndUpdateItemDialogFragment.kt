@@ -1,162 +1,118 @@
-package com.example.myittaroostockinventorymanger.ui.item_name;
+package com.example.myittaroostockinventorymanger.ui.item_name
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
+import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.data.entities.Item
+import com.example.myittaroostockinventorymanger.databinding.AddAndUpdateItemDialogFragmentBinding
+import com.example.myittaroostockinventorymanger.enum.Option
+import com.example.myittaroostockinventorymanger.event.Event
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
+class AddAndUpdateItemDialogFragment : DialogFragment() {
 
-import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Item;
-;
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var context: Context
+    private val addAndUpdateItemViewModel: AddAndUpdateItemViewModel by viewModels()
+    private lateinit var binding: AddAndUpdateItemDialogFragmentBinding
+    private val args: AddAndUpdateItemDialogFragmentArgs by navArgs()
+    private lateinit var item: Item
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val layoutInflater = LayoutInflater.from(getContext())
+        val view = layoutInflater.inflate(R.layout.add_and_update_item_dialog_fragment, null, false)
 
-public class AddAndUpdateItemDialogFragment extends DialogFragment {
+        binding = AddAndUpdateItemDialogFragmentBinding.bind(view)
 
-    TextView txtTitle;
-    EditText edtStockName;
-    Button btnSave;
-    Button btnCancel;
-
-    private String option;
-    private AddAndRenameItemViewModel addAndRenameItemViewModel;
-    private AlertDialog alertDialog;
-    private Context context;
-    private Item item;
-
-    private AddAndUpdateItemDialogFragment() {
-
+        alertDialog = AlertDialog.Builder(getContext())
+            .setView(view)
+            .create()
+        alertDialog.getWindow()!!.setBackgroundDrawableResource(R.drawable.rounded_rectangle_white)
+        return alertDialog
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        val itemId = args.itemId
 
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-        View view = layoutInflater.inflate(R.layout.item_dialog_fragment, null, false);
-
-        txtTitle = view.findViewById(R.id.txt_title);
-        edtStockName = view.findViewById(R.id.edt_stock_name);
-        btnSave = view.findViewById(R.id.btn_save);
-        btnCancel = view.findViewById(R.id.btn_cancel);
-
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-
-            option = bundle.getString(ItemNameFragment.EXTRA_OPTION);
-            item = bundle.getParcelable(ItemNameFragment.EXTRA_STOCK);
-        }
-
-        changeTitleAndBtn();
-
-        if (!option.equals(ItemNameFragment.ADD)) {
-            edtStockName.setText(item.getName());
-        }
-
-
-        alertDialog = new AlertDialog.Builder(getContext())
-                .setView(view)
-                .create();
-
-        alertDialog.getWindow().
-                setBackgroundDrawableResource(R.drawable.rounded_rectangle_white);
-
-        return alertDialog;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        addAndRenameItemViewModel = new ViewModelProvider(requireActivity())
-                .get(AddAndRenameItemViewModel.class);
-
-        btnSave.setOnClickListener(v -> {
-
-            String stockName = edtStockName.getText().toString();
-
-            if (option.equals(ItemNameFragment.ADD)) {
-                addAndRenameItemViewModel.onClickBtn(new Item(stockName), option);
-            } else {
-                this.item.setName(stockName);
-                addAndRenameItemViewModel.onClickBtn(this.item, option);
-            }
-        });
-
-        btnCancel.setOnClickListener(v -> {
-            alertDialog.cancel();
-        });
-
-        //add and rename stock to database
-        addAndRenameItemViewModel.getStock()
-                .observe(getParentFragment().getViewLifecycleOwner(), s -> {
-
-                    Item item = s.getContentIfNotHandle();
-                    String option = addAndRenameItemViewModel.getOption();
-
-                    if (item != null) {
-                        if (option.equals(ItemNameFragment.ADD)) {
-                            addAndRenameItemViewModel.insertStock(item);
-                        } else {
-                            addAndRenameItemViewModel.updateStockName(item);
-                        }
-                    }
-                    alertDialog.cancel();
-                });
-
-        //to show message update,added or error
-        addAndRenameItemViewModel.getMessage()
-                .observe(getParentFragment().getViewLifecycleOwner(), message -> {
-
-                    String notify = message.getContentIfNotHandle();
-
-                    if (notify != null) {
-                        Toast.makeText(context, notify, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-
-    public static AddAndUpdateItemDialogFragment getNewInstance(String key1, String key2,
-                                                                String option,
-                                                                Item itemForRename) {
-        AddAndUpdateItemDialogFragment addAndUpdateItemDialogFragment = new AddAndUpdateItemDialogFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(key1, option);
-        bundle.putParcelable(key2, itemForRename);
-        addAndUpdateItemDialogFragment.setArguments(bundle);
-        return addAndUpdateItemDialogFragment;
-    }
-
-    //change dialogFragment title and button
-    private void changeTitleAndBtn() {
-        if (option.equals(ItemNameFragment.ADD)) {
-            txtTitle.setText("Add New Stock Name");
-            btnSave.setText("Save");
+        val option = if (itemId > 0) {
+            // TODO: editing item
+            addAndUpdateItemViewModel.findItemById(itemId)
+            Option.UPDATE_ITEM
         } else {
-            txtTitle.setText("Rename the Stock");
-            btnSave.setText("Rename");
+            // TODO: add new item
+            Option.NEW_ITEM
         }
+
+        addAndUpdateItemViewModel.getItem()
+            .observe(this) {
+                binding.edtStockName.setText(it.name)
+                this.item = it
+            }
+
+
+        addAndUpdateItemViewModel.getIsValidItem
+            .observe(this) {
+
+                val item = it.contentIfNotHandle
+
+                if (item != null) {
+
+                    when (option) {
+
+                        Option.NEW_ITEM -> addAndUpdateItemViewModel.insertItem(item)
+
+                        else -> addAndUpdateItemViewModel.updateItemName(item)
+                    }
+
+                    alertDialog.dismiss()
+                }
+            }
+
+
+        binding.btnSave.setOnClickListener { v: View? ->
+            val itemName = binding.edtStockName.text.toString()
+
+            this.item = when (option) {
+
+                Option.NEW_ITEM -> Item(itemName)
+
+                else -> {
+                    this.item.name = itemName
+                    this.item
+                }
+            }
+
+            addAndUpdateItemViewModel.onClickDone(item)
+        }
+
+        binding.btnCancel.setOnClickListener { v: View? -> alertDialog.dismiss() }
+
+
+//        to show message update,added or error
+        addAndUpdateItemViewModel.getMessage()
+            .observe(this) { message: Event<String> ->
+                val notify = message.contentIfNotHandle
+                if (notify != null) {
+                    Toast.makeText(context, notify, Toast.LENGTH_SHORT).show()
+                }
+            }
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    //this need context for toast
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context
     }
 }

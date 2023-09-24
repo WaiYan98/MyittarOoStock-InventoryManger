@@ -57,6 +57,9 @@ interface Dao {
     @Query("DELETE FROM Item WHERE item_id IN(:ids)")
     fun deleteItemByIds(ids: List<Long>): Completable
 
-    @Query("SELECT * FROM Item Where name LIKE :queryText")
-    fun searchItems(queryText: String):LiveData<List<Item>>
+    @Query("SELECT * FROM Item WHERE name LIKE :queryText")
+    fun searchItems(queryText: String): LiveData<List<Item>>
+
+    @Query("SELECT * FROM Item WHERE item_id = :id")
+    fun getItemById(id: Long): LiveData<Item>
 }

@@ -12,7 +12,6 @@ public class LocalDataBaseService {
 
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(Application.getContext(), Database.class, "stock_db")
-                    .addMigrations(Database.MIGRATION_1_2)
                     .build();
         }
         return INSTANCE;

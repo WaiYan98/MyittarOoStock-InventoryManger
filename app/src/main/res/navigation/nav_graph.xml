@@ -12,8 +12,9 @@
         tools:layout="@layout/fragment_item_name">
 
         <action
-            android:id="@+id/action_itemNameFragment_to_addAndRenameItemDialogFragment"
-            app:destination="@id/add_and_rename_item_dialog_fragment" />
+            android:id="@+id/action_itemNameFragment_to_addAndUpdateItemDialogFragment"
+            app:destination="@id/add_and_update_item_dialog_fragment" />
+
 
         <action
             android:id="@+id/action_itemNameFragment_to_confirmDialogFragment"
@@ -22,26 +23,33 @@
     </fragment>
 
     <dialog
-        android:id="@+id/add_and_rename_item_dialog_fragment"
+        android:id="@+id/add_and_update_item_dialog_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.item_name.AddAndUpdateItemDialogFragment"
         android:label="@string/add_and_rename_dialog"
-        tools:layout="@layout/item_dialog_fragment">
+        tools:layout="@layout/add_and_update_item_dialog_fragment">
 
-        <action
-            android:id="@+id/action_addAndRenameItemDialogFragment_To_itemNameFragment"
-            app:destination="@id/item_name_fragment" />
+        <argument
+            android:name="itemId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+
 
     </dialog>
 
     <dialog
         android:id="@+id/confirm_dialog_fragment"
-        android:name="com.example.myittaroostockinventorymanger.ui.ConfirmDialog"
+        android:name="com.example.myittaroostockinventorymanger.ui.item_name.ConfirmDialogFragment"
         android:label="@string/confirm_dialog"
         tools:layout="@layout/confirm_dialog_fragment">
 
         <action
             android:id="@+id/action_confirmDialogFragment_to_itemNameFragment"
             app:destination="@id/item_name_fragment" />
+
+        <argument
+            android:name="selected_id_list"
+            app:argType="long[]"
+            app:nullable="false"/>
 
     </dialog>
 

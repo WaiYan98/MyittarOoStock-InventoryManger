@@ -64,4 +64,8 @@ class Repository {
     fun searchItems(queryText: String): LiveData<List<Item>> {
         return dao.searchItems(queryText)
     }
+
+    fun getItemById(id: Long): LiveData<Item> {
+        return dao.getItemById(id)
+    }
 }

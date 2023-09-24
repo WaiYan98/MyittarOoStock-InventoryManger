@@ -1,193 +1,169 @@
-package com.example.myittaroostockinventorymanger.ui.item_name;
+package com.example.myittaroostockinventorymanger.ui.item_name
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.content.Context
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myittaroostockinventorymanger.Application
+import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.data.entities.Item
+import java.util.Locale
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAdapter.ViewHolder>() {
+    private val context: Context
+    private var itemList: List<Item> = listOf()
+    private lateinit var callBack: CallBack
+    private var isSelectedMode = false
+    private var selectedItemIdList: MutableList<Long> = ArrayList()
+    private var itemPosition: MutableList<Int> = mutableListOf()
 
-import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.Item;
-
-import java.util.ArrayList;
-import java.util.List;
-public class ItemNameRecycleViewAdapter extends RecyclerView.Adapter<ItemNameRecycleViewAdapter.ViewHolder> {
-
-    private List<Item> itemList;
-    private Context context;
-    private CallBack callBack;
-    private boolean isSelectedMode = false;
-    private List<Long> selectedStockIdList = new ArrayList<>();
-
-    public void setCallBack(CallBack callBack) {
-        this.callBack = callBack;
+    init {
+        context = Application.getContext()
     }
 
-    public ItemNameRecycleViewAdapter(Context context, List<Item> itemList) {
-        this.context = context;
-        this.itemList = itemList;
+    fun setCallBack(callBack: CallBack) {
+        this.callBack = callBack
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_stock_name, parent, false);
-        return new ViewHolder(view);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view = layoutInflater.inflate(R.layout.item_stock_name, parent, false)
+        return ViewHolder(view)
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Item currentItem = itemList.get(position);
-        String initialWord = Character.toString(currentItem.getName().charAt(0)).
-                toUpperCase();
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentItem = itemList[position]
+        val initialWord = currentItem.name[0].toString().uppercase(Locale.getDefault())
+        holder.txtStockName.text = currentItem.name
 
-        holder.txtStockName.setText(currentItem.getName());
+        holder.linearLayoutItemName.setOnLongClickListener { v: View? ->
+            isSelectedMode = true
+            checkSelectAndUnselectItem(currentItem, holder, position)
+            callBack.onLongClickItem()
+            callBack.onClickItem(selectedItemIdList)
+            holder.linearLayoutItemView.isSelected = selectedItemIdList.contains(currentItem.itemId)
 
-        holder.linearLayoutStockName.setOnLongClickListener(v -> {
-            isSelectedMode = true;
-            callBack.onLongClickItem();
-            return true;
-        });
+            if (selectedItemIdList.size == 1) {
+                callBack.onSelectedItemIsOne(currentItem)
+            }
+            true
+        }
 
-        holder.linearLayoutStockName.setOnClickListener(v -> {
+        holder.linearLayoutItemName.setOnClickListener { v: View? ->
             if (isSelectedMode) {
                 //For test
-                itemAddToSelectedList(currentItem);
-                callBack.onClickItem(selectedStockIdList);
+                checkSelectAndUnselectItem(currentItem, holder, position)
+                callBack.onClickItem(selectedItemIdList)
+                holder.linearLayoutItemView.isSelected =
+                    selectedItemIdList.contains(currentItem.itemId)
+                if (selectedItemIdList.size == 1) {
+//solve for selected many items and rename it left one item
+                        val item = itemList[itemPosition[0]]
 
-                if (selectedStockIdList.size() == 1) {
-                    callBack.onSelectedItemIsOne(currentItem);
+                        callBack.onSelectedItemIsOne(item)
+
+                        Log.d("tag", "onBindViewHolder: $itemPosition,$item")
+
                 }
-
-                notifyItemChanged(position);
-            }
-        });
-
-        holder.txtNameInitialWord.setText(initialWord);
-
-        stockBackgroundColorChange(currentItem, holder);
-    }
-
-    private void itemAddToSelectedList(Item currentItem) {
-
-        long stockId = currentItem.getItemId();
-
-        if (!selectedStockIdList.contains(stockId)) {
-            currentItem.setSelected(true);
-            selectedStockIdList.add(stockId);
-        } else {
-            currentItem.setSelected(false);
-            selectedStockIdList.remove(stockId);
-        }
-
-    }
-
-    public void onClickSelectAll() {
-
-        Boolean isSelectedAll = false;
-
-        for (Item item : itemList) {
-
-            if (item.isSelected()) {
-                isSelectedAll = true;
-            } else {
-                isSelectedAll = false;
-                break;
+                notifyItemChanged(position)
             }
         }
 
-        if (isSelectedAll) {
-            selectedStockIdList.clear();
-            importSelectedFalse();
+        holder.linearLayoutItemView.isSelected = selectedItemIdList.contains(currentItem.itemId)
+
+        holder.txtNameInitialWord.text = initialWord
+
+        holder.linearLayoutItemView.isSelected
+    }
+
+
+    /*
+    check selectedItemIdList contain this
+     @param currentItem
+     @param holder
+    If not have this id in this list add currentIte.itemId to selectedItemIdList
+    If contain remove form list.
+     */
+    private fun checkSelectAndUnselectItem(
+        currentItem: Item,
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val itemId = currentItem.itemId
+        if (!selectedItemIdList.contains(itemId)) {
+            selectedItemIdList.add(itemId)
+            itemPosition.add(position)
+
+            Log.d("tag", "checkSelectAndUnselectItem: select $itemId $selectedItemIdList")
         } else {
-            insertAllStockIds();
-            importSelectedTrue();
-        }
-        callBack.onClickItem(selectedStockIdList);
-        notifyDataSetChanged();
-    }
-
-    private void insertAllStockIds() {
-
-        selectedStockIdList.clear();
-
-        for (Item item : itemList) {
-            selectedStockIdList.add(item.getItemId());
+            selectedItemIdList.remove(itemId)
+            itemPosition.remove(position)
+            Log.d("tag", "checkSelectAndUnselectItem: deselect $itemId $selectedItemIdList")
         }
     }
 
-    public void contextualActionBarClose() {
-        selectedStockIdList.clear();
-        isSelectedMode = false;
-        importSelectedFalse();
-        notifyDataSetChanged();
-    }
 
-    private void importSelectedFalse() {
-        for (Item item : itemList) {
-            item.setSelected(false);
-        }
-    }
+    fun onClickSelectAll() {
+        val itemIdList = itemList.itemToIdList()
 
-    private void importSelectedTrue() {
-        for (Item item : itemList) {
-            item.setSelected(true);
-        }
-    }
-
-    private void stockBackgroundColorChange(Item item, ViewHolder holder) {
-
-        if (item.isSelected()) {
-            holder.cardViewStock.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
+        if (itemIdList == selectedItemIdList) {
+            selectedItemIdList.clear()
         } else {
-            holder.cardViewStock.setBackgroundColor(ContextCompat.getColor(context, R.color.little_dark_white));
+            selectedItemIdList = itemIdList as MutableList<Long>
         }
+
+        callBack.onClickItem(selectedItemIdList)
+        notifyDataSetChanged()
     }
 
-    @Override
-    public int getItemCount() {
-        return itemList.size();
+    fun contextualActionBarClose() {
+        selectedItemIdList.clear()
+        itemPosition.clear()
+        isSelectedMode = false
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return itemList.size
     }
 
     /**
      * @param itemList To update data by observer
      */
-    public void insertItem(List<Item> itemList) {
-        this.itemList.clear();
-        this.itemList.addAll(itemList);
-        notifyDataSetChanged();
+    fun insertItem(itemList: List<Item>) {
+        this.itemList = itemList
+        notifyDataSetChanged()
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var linearLayoutItemName: LinearLayout
+        var cardViewItem: CardView
+        var txtStockName: TextView
+        var txtNameInitialWord: TextView
+        var linearLayoutItemView: LinearLayout
 
-        LinearLayout linearLayoutStockName;
-        CardView cardViewStock;
-        TextView txtStockName;
-        TextView txtNameInitialWord;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            linearLayoutStockName = itemView.findViewById(R.id.linear_layout_stock_name);
-            cardViewStock = itemView.findViewById(R.id.card_view_stock);
-            txtStockName = itemView.findViewById(R.id.txt_stock_name);
-            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word);
+        init {
+            linearLayoutItemName = itemView.findViewById(R.id.linear_layout_stock_name)
+            cardViewItem = itemView.findViewById(R.id.card_view_item)
+            txtStockName = itemView.findViewById(R.id.txt_stock_name)
+            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word)
+            linearLayoutItemView = itemView.findViewById(R.id.linear_layout_item_view)
         }
     }
 
-    public interface CallBack {
-
-        void onLongClickItem();
-
-        void onClickItem(List<Long> selectedStockIdList);
-
-        void onSelectedItemIsOne(Item item);
+    private fun List<Item>.itemToIdList(): List<Long> = this.map {
+        it.itemId
     }
 
+    interface CallBack {
+        fun onLongClickItem()
+        fun onClickItem(selectedStockIdList: List<Long>)
+        fun onSelectedItemIsOne(item: Item)
+    }
 }

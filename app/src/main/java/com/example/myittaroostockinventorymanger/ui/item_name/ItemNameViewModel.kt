@@ -18,6 +18,7 @@ import java.util.stream.Collectors
 
 class ItemNameViewModel : ViewModel() {
     private var mutItemList: LiveData<List<Item>>
+    private var searchItems: LiveData<List<Item>>
     private val message: MutableLiveData<Event<String?>>
     private val isLoading: MutableLiveData<Boolean>
     private val mutFilterNames: MutableLiveData<List<Item>>
@@ -26,7 +27,6 @@ class ItemNameViewModel : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private val isShowRenameButton: MutableLiveData<Boolean>
     private val isValidDelete: MutableLiveData<Boolean>
-    private var searchItems: LiveData<List<Item>>
 
     init {
         mutItemList = MutableLiveData()
@@ -60,22 +60,6 @@ class ItemNameViewModel : ViewModel() {
         return isLoading
     }
 
-    //for SearchView to find Name
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    fun filterName(itemList: List<Item>, text: String) {
-        val resultList = itemList.stream()
-            .filter { (name): Item ->
-                name.uppercase(Locale.getDefault()).startsWith(
-                    text.uppercase(
-                        Locale.getDefault()
-                    )
-                )
-            }
-            .collect(Collectors.toList())
-        mutFilterNames.value = resultList
-    }
-
-    fun filterNames(): LiveData<List<Item>> = mutFilterNames
 
     override fun onCleared() {
         super.onCleared()
@@ -128,12 +112,10 @@ class ItemNameViewModel : ViewModel() {
     }
 
     // TODO: repair and check for issue
-    fun searchItemsFromDb(queryText: String) {
+    fun searchItemsFromDb(queryText: String): LiveData<List<Item>> {
         Log.d("tag", "searchItemsFromDb: $queryText")
-        this.searchItems = repository.searchItems(queryText)
+        return repository.searchItems(queryText)
     }
 
-    fun getSearchItems(): LiveData<List<Item>> {
-        return searchItems
-    }
+    fun getSearchItems() = searchItems
 }
