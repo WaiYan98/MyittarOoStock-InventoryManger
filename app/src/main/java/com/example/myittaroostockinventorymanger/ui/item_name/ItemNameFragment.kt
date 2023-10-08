@@ -2,8 +2,6 @@ package com.example.myittaroostockinventorymanger.ui.item_name
 
 import android.os.Bundle
 import android.view.ActionMode
-import android.view.ContextThemeWrapper
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -25,18 +23,12 @@ import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.databinding.FragmentItemNameBinding
 import com.example.myittaroostockinventorymanger.event.Event
-import com.example.myittaroostockinventorymanger.ui.ConfirmDialog
-import com.example.myittaroostockinventorymanger.ui.ConfirmDialog.Companion.getNewInstance
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 
-class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, ConfirmDialog.CallBack,
+class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
     MenuProvider {
     private lateinit var toolbar: Toolbar
-    private lateinit var searchView: SearchView
     private lateinit var adapter: ItemNameRecycleViewAdapter
-    private lateinit var addAndUpdateItemDialogFragment: AddAndUpdateItemDialogFragment
-    private lateinit var popupMenu: PopupMenu
-    private var itemList: List<Item> = ArrayList()
     private lateinit var item: Item
     private var selectItemIdList: List<Long> = ArrayList()
     private lateinit var actionMode: ActionMode
@@ -48,7 +40,7 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentItemNameBinding.inflate(inflater, container, false)
         toolbar = requireActivity().findViewById(R.id.tool_bar_main)
 
@@ -59,18 +51,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                return false
-//            }
-//
-//            @RequiresApi(api = Build.VERSION_CODES.N)
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                viewModel.filterName(itemList, newText)
-//                return false
-//            }
-//        })
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -105,23 +85,12 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
 
         binding.refresh.setOnRefreshListener { viewModel.loadItems() }
 
-//        //Search View Find Name list insert to recycleView adapter
-//        viewModel.filterNames()
-//            .observe(viewLifecycleOwner)
-//            { itemList: List<Item?>? ->
-//                adapter.insertItem(
-//                    itemList
-//                )
-//            }
-
-        //to add new Stock
+        //to add new Item
         binding.fabAddItem.setOnClickListener {
             val action =
                 ItemNameFragmentDirections.actionItemNameFragmentToAddAndUpdateItemDialogFragment()
             findNavController().navigate(action)
-//            showAddAndRenameStockDialogFragment(
-//                ADD, null
-//            )
+
         }
 
         viewModel.getContextualActionBarTitle()
@@ -130,16 +99,8 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
 
         viewModel.isShowRenameButton()
             .observe(viewLifecycleOwner)
-            { isShow: Boolean? ->
-                actionMode.menu.findItem(R.id.edit).isVisible = isShow!!
-            }
-
-        viewModel.getIsValidDelete()
-            .observe(viewLifecycleOwner)
-            { isValidDelete: Boolean ->
-                if (isValidDelete) {
-                    showConfirmDialog()
-                }
+            { isShow: Boolean ->
+                actionMode.menu.findItem(R.id.edit).isVisible = isShow
             }
     }
 
@@ -149,39 +110,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
         binding.recyStockName.adapter = adapter
         binding.recyStockName.layoutManager = LinearLayoutManager(context)
         binding.recyStockName.addItemDecoration(VerticalSpaceItemDecoration(8))
-    }
-
-//    private fun showAddAndRenameStockDialogFragment(option: String, itemForRename: Item?) {
-//        addAndUpdateItemDialogFragment = AddAndUpdateItemDialogFragment.getNewInstance(
-//            EXTRA_OPTION, EXTRA_STOCK,
-//            option, itemForRename
-//        )
-//        addAndUpdateItemDialogFragment.show(childFragmentManager, "")
-//    }
-
-    //show popup menu for rename and delete
-    private fun createPopupMenu(v: View) {
-        val contextThemeWrapper = ContextThemeWrapper(context, R.style.PopupMenuOverlapAnchor)
-        popupMenu = PopupMenu(contextThemeWrapper, v, Gravity.END)
-        popupMenu.inflate(R.menu.contexual_menu)
-        popupMenu.show()
-    }
-
-    private fun popupMenuItemClick() {
-
-//        popupMenu.setOnMenuItemClickListener(item -> {
-//
-//            switch (item.getItemId()) {
-//                case R.id.rename:
-//                    // TODO: 2/27/2022 repair rename fun
-//                    showAddAndRenameStockDialogFragment(RENAME, stock);
-//                    break;
-//                case R.id.delete:
-//
-//                    break;
-//            }
-//            return false;
-//        });
     }
 
     private val callBack: ActionMode.Callback
@@ -196,19 +124,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
             }
 
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-
-//                switch (item.getItemId()) {
-//                    case R.id.select_all:
-//                        adapter.onClickSelectAll();
-//                        break;
-//                    case R.id.edit:
-//                        showAddAndRenameStockDialogFragment(RENAME, stock);
-//                        break;
-//                    case R.id.delete:
-//                        viewModel.isValidDelete(selectStockIdList);
-//                        break;
-////
-////                }
 
                 when (item.itemId) {
 
@@ -238,12 +153,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
             }
         }
 
-    private fun showConfirmDialog() {
-        val confirmDialog = getNewInstance(EXTRA_NUM_OF_STOCK, selectItemIdList.size)
-        confirmDialog.setCallBack(this)
-        confirmDialog.setKey(EXTRA_NUM_OF_STOCK)
-        confirmDialog.show(childFragmentManager, "")
-    }
 
     override fun onLongClickItem() {
         actionMode = requireActivity().startActionMode(callBack)!!
@@ -266,20 +175,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack, Confir
         if (selectedStockIdList.isEmpty()) {
             actionMode.finish()
         }
-    }
-
-    override fun onClickedYes() {
-        viewModel.deleteStocks(selectItemIdList, actionMode)
-    }
-
-
-    companion object {
-        const val ADD = "ADD"
-        const val RENAME = "RENAME"
-        const val EXTRA_OPTION = "EXTRA_OPTION"
-        const val EXTRA_STOCK = "EXTRA_STOCK"
-        const val EXTRA_DELETE = "EXTRA_DELETE"
-        const val EXTRA_NUM_OF_STOCK = "EXTRA_NUM_OF_STOCK"
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

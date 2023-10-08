@@ -86,30 +86,6 @@ class ItemNameViewModel : ViewModel() {
         return isShowRenameButton
     }
 
-    fun deleteStocks(selectStockIdList: List<Long>, actionMode: ActionMode) {
-        val disposable = repository.deleteItemsById(selectStockIdList)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                message.value = Event<String?>("Deleted ${selectStockIdList.size} items")
-                actionMode.finish()
-            }) { error: Throwable -> error.printStackTrace() }
-
-        compositeDisposable.add(disposable)
-    }
-
-    fun isValidDelete(selectStockIdList: List<Long?>) {
-        if (!selectStockIdList.isEmpty()) {
-            isValidDelete.setValue(true)
-        } else {
-            isValidDelete.value = false
-            message.setValue(Event<String?>("Please select item"))
-        }
-    }
-
-    fun getIsValidDelete(): LiveData<Boolean> {
-        return isValidDelete
-    }
 
     // TODO: repair and check for issue
     fun searchItemsFromDb(queryText: String): LiveData<List<Item>> {

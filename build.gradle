@@ -8,3 +8,7 @@ plugins {
     id 'org.jetbrains.kotlin.kapt' version '1.9.10' apply false
     id 'androidx.navigation.safeargs.kotlin' version '2.7.1' apply false
 }
+
+ext {
+    mockitoKotlinVersion = '5.1.0'
+}

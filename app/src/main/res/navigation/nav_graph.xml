@@ -60,17 +60,17 @@
         tools:layout="@layout/fragment_batch">
 
         <action
-            android:id="@+id/action_batchFragment_to_addAndUpdateBatchActivity"
+            android:id="@+id/action_batchFragment_to_addAndUpdateBatchFragment"
             app:destination="@id/add_and_update_batch_activity" />
         />
 
     </fragment>
 
-    <activity
+    <fragment
         android:id="@+id/add_and_update_batch_activity"
-        android:name="com.example.myittaroostockinventorymanger.ui.batch.AddNewAndUpdateBatchActivity"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.AddAndUpdateBatchFragment"
         android:label="Add and Update Batch"
-        tools:layout="@layout/activity_add_new_item" />
+        tools:layout="@layout/fragment_add_and_update_batch" />
 
     <fragment
         android:id="@+id/transaction_fragment"

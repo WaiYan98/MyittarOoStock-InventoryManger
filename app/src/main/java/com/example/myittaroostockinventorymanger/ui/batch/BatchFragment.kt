@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myittaroostockinventorymanger.ui.ConfirmDialog
 import com.example.myittaroostockinventorymanger.R
@@ -16,7 +17,6 @@ import com.example.myittaroostockinventorymanger.databinding.FragmentBatchBindin
 import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
-import com.google.android.material.appbar.MaterialToolbar
 
 class BatchFragment : Fragment(),
     BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack {
@@ -81,8 +81,7 @@ class BatchFragment : Fragment(),
 //        })
 
         binding.fabAddBatch.setOnClickListener {
-
-            goToAddNewAndUpdateBatchActivity(ADD_NEW, null, 0)
+            findNavController().navigate(BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment())
         }
 
         batchViewModel.getAllStockWithBatches()
@@ -147,7 +146,7 @@ class BatchFragment : Fragment(),
         itemBatch: ItemBatch?,
         batchId: Long
     ) {
-        val intent: Intent = Intent(context, AddNewAndUpdateBatchActivity::class.java)
+        val intent: Intent = Intent(context, AddAndUpdateBatchFragment::class.java)
         intent.putExtra(EXTRA_OPTION, option)
         intent.putExtra(EXTRA_STOCK_BATCH, itemBatch)
         intent.putExtra(EXTRA_BATCH_ID, batchId)

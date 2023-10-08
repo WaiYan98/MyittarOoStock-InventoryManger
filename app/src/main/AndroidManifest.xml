@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyittarOoStockInventoryManger">
-        <activity android:name=".ui.batch.AddNewAndUpdateBatchActivity" />
+        <activity android:name=".ui.batch.AddAndUpdateBatchFragment" />
         <activity android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
