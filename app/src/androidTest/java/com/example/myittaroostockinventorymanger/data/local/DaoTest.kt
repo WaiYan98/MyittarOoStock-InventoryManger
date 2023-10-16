@@ -1,7 +1,6 @@
 package com.example.myittaroostockinventorymanger.data.local
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.map
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
@@ -110,6 +109,8 @@ class DaoTest {
         dao.insertItem(item2).test().assertComplete()
 
         val itemNameList = dao.getAllItemNames().getOrAwaitValue()
+        assertThat(itemNameList).contains(item1.name)
+        assertThat(itemNameList).contains(item2.name)
         assertThat(itemNameList.size).isEqualTo(2)
     }
 
@@ -172,5 +173,22 @@ class DaoTest {
         val itemList = dao.getAllItems().getOrAwaitValue()
         val item = dao.getItemById(itemList[0].itemId).getOrAwaitValue()
         assertThat(item).isEqualTo(item1)
+    }
+
+    @Test
+    fun test_findItemWithBatchById() {
+
+        val item = Item("halogen")
+        val batch = Batch(1, 100.0, 200.0, 10, Date())
+        item.itemId = 1
+        batch.batchId = 1
+
+        dao.insertItem(item).test().assertComplete()
+        dao.insertBatch(batch).test().assertComplete()
+
+        val batchWithItem = dao.findItemWithBatchById(batch.batchId).getOrAwaitValue()
+
+        assertThat(batchWithItem.item).isEqualTo(item)
+        assertThat(batchWithItem.batch).isEqualTo(batch)
     }
 }

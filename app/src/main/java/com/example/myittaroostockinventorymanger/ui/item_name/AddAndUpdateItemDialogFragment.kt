@@ -108,6 +108,7 @@ class AddAndUpdateItemDialogFragment : DialogFragment() {
                     Toast.makeText(context, notify, Toast.LENGTH_SHORT).show()
                 }
             }
+
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

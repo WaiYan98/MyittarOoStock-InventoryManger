@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
@@ -62,4 +63,8 @@ interface Dao {
 
     @Query("SELECT * FROM Item WHERE item_id = :id")
     fun getItemById(id: Long): LiveData<Item>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM Batch WHERE batch_id=:id ")
+    fun findItemWithBatchById(id: Long): LiveData<BatchWithItem>
 }

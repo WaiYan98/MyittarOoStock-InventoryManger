@@ -1,66 +1,127 @@
 package com.example.myittaroostockinventorymanger.ui.batch
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.example.myittaroostockinventorymanger.Application
 import com.example.myittaroostockinventorymanger.R
-import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
-import com.example.myittaroostockinventorymanger.event.Event
-import com.example.myittaroostockinventorymanger.ui.MainActivity
-import com.example.myittaroostockinventorymanger.ui.batch.BatchFragment.Companion.EXTRA_BATCH_ID
-import com.example.myittaroostockinventorymanger.ui.batch.BatchFragment.Companion.EXTRA_OPTION
-import com.example.myittaroostockinventorymanger.ui.batch.BatchFragment.Companion.EXTRA_STOCK_BATCH
-import com.example.myittaroostockinventorymanger.ui.batch.BatchFragment.Companion.UPDATE
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.textfield.TextInputLayout
-import java.text.DateFormat
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
+import com.example.myittaroostockinventorymanger.databinding.FragmentAddAndUpdateBatchBinding
+import com.example.myittaroostockinventorymanger.enum.Option
+import com.example.myittaroostockinventorymanger.util.TextWatcherTest
 import java.text.SimpleDateFormat
 
-class AddAndUpdateBatchFragment : Fragment() {
+class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
 
-    private lateinit var toolBar: MaterialToolbar
-    private lateinit var actStockName: AutoCompleteTextView
-//    var edtAmount: EditText
-//    var edtCostPrice: EditText
-//    var edtSalePrice: EditText
-//    var txtInputLayout: TextInputLayout
+    //    var txtInputLayout: TextInputLayout
 //    private var addNewAndUpdateBatchViewModel: AddNewAndUpdateBatchViewModel
 //    private val stockNameList: List<String> = ArrayList()
-//    private var option: String
-//    private var itemBatch: ItemBatch
-//    private var batchId: Long
+    private lateinit var binding: FragmentAddAndUpdateBatchBinding
+    private val args: AddAndUpdateBatchFragmentArgs by navArgs()
+    private val viewModel: AddNewAndUpdateBatchViewModel by viewModels()
+    private var option: String = ""
+    private var batchId: Long = 0
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_add_and_update_batch, container, false)
+    ): View {
 
-        return view
+        binding = FragmentAddAndUpdateBatchBinding.inflate(inflater, container, false)
 
-
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        batchId = args.batchId
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        viewModel.checkInsertOrUpdateBatch(batchId)
+
+        viewModel.getAllItemNames()
+            ?.observe(viewLifecycleOwner) {
+                Log.d("tag", "onViewCreated: $it ")
+                setUpAutoCompleteTextView(it)
+            }
+
+        //Todo consider something possible things
+        viewModel.getOption()
+            .observe(viewLifecycleOwner) {
+                if (it.equals(Option.UPDATE_ITEM.name)) {
+                    viewModel.findBatchWithItemById(batchId)
+                }
+                option = it
+            }
+
+
+        viewModel.existingBatch
+            .observe(viewLifecycleOwner) {
+                populateData(it)
+                Log.d("tag", "onViewCreated: ${it.batch.batchId}")
+            }
+
+        viewModel.isReturnBack()
+            .observe(viewLifecycleOwner) {
+                val notify = it.contentIfNotHandle
+
+                if (notify != null) {
+                    if (notify) {
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+
+        viewModel.getMessage()
+            .observe(viewLifecycleOwner) {
+                val notify = it.contentIfNotHandle
+                if (notify != null) {
+                    Toast.makeText(Application.getContext(), notify, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        TextWatcherTest(binding.edtDate)
+
+
+//        binding.actItemName.setOnTouchListener(OnTouchListener { v: View, motion: MotionEvent ->
+//            binding.actItemName.showDropDown()
+//            false
+//        })
+
     }
 
+    private fun populateData(batchWithItem: BatchWithItem) {
+        val dateFormat = SimpleDateFormat("dd/MM/YYYY")
+        val batch = batchWithItem.batch
+        val item = batchWithItem.item
+        val expDate = dateFormat.format(batch.expDate)
+        binding.actItemName.setText(item.name)
+        binding.edtDate.setText(expDate)
+        binding.edtQuantity.setText(batch.quantity.toString())
+        binding.edtCostPrice.setText(batch.originalPrice.toString())
+        binding.edtSalePrice.setText(batch.salePrice.toString())
+    }
 
-        //test
+//test
 //        edtDate.listen();
 
 
@@ -117,17 +178,38 @@ class AddAndUpdateBatchFragment : Fragment() {
 //            })
 
 
-    //AutoCompleteTextView for stock name
-//    private fun setUpAutoCompleteTextView(stockNameList: List<String>) {
-//        val adapter = ArrayAdapter(
-//            this,
-//            R.layout.simple_drop_down_layout, R.id.txt_name, stockNameList
-//        )
-//        actStockName!!.setAdapter(adapter)
-//    }
+    //AutoCompleteTextView for item name
+    private fun setUpAutoCompleteTextView(itemNameList: List<String>) {
+        val adapter = ArrayAdapter(
+            Application.getContext(),
+            R.layout.simple_drop_down_layout,
+            R.id.txt_name,
+            itemNameList
+        )
+        //type first char show drop down
+        binding.actItemName.threshold = 1
+        binding.actItemName.setAdapter(adapter)
+    }
 
-//    private fun setUpViewModel() {
-//        addNewAndUpdateBatchViewModel = ViewModelProvider(this)
-//            .get(AddNewAndUpdateBatchViewModel::class.java)
-//    }
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.add_new_item_app_bar, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+        // todo for test
+        when (menuItem.itemId) {
+            R.id.save -> viewModel.onClickSave(
+                option,
+                batchId,
+                binding.actItemName,
+                binding.edtDate,
+                binding.edtQuantity,
+                binding.edtCostPrice,
+                binding.edtSalePrice,
+                true
+            )
+        }
+        return false
+    }
 }

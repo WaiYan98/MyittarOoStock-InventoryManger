@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class ItemBatch(
     var item: Item,
     var batch: Batch,
-    var isSelected: Boolean
+    var isSelected:Boolean = true
 ) : Parcelable

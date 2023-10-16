@@ -8,10 +8,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -27,7 +25,6 @@ import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoratio
 
 class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
     MenuProvider {
-    private lateinit var toolbar: Toolbar
     private lateinit var adapter: ItemNameRecycleViewAdapter
     private lateinit var item: Item
     private var selectItemIdList: List<Long> = ArrayList()
@@ -42,7 +39,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentItemNameBinding.inflate(inflater, container, false)
-        toolbar = requireActivity().findViewById(R.id.tool_bar_main)
 
         setUpRecycleView()
         return binding.root
@@ -152,7 +148,6 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
                 adapter.contextualActionBarClose()
             }
         }
-
 
     override fun onLongClickItem() {
         actionMode = requireActivity().startActionMode(callBack)!!

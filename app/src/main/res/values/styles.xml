@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">
         <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
         <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
         <item name="background">@color/material_grey_900</item>
+    </style>
+
+    <style name="HintTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/light_red</item>
+        <item name="android:textSize">10sp</item>
     </style>
 </resources>

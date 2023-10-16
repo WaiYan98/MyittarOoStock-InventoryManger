@@ -4,10 +4,12 @@ import android.view.ActionMode
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.data.repository.Repository
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers.io
 
@@ -40,7 +42,8 @@ class BatchViewModel : ViewModel() {
 
     fun searchBatchByName(itemBatchList: List<ItemBatch>, newText: String) {
 
-        val resultList = itemBatchList.filter { it.item.name.startsWith(newText, ignoreCase = true) }
+        val resultList =
+            itemBatchList.filter { it.item.name.startsWith(newText, ignoreCase = true) }
 
         searchBatchResultList.value = resultList
     }
@@ -81,14 +84,14 @@ class BatchViewModel : ViewModel() {
 
     fun deleteBatches(batchesIdList: List<Long>, actionMode: ActionMode) {
         val disposable = repository.deleteBatchesById(batchesIdList)
-                .subscribeOn(io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    message.value = Event("Delete ${batchesIdList.size} Items ")
-                    actionMode.finish()
-                }) {
-                    it.printStackTrace()
-                }
+            .subscribeOn(io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                message.value = Event("Delete ${batchesIdList.size} Items ")
+                actionMode.finish()
+            }) {
+                it.printStackTrace()
+            }
     }
 
     fun showRenameButton(num: Int) {
@@ -99,6 +102,11 @@ class BatchViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+    }
+
+    //for test
+    fun insertBatch(batch: Batch): Completable {
+        return repository.insertBatch(batch)
     }
 
 }

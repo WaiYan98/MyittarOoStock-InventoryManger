@@ -21,7 +21,7 @@ import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoratio
 class BatchFragment : Fragment(),
     BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack {
 
-    private lateinit var itemBatch: ItemBatch
+    private var batchId: Long = 0
     private lateinit var selectedBatchIdList: MutableList<Long>
     private lateinit var searchView: SearchView
 
@@ -79,6 +79,28 @@ class BatchFragment : Fragment(),
 //                return false
 //            }
 //        })
+
+//        val batch1 = Batch(1, 200.0, 300.0, 10, Date())
+//        val batch2 = Batch(2, 200.0, 300.0, 10, Date())
+//        val batch3 = Batch(4, 200.0, 300.0, 10, Date())
+//        batchViewModel.insertBatch(batch1)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//
+//            }
+//        batchViewModel.insertBatch(batch2)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//
+//            }
+//        batchViewModel.insertBatch(batch3)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//
+//            }
 
         binding.fabAddBatch.setOnClickListener {
             findNavController().navigate(BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment())
@@ -176,11 +198,12 @@ class BatchFragment : Fragment(),
 
                     R.id.delete -> confirmDialog.show(childFragmentManager, "")
 
-                    R.id.edit -> goToAddNewAndUpdateBatchActivity(
-                        UPDATE,
-                        itemBatch,
-                        itemBatch.batch.batchId
-                    )
+                    R.id.edit -> findNavController()
+                        .navigate(
+                            BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment(
+                                batchId
+                            )
+                        )
 
                     R.id.select_all -> adapter.selectAllItems()
 
@@ -206,8 +229,8 @@ class BatchFragment : Fragment(),
         setUpContextualBarSelection(selectedBatchIdList)
     }
 
-    override fun onSelectedItemIsOne(itemBatch: ItemBatch) {
-        this.itemBatch = itemBatch
+    override fun onSelectedItemIsOne(batchId: Long) {
+        this.batchId = batchId
     }
 
     private fun setUpConfirmDialog() {

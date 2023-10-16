@@ -78,6 +78,10 @@ dependencies {
     def room_version = "2.5.2"
     def nav_version = "2.7.1"
     def arch_core_version = "2.2.0"
+    def lifecycle_version ="2.6.2"
+
+    //liveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     //room database
     implementation "androidx.room:room-runtime:$room_version"
@@ -92,7 +96,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
-//    debugImplementation "com.amitshekhar.android:debug-db:1.0.6"
+//    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 

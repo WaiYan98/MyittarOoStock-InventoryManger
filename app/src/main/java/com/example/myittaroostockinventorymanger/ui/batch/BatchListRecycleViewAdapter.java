@@ -78,7 +78,7 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
                 callBack.onItemsSelected(selectedBatchIdList);
 
                 if (selectedBatchIdList.size() == 1) {
-                    callBack.onSelectedItemIsOne(findStockBatchByBatchId(selectedBatchIdList.get(0)));
+                    callBack.onSelectedItemIsOne(selectedBatchIdList.get(0));
                 }
 
                 notifyItemChanged(position);
@@ -242,6 +242,6 @@ public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListR
 
         void onItemsSelected(List<Long> selectedBatchIdList);
 
-        void onSelectedItemIsOne(ItemBatch itemBatch);
+        void onSelectedItemIsOne(Long batchId);
     }
 }

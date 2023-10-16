@@ -2,6 +2,7 @@ package com.example.myittaroostockinventorymanger.data.repository
 
 import androidx.lifecycle.LiveData
 import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
@@ -67,5 +68,9 @@ class Repository {
 
     fun getItemById(id: Long): LiveData<Item> {
         return dao.getItemById(id)
+    }
+
+    fun findBatchWithItemById(batchId: Long): LiveData<BatchWithItem> {
+        return dao.findItemWithBatchById(batchId)
     }
 }

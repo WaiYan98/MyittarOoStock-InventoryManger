@@ -5,9 +5,12 @@ import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.repository.Repository
+import com.example.myittaroostockinventorymanger.enum.Option
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -19,61 +22,88 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     private var repository: Repository =
         Repository()
-    private var mutStockNames: LiveData<List<String>>? = null
+    private var mutItemNames: LiveData<List<String>>? = null
     private var mutErrorMessage: MutableLiveData<Event<String>> = MutableLiveData()
-    private var navigateToMainActivity: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    private var returnBack: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private lateinit var disposable: Disposable
+    private val option: MutableLiveData<String> = MutableLiveData()
+    private val batchIdLiveData: MutableLiveData<Long> = MutableLiveData()
+
+    //Use switchMap when batchIdLiveData update switch return new LiveData related type
+    var existingBatch: LiveData<BatchWithItem> = batchIdLiveData.switchMap {
+        repository.findBatchWithItemById(it)
+    }
 
 
-    fun getAllStockNames(): LiveData<List<String>>? {
+    fun getAllItemNames(): LiveData<List<String>>? {
 
-        if (mutStockNames == null) {
-            mutStockNames = MutableLiveData()
-            mutStockNames = repository.allItemNames
+        if (mutItemNames == null) {
+            mutItemNames = MutableLiveData()
+            mutItemNames = repository.allItemNames
         }
-        return mutStockNames
+        return mutItemNames
     }
 
     //to save and update in local database
-    fun onClickSave(option: String, updateBatchId: Long,
-                    edtStockName: EditText, edtExpDate: EditText,
-                    edtAmount: EditText, edtCostPrice: EditText,
-                    edtSalePrice: EditText, isValidDate: Boolean) {
+    fun onClickSave(
+        option: String, updateBatchId: Long,
+        actItemName: EditText, edtExpDate: EditText,
+        edtQuantity: EditText, edtBasePrice: EditText,
+        edtSellingPrice: EditText, isValidDate: Boolean
+    ) {
 
-        if (isValidInput(edtStockName, edtAmount, edtCostPrice, edtSalePrice, isValidDate)) {
-            val batch = createBatch(edtStockName, edtExpDate, edtAmount, edtCostPrice, edtSalePrice)
+        if (isValidInput(actItemName, edtQuantity, edtBasePrice, edtSellingPrice, isValidDate)) {
+            val batch =
+                createBatch(actItemName, edtExpDate, edtQuantity, edtBasePrice, edtSellingPrice)
 
-            disposable = repository.findItemIdByName(edtStockName.text.toString())
-                    .flatMap {
-                        batch.itemId = it
+            disposable = repository.findItemIdByName(actItemName.text.toString())
+                .flatMap {
+                    batch.itemId = it
 
-                        Log.d("tag", "onClickSave: "+it)
+                    Log.d("tag", "onClickSave: " + it)
 
-                        if (option == BatchFragment.ADD_NEW) {
-                            Log.d("tag", "onClickSave: " + batch)
-                            repository.insertBatch(batch)
-                        } else {
-                            batch.batchId = updateBatchId
-                            Log.d("tag", "onClickSave: " + batch)
-                            repository.updateBatch(batch)
-                        }.andThen(Observable.just(Unit))
-                    }
-                    .subscribeOn(io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        mutErrorMessage.value = Event("Save")
-                        navigateToMainActivity.value = Event(true)
-                    }) {
-                        mutErrorMessage.value = Event("Cannot Save")
-                    }
+                    if (option == Option.NEW_ITEM.name) {
+                        Log.d("tag", "onClickSave: " + batch)
+                        repository.insertBatch(batch)
+                    } else {
+                        batch.batchId = updateBatchId
+                        Log.d("tag", "onClickSave: " + batch)
+                        repository.updateBatch(batch)
+                    }.andThen(Observable.just(Unit))
+                }
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    mutErrorMessage.value = Event("Save")
+                    returnBack.value = Event(true)
+                }) {
+                    mutErrorMessage.value = Event("Cannot Save")
+                }
         }
     }
 
 
+    fun checkInsertOrUpdateBatch(batchId: Long) {
+
+        if (batchId > 0) {
+            option.value = Option.UPDATE_ITEM.name
+        } else {
+            option.value = Option.NEW_ITEM.name
+        }
+    }
+
+    fun getOption(): LiveData<String> = option
+
+    fun findBatchWithItemById(batchId: Long) {
+        batchIdLiveData.value = batchId
+    }
+
     //to check the user input is valid or not
-    private fun isValidInput(edtStockName: EditText,
-                             edtAmount: EditText, edtCostPrice: EditText,
-                             edtSalePrice: EditText, isValidDate: Boolean): Boolean {
+    private fun isValidInput(
+        edtStockName: EditText,
+        edtAmount: EditText, edtCostPrice: EditText,
+        edtSalePrice: EditText, isValidDate: Boolean
+    ): Boolean {
 
         var isNameValid = false
         var isAmountValid = false
@@ -146,14 +176,16 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     }
 
-    private fun createBatch(edtStockName: EditText, edtExpDate: EditText,
-                            edtAmount: EditText, edtCostPrice: EditText,
-                            edtSalePrice: EditText): Batch {
+    private fun createBatch(
+        edtStockName: EditText, edtExpDate: EditText,
+        edtAmount: EditText, edtCostPrice: EditText,
+        edtSalePrice: EditText
+    ): Batch {
 
         val stockName = edtStockName.text.toString()
         var expDate: Date
         val format = SimpleDateFormat("dd/MM/yyyy")
-        expDate = format.parse(edtExpDate.text.toString())
+        expDate = format.parse(edtExpDate.text.toString())!!
         val amount = edtAmount.text.toString().toInt()
         val costPrice = edtCostPrice.text.toString().toDouble()
         val salePrice = edtSalePrice.text.toString().toDouble()
@@ -166,8 +198,8 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
         return mutErrorMessage
     }
 
-    fun getNavigateToMainActivity(): LiveData<Event<Boolean>> {
-        return navigateToMainActivity
+    fun isReturnBack(): LiveData<Event<Boolean>> {
+        return returnBack
     }
 
     override fun onCleared() {

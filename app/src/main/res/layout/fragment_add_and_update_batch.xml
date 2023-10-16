@@ -4,24 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/little_dark_white"
     android:orientation="vertical"
     tools:context=".ui.batch.AddAndUpdateBatchFragment">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/little_dark_white"
-        android:theme="@style/AppTheme.Toolbar"
-        app:menu="@menu/add_new_item_app_bar"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:title="Add New Item"
-        app:titleCentered="true"
-        app:titleTextColor="@color/grey">
-
-
-    </com.google.android.material.appbar.MaterialToolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,77 +17,89 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_pill" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical|start"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/large_margin"
-                    android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Item Name"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/small_text_size"
-                    android:textStyle="bold" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/act_stock_name"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txt_input_layout_item"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
-                    android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp"
-                    android:gravity="center_vertical|start"
-                    android:paddingStart="8dp"
-                    android:textColor="@color/black" />
+                    android:accessibilityPaneTitle="@string/item_name"
+                    android:hint="Item_Name"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/purple_200"
+                    app:endIconMode="dropdown_menu"
+                    app:endIconTint="@color/light_red"
+                    app:errorEnabled="true"
+                    app:errorIconDrawable="@drawable/ic_about"
+                    app:errorIconTint="@color/red"
+                    app:startIconDrawable="@drawable/ic_pill"
+                    app:startIconTint="@color/black">
+
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/act_item_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|start"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:gravity="center_vertical|start"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/large_margin"
-                    android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Input Date"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/small_text_size"
-                    android:textStyle="bold" />
-
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/txt_input_layout"
+                    android:id="@+id/txt_input_layout_date"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
-                    android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp">
+                    android:hint="Date"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/purple_200"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/light_red"
+                    app:errorEnabled="true"
+                    app:errorIconDrawable="@drawable/ic_error"
+                    app:errorIconTint="@color/red"
+                    app:startIconDrawable="@drawable/ic_date_range"
+                    app:startIconTint="@color/black">
 
-                    <EditText
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edt_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:background="@drawable/rounded_rectangle_white"
-                        android:hint="Date"
                         android:imeOptions="actionNext"
+                        android:inputType="number"
                         android:paddingStart="8dp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,29 +113,33 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/large_margin"
-                    android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Total Amount"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/small_text_size"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edt_amount"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txt_input_layout_quantity"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
-                    android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp"
-                    android:gravity="center_vertical|start"
-                    android:inputType="number"
-                    android:paddingStart="8dp"
-                    android:textColor="@color/black" />
+                    android:hint="Quantity"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/purple_200"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/light_red"
+                    app:startIconDrawable="@drawable/ic_pill"
+                    app:startIconTint="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edt_quantity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|start"
+                        android:inputType="number"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
 
             </LinearLayout>
 
@@ -150,29 +151,35 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/large_margin"
-                    android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Cost Price"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/small_text_size"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edt_cost_price"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txt_input_layout_base_price"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
-                    android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp"
-                    android:gravity="center_vertical|start"
-                    android:inputType="numberDecimal"
-                    android:paddingStart="8dp"
-                    android:textColor="@color/black" />
+                    android:hint="Base_Price"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/purple_200"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/light_red"
+                    app:hintTextColor="@color/black"
+                    app:startIconDrawable="@drawable/ic_pill"
+                    app:startIconTint="@color/black">
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edt_cost_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|start"
+                        android:inputType="numberDecimal"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
 
             </LinearLayout>
 
@@ -184,29 +191,33 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/large_margin"
-                    android:layout_marginBottom="@dimen/medium_margin"
-                    android:text="Sale Price"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/small_text_size"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/edt_sale_price"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txt_input_layout_selling_price"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/edt_height"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_margin"
                     android:layout_marginEnd="@dimen/large_margin"
                     android:layout_marginBottom="@dimen/large_margin"
-                    android:background="@drawable/rounded_rectangle_white"
-                    android:elevation="8dp"
-                    android:gravity="center_vertical|start"
-                    android:inputType="numberDecimal"
-                    android:paddingStart="8dp"
-                    android:textColor="@color/black" />
+                    android:hint="Selling_Price"
+                    android:textColorHint="@color/grey"
+                    app:boxStrokeColor="@color/purple_200"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/light_red"
+                    app:startIconDrawable="@drawable/ic_pill"
+                    app:startIconTint="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edt_sale_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical|start"
+                        android:inputType="numberDecimal"
+                        android:paddingStart="8dp"
+                        android:textColor="@color/black" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
 
             </LinearLayout>
 

@@ -46,7 +46,7 @@ class AddAndUpdateItemViewModel : ViewModel() {
         item = repository.getItemById(id)
     }
 
-    //Check the stock is empty or not
+    //Check the item is empty or not
     fun onClickDone(item: Item) {
         val itemName = item.name
         if (!TextUtils.isEmpty(itemName)) {
