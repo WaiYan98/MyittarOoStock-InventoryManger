@@ -6,8 +6,11 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +22,7 @@ import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 
 class BatchFragment : Fragment(),
-    BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack {
+    BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack, MenuProvider {
 
     private var batchId: Long = 0
     private lateinit var selectedBatchIdList: MutableList<Long>
@@ -55,7 +58,6 @@ class BatchFragment : Fragment(),
 
         binding = FragmentBatchBinding.inflate(inflater, container, false)
 
-        toolbar = activity?.findViewById(R.id.tool_bar_main) as Toolbar
 //        val menuItem = toolbar.menu.findItem(R.id.menu_search_view)
 //        searchView = menuItem.actionView as SearchView
 
@@ -66,6 +68,9 @@ class BatchFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val menuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
 //        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 //            override fun onQueryTextSubmit(query: String?): Boolean {
@@ -106,19 +111,15 @@ class BatchFragment : Fragment(),
             findNavController().navigate(BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment())
         }
 
-        batchViewModel.getAllStockWithBatches()
+        batchViewModel.getAllBatchWithItem()
             ?.observe(viewLifecycleOwner) {
-
-                //covert nested list into one list
-                itemBatchList = ListCreator.createStockBatchList(it)
-
-                adapter.insertItem(itemBatchList)
-            }
-
-        batchViewModel.getSearchResult()
-            .observe(viewLifecycleOwner) {
                 adapter.insertItem(it)
             }
+
+//        batchViewModel.getSearchResult()
+//            .observe(viewLifecycleOwner) {
+//                adapter.insertItem(it)
+//            }
 
         binding.swipeRefreshLoading.setOnRefreshListener {
             batchViewModel.loadStockWithBatches()
@@ -153,10 +154,7 @@ class BatchFragment : Fragment(),
 
     private fun setUpRecycleView() {
         adapter =
-            BatchListRecycleViewAdapter(
-                context,
-                arrayListOf()
-            )
+            BatchListRecycleViewAdapter()
         adapter.setCallBack(this)
         binding.recyBatchList.adapter = adapter
         binding.recyBatchList.layoutManager = LinearLayoutManager(context)
@@ -205,7 +203,7 @@ class BatchFragment : Fragment(),
                             )
                         )
 
-                    R.id.select_all -> adapter.selectAllItems()
+                    R.id.select_all -> adapter.selectAllBatch()
 
                 }
 
@@ -257,5 +255,37 @@ class BatchFragment : Fragment(),
         if (selectedBatchIdList.isEmpty()) {
             actionMode.finish()
         }
+    }
+
+    //create menu with menuProvider
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.main_app_bar_menu, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+        when (menuItem.itemId) {
+
+            R.id.menu_search_view -> {
+                val searchView = menuItem.actionView as SearchView
+                searchView.setOnQueryTextListener(object : OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        return false
+                    }
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        val queryText = "%$newText%"
+                        batchViewModel.searchFromDb(queryText)
+                            .observe(viewLifecycleOwner) {
+                                adapter.insertItem(it)
+                            }
+                        return false
+                    }
+
+                })
+
+            }
+        }
+        return false
     }
 }

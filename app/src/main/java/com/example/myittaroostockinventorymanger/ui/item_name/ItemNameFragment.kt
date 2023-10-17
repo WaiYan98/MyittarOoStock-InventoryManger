@@ -26,7 +26,7 @@ import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoratio
 class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
     MenuProvider {
     private lateinit var adapter: ItemNameRecycleViewAdapter
-    private lateinit var item: Item
+    private var itemId: Long = 0
     private var selectItemIdList: List<Long> = ArrayList()
     private lateinit var actionMode: ActionMode
     private lateinit var binding: FragmentItemNameBinding
@@ -130,7 +130,7 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
                         findNavController()
                             .navigate(
                                 ItemNameFragmentDirections.actionItemNameFragmentToAddAndUpdateItemDialogFragment(
-                                    this@ItemNameFragment.item.itemId
+                                    this@ItemNameFragment.itemId
                                 )
                             )
 
@@ -158,8 +158,8 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
 
     }
 
-    override fun onSelectedItemIsOne(item: Item) {
-        this.item = item
+    override fun onSelectedItemIsOne(id: Long) {
+        this.itemId = id
     }
 
     private fun setUpContextualBar(selectedStockIdList: List<Long>) {

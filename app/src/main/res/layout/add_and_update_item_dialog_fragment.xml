@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
@@ -23,7 +24,7 @@
 
     </FrameLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -36,19 +37,37 @@
             android:layout_marginBottom="@dimen/medium_margin"
             android:text="Name"
             android:textColor="@color/black"
-            android:textSize="@dimen/small_text_size" />
+            android:textSize="@dimen/small_text_size"
+            app:layout_constraintBottom_toTopOf="@id/edt_stock_name"
+            app:layout_constraintStart_toStartOf="@id/edt_stock_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/edt_stock_name"
+            app:layout_constraintBottom_toBottomOf="@id/edt_stock_name"
+            app:layout_constraintEnd_toStartOf="@id/edt_stock_name"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_save"/>
 
         <EditText
             android:id="@+id/edt_stock_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/edt_height"
             android:background="@drawable/rounded_rectangle_with_black_stroke"
             android:hint="Type Name"
             android:paddingStart="8dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/grey" />
+            android:textColorHint="@color/grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_view"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

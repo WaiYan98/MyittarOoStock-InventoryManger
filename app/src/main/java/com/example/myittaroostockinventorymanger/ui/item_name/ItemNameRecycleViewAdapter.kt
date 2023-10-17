@@ -21,7 +21,6 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
     private lateinit var callBack: CallBack
     private var isSelectedMode = false
     private var selectedItemIdList: MutableList<Long> = ArrayList()
-    private var itemPosition: MutableList<Int> = mutableListOf()
 
     init {
         context = Application.getContext()
@@ -44,13 +43,13 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
 
         holder.linearLayoutItemName.setOnLongClickListener { v: View? ->
             isSelectedMode = true
-            checkSelectAndUnselectItem(currentItem, holder, position)
+            checkSelectAndUnselectItem(currentItem)
             callBack.onLongClickItem()
             callBack.onClickItem(selectedItemIdList)
             holder.linearLayoutItemView.isSelected = selectedItemIdList.contains(currentItem.itemId)
 
             if (selectedItemIdList.size == 1) {
-                callBack.onSelectedItemIsOne(currentItem)
+                callBack.onSelectedItemIsOne(currentItem.itemId)
             }
             true
         }
@@ -58,17 +57,13 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
         holder.linearLayoutItemName.setOnClickListener { v: View? ->
             if (isSelectedMode) {
                 //For test
-                checkSelectAndUnselectItem(currentItem, holder, position)
+                checkSelectAndUnselectItem(currentItem)
                 callBack.onClickItem(selectedItemIdList)
                 holder.linearLayoutItemView.isSelected =
                     selectedItemIdList.contains(currentItem.itemId)
                 if (selectedItemIdList.size == 1) {
-//solve for selected many items and rename it left one item
-                        val item = itemList[itemPosition[0]]
 
-                        callBack.onSelectedItemIsOne(item)
-
-                        Log.d("tag", "onBindViewHolder: $itemPosition,$item")
+                    callBack.onSelectedItemIsOne(selectedItemIdList[0])
 
                 }
                 notifyItemChanged(position)
@@ -78,32 +73,22 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
         holder.linearLayoutItemView.isSelected = selectedItemIdList.contains(currentItem.itemId)
 
         holder.txtNameInitialWord.text = initialWord
-
-        holder.linearLayoutItemView.isSelected
     }
 
 
     /*
     check selectedItemIdList contain this
      @param currentItem
-     @param holder
     If not have this id in this list add currentIte.itemId to selectedItemIdList
     If contain remove form list.
      */
-    private fun checkSelectAndUnselectItem(
-        currentItem: Item,
-        holder: ViewHolder,
-        position: Int
-    ) {
+    private fun checkSelectAndUnselectItem(currentItem: Item) {
         val itemId = currentItem.itemId
         if (!selectedItemIdList.contains(itemId)) {
             selectedItemIdList.add(itemId)
-            itemPosition.add(position)
-
             Log.d("tag", "checkSelectAndUnselectItem: select $itemId $selectedItemIdList")
         } else {
             selectedItemIdList.remove(itemId)
-            itemPosition.remove(position)
             Log.d("tag", "checkSelectAndUnselectItem: deselect $itemId $selectedItemIdList")
         }
     }
@@ -124,7 +109,6 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
 
     fun contextualActionBarClose() {
         selectedItemIdList.clear()
-        itemPosition.clear()
         isSelectedMode = false
         notifyDataSetChanged()
     }
@@ -164,6 +148,6 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
     interface CallBack {
         fun onLongClickItem()
         fun onClickItem(selectedStockIdList: List<Long>)
-        fun onSelectedItemIsOne(item: Item)
+        fun onSelectedItemIsOne(id: Long)
     }
 }

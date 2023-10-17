@@ -31,7 +31,7 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     //Use switchMap when batchIdLiveData update switch return new LiveData related type
     var existingBatch: LiveData<BatchWithItem> = batchIdLiveData.switchMap {
-        repository.findBatchWithItemById(it)
+        repository.findBatchWithItemByIds(it)
     }
 
 
@@ -49,10 +49,12 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
         option: String, updateBatchId: Long,
         actItemName: EditText, edtExpDate: EditText,
         edtQuantity: EditText, edtBasePrice: EditText,
-        edtSellingPrice: EditText, isValidDate: Boolean
+        edtSellingPrice: EditText, edtDate: EditText
     ) {
 
-        if (isValidInput(actItemName, edtQuantity, edtBasePrice, edtSellingPrice, isValidDate)) {
+        Log.d("myTag", "onClickSave: ${edtDate.text.length}")
+
+        if (isValidInput(actItemName, edtQuantity, edtBasePrice, edtSellingPrice, edtDate)) {
             val batch =
                 createBatch(actItemName, edtExpDate, edtQuantity, edtBasePrice, edtSellingPrice)
 
@@ -102,10 +104,11 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
     private fun isValidInput(
         edtStockName: EditText,
         edtAmount: EditText, edtCostPrice: EditText,
-        edtSalePrice: EditText, isValidDate: Boolean
+        edtSalePrice: EditText, edtDate: EditText
     ): Boolean {
 
         var isNameValid = false
+        var isDateValid = false
         var isAmountValid = false
         var isCostPriceValid = false
         var isSalePriceValid = false
@@ -163,11 +166,16 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
             errorMessage += "Sale price is empty\n"
         }
 
-        if (!isValidDate) {
+        //check date is valid
+        if (edtDate.text.length != 10) {
+            isDateValid = false
             errorMessage += "Invalid date\n"
+        } else {
+            isDateValid = true
         }
 
-        return if (isNameValid && isAmountValid && isCostPriceValid && isSalePriceValid && isValidDate) {
+
+        return if (isNameValid && isAmountValid && isCostPriceValid && isSalePriceValid && isDateValid) {
             true
         } else {
             mutErrorMessage.value = Event(errorMessage)

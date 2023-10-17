@@ -4,40 +4,50 @@ import android.view.ActionMode
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.event.Event
-import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.data.repository.Repository
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
 
 class BatchViewModel : ViewModel() {
 
     private val repository: Repository =
         Repository()
-    private var itemWithBatches: LiveData<List<ItemWithBatch>>? = null
+    private var BatchWithItem: LiveData<List<BatchWithItem>>? = null
     private var isLoading: MutableLiveData<Boolean> = MutableLiveData()
     private var searchBatchResultList: MutableLiveData<List<ItemBatch>> = MutableLiveData()
     private var message: MutableLiveData<Event<String>> = MutableLiveData()
     private var contextualTitle: MutableLiveData<String> = MutableLiveData()
     private var showRenameButton: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun getAllStockWithBatches(): LiveData<List<ItemWithBatch>>? {
+    fun getAllBatchWithItem(): LiveData<List<BatchWithItem>>? {
 
-        if (itemWithBatches == null) {
-            itemWithBatches = MutableLiveData()
+        if (BatchWithItem == null) {
+            BatchWithItem = MutableLiveData()
             loadStockWithBatches()
         }
-        return itemWithBatches
+        return BatchWithItem
     }
 
     fun loadStockWithBatches() {
         isLoading.value = true
-        itemWithBatches = repository.allStockWithBatch
+        BatchWithItem = repository.allBatchWithItem
         isLoading.value = false
         message.value = Event("updated")
+    }
+
+    //Search view QueryText search from db
+    fun searchFromDb(queryText: String): LiveData<List<BatchWithItem>> {
+        return repository.findIdListByQueryText(queryText)
+            .switchMap {
+                repository.findBatchWithItemByIds(it)
+            }
     }
 
     fun searchBatchByName(itemBatchList: List<ItemBatch>, newText: String) {

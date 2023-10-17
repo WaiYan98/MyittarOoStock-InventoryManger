@@ -1,247 +1,243 @@
-package com.example.myittaroostockinventorymanger.ui.batch;
+package com.example.myittaroostockinventorymanger.ui.batch
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myittaroostockinventorymanger.Application
+import com.example.myittaroostockinventorymanger.R
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
+import com.example.myittaroostockinventorymanger.util.AutoNumGenerator
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+class BatchListRecycleViewAdapter() :
+    RecyclerView.Adapter<BatchListRecycleViewAdapter.ViewHolder>() {
 
-import com.example.myittaroostockinventorymanger.R;
-import com.example.myittaroostockinventorymanger.data.entities.ItemBatch;
-import com.example.myittaroostockinventorymanger.util.AutoNumGenerator;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-public class BatchListRecycleViewAdapter extends RecyclerView.Adapter<BatchListRecycleViewAdapter.ViewHolder> {
-
-    private Context context;
-    private List<ItemBatch> itemBatchList;
-    private boolean isSelectedMode = false;
-    private List<Long> selectedBatchIdList = new ArrayList<>();
-    private CallBack callBack;
-    private ViewHolder holder;
-
-
-    public BatchListRecycleViewAdapter(Context context, List<ItemBatch> itemBatchList) {
-        this.context = context;
-        this.itemBatchList = itemBatchList;
+    private val batchWithItem: MutableList<BatchWithItem> = mutableListOf()
+    private var isSelectedMode = false
+    private val selectedBatchIdList: MutableList<Long> = mutableListOf()
+    private lateinit var callBack: CallBack
+    private var holder: ViewHolder? = null
+    fun setCallBack(callBack: CallBack) {
+        this.callBack = callBack
     }
 
-    public void setCallBack(CallBack callBack) {
-        this.callBack = callBack;
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view =
+            layoutInflater.inflate(R.layout.item_stock_list, parent, false)
+        return ViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.item_stock_list, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-        this.holder = holder;
-        ItemBatch current = itemBatchList.get(position);
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
-
-        CardView cardView = holder.cardViewItemNameContainer;
-        changeCardViewColor(cardView);
-
-        holder.txtStockName.setText(current.getItem().getName());
-        holder.txtNameInitialWord.setText(current.getItem().getName().substring(0, 1).toUpperCase());
-        holder.txtCostPrice.setText(String.valueOf(current.getBatch().getOriginalPrice()));
-        holder.txtSalePrice.setText(String.valueOf(current.getBatch().getSalePrice()));
-        holder.txtExpDate.setText(df.format(current.getBatch().getExpDate()));
-        holder.txtAmount.setText(String.valueOf(current.getBatch().getQuantity()));
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        this.holder = holder
+        val (batch, item) = batchWithItem[position]
+        val curBatchId = batch.batchId
+        val df = SimpleDateFormat("dd/MM/yy")
+        val cardView = holder.cardViewItemNameContainer
+        changeCardViewColor(cardView)
+        holder.txtStockName.text = item.name
+        holder.txtNameInitialWord.text = item.name.substring(0, 1).uppercase(Locale.getDefault())
+        holder.txtCostPrice.text = batch.originalPrice.toString()
+        holder.txtSalePrice.text = batch.salePrice.toString()
+        holder.txtExpDate.text = df.format(batch.expDate)
+        holder.txtAmount.text = batch.quantity.toString()
 
         //when batch item onLongClicked show contextual action mode
-        holder.cardViewBatch.setOnLongClickListener(v -> {
-            callBack.onLongClicked();
-            isSelectedMode = true;
-            return false;
-        });
+        holder.linearLayoutBatch.setOnLongClickListener { v: View? ->
+            callBack.onLongClicked()
+            checkSelectAndDeSelectBatches(curBatchId)
+            //change color for selected and deselected batch
+            holder.linearLayoutBatch.isSelected = isSelectedBatch(curBatchId)
+            callBack.onItemsSelected(selectedBatchIdList)
+            isSelectedMode = true
+            true
+        }
 
         //to insert selected Batch id to selectedBatchIdList
-        holder.cardViewBatch.setOnClickListener(v -> {
+        holder.linearLayoutBatch.setOnClickListener { v: View? ->
             if (isSelectedMode) {
-                itemAddToSelectedList(current.getBatch().getBatchId(), current);
-                callBack.onItemsSelected(selectedBatchIdList);
-
-                if (selectedBatchIdList.size() == 1) {
-                    callBack.onSelectedItemIsOne(selectedBatchIdList.get(0));
+                checkSelectAndDeSelectBatches(curBatchId)
+                holder.linearLayoutBatch.isSelected = isSelectedBatch(curBatchId)
+                callBack.onItemsSelected(selectedBatchIdList)
+                if (selectedBatchIdList.size == 1) {
+                    callBack.onSelectedItemIsOne(selectedBatchIdList[0])
                 }
-
-                notifyItemChanged(position);
+                notifyItemChanged(position)
             }
-        });
-
-
-        changeSelectedItemColor(holder, current);
-    }
-
-    private void changeSelectedItemColor(ViewHolder holder, ItemBatch current) {
-        if (current.isSelected()) {
-            holder.cardViewBatch.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
-        } else {
-            holder.cardViewBatch.setBackgroundColor(ContextCompat.getColor(context, R.color.little_dark_white));
         }
+        holder.linearLayoutBatch.isSelected = isSelectedBatch(curBatchId)
     }
 
-    @Override
-    public int getItemCount() {
-        return itemBatchList.size();
+    private fun isSelectedBatch(id: Long): Boolean {
+        return selectedBatchIdList.contains(id)
+    }
+
+    override fun getItemCount(): Int {
+        return batchWithItem.size
     }
 
     //when item click itemId save to selectedList and id is equal remove from list
-    private void itemAddToSelectedList(Long id, ItemBatch current) {
-
+    private fun checkSelectAndDeSelectBatches(id: Long) {
         if (!selectedBatchIdList.contains(id)) {
-            selectedBatchIdList.add(id);
-            current.setSelected(true);
+            selectedBatchIdList.add(id)
         } else {
-            selectedBatchIdList.remove(id);
-            current.setSelected(false);
+            selectedBatchIdList.remove(id)
         }
     }
 
     //if tap actionbar close button following logic work
-    public void contextualActionBarClose() {
-        isSelectedMode = false;
-        selectedBatchIdList.clear();
-        importSelectedFalse();
-        notifyDataSetChanged();
+    fun contextualActionBarClose() {
+        isSelectedMode = false
+        selectedBatchIdList.clear()
+        notifyDataSetChanged()
     }
 
-    public void selectAllItems() {
+    fun selectAllBatch() {
+        val batchIdList = batchWithItem.toBatchIdList()
 
-        boolean isAllSelected = false;
-
-        for (ItemBatch itemBatch : itemBatchList) {
-
-            if (!itemBatch.isSelected()) {
-                isAllSelected = false;
-                break;
-            } else {
-                isAllSelected = true;
-            }
-        }
-
-        if (isAllSelected) {
-            importSelectedFalse();
-            this.selectedBatchIdList.clear();
+        if (batchIdList == selectedBatchIdList) {
+            selectedBatchIdList.clear()
         } else {
-            importSelectedTrue();
-            insertAllBatchId();
+            selectedBatchIdList.clear()
+            selectedBatchIdList.addAll(batchIdList)
         }
-        callBack.onItemsSelected(selectedBatchIdList);
-
-        notifyDataSetChanged();
+        callBack.onItemsSelected(selectedBatchIdList)
+        notifyDataSetChanged()
     }
 
-    private void insertAllBatchId() {
+    private fun List<BatchWithItem>.toBatchIdList(): List<Long> = this.map { it.batch.batchId }
 
-        selectedBatchIdList.clear();
+    //    public void selectAllItems() {
+    //
+    //        boolean isAllSelected = false;
+    //
+    //        for (ItemBatch itemBatch : batchWithItem) {
+    //
+    //            if (!itemBatch.isSelected()) {
+    //                isAllSelected = false;
+    //                break;
+    //            } else {
+    //                isAllSelected = true;
+    //            }
+    //        }
+    //
+    //        if (isAllSelected) {
+    //            importSelectedFalse();
+    //            this.selectedBatchIdList.clear();
+    //        } else {
+    //            importSelectedTrue();
+    //            insertAllBatchId();
+    //        }
+    //        callBack.onItemsSelected(selectedBatchIdList);
+    //
+    //        notifyDataSetChanged();
+    //    }
+    //    private void insertAllBatchId() {
+    //
+    //        selectedBatchIdList.clear();
+    //
+    //        for (ItemBatch itemBatch : batchWithItem) {
+    //            this.selectedBatchIdList.add(itemBatch.getBatch().getBatchId());
+    //        }
+    //    }
+    //    private void importSelectedTrue() {
+    //        for (ItemBatch itemBatch : batchWithItem) {
+    //            itemBatch.setSelected(true);
+    //        }
+    //    }
+    //    private ItemBatch findStockBatchByBatchId(Long batchId) {
+    //        for (ItemBatch itemBatch : batchWithItem) {
+    //            if (batchId == itemBatch.getBatch().getBatchId()) {
+    //                return itemBatch;
+    //            }
+    //        }
+    //        return null;
+    //    }
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var linearLayoutBatch: LinearLayout
+        var cardViewItemNameContainer: CardView
+        var txtStockName: TextView
+        var txtCostPrice: TextView
+        var txtSalePrice: TextView
+        var txtExpDate: TextView
+        var txtAmount: TextView
+        var txtNameInitialWord: TextView
 
-        for (ItemBatch itemBatch : itemBatchList) {
-            this.selectedBatchIdList.add(itemBatch.getBatch().getBatchId());
+        init {
+            linearLayoutBatch = itemView.findViewById(R.id.linear_layout_batch)
+            cardViewItemNameContainer = itemView.findViewById(R.id.card_view_item_name_container)
+            txtStockName = itemView.findViewById(R.id.txt_stock_name)
+            txtCostPrice = itemView.findViewById(R.id.txt_cost_price)
+            txtSalePrice = itemView.findViewById(R.id.txt_sale_price)
+            txtExpDate = itemView.findViewById(R.id.txt_exp_date)
+            txtAmount = itemView.findViewById(R.id.txt_amount)
+            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word)
         }
     }
 
-    private void importSelectedTrue() {
-        for (ItemBatch itemBatch : itemBatchList) {
-            itemBatch.setSelected(true);
-        }
-    }
-
-    private ItemBatch findStockBatchByBatchId(Long batchId) {
-        for (ItemBatch itemBatch : itemBatchList) {
-            if (batchId == itemBatch.getBatch().getBatchId()) {
-                return itemBatch;
-            }
-        }
-        return null;
-    }
-
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        CardView cardViewBatch;
-        CardView cardViewItemNameContainer;
-        TextView txtStockName;
-        TextView txtCostPrice;
-        TextView txtSalePrice;
-        TextView txtExpDate;
-        TextView txtAmount;
-        TextView txtNameInitialWord;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            cardViewBatch = itemView.findViewById(R.id.card_view_batch);
-            cardViewItemNameContainer = itemView.findViewById(R.id.card_view_item_name_container);
-            txtStockName = itemView.findViewById(R.id.txt_stock_name);
-            txtCostPrice = itemView.findViewById(R.id.txt_cost_price);
-            txtSalePrice = itemView.findViewById(R.id.txt_sale_price);
-            txtExpDate = itemView.findViewById(R.id.txt_exp_date);
-            txtAmount = itemView.findViewById(R.id.txt_amount);
-            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word);
-        }
-    }
-
-    public void insertItem(List<ItemBatch> itemBatchList) {
-        this.itemBatchList.clear();
-        this.itemBatchList.addAll(itemBatchList);
-        notifyDataSetChanged();
+    fun insertItem(batchWithItem: List<BatchWithItem>) {
+        this.batchWithItem.clear()
+        this.batchWithItem.addAll(batchWithItem)
+        notifyDataSetChanged()
     }
 
     //Assign allStockBatches isSelected property to false
-    private void importSelectedFalse() {
-
-        for (ItemBatch itemBatch : itemBatchList) {
-
-            itemBatch.setSelected(false);
-        }
-
-    }
-
+    //    private void importSelectedFalse() {
+    //
+    //        for (ItemBatch itemBatch : batchWithItem) {
+    //
+    //        }
+    //
+    //    }
     //for change card view color by random
-    private void changeCardViewColor(CardView cardView) {
-        int randomNum = AutoNumGenerator.generateNum();
+    private fun changeCardViewColor(cardView: CardView) {
+        val randomNum = AutoNumGenerator.generateNum()
+        val context = Application.getContext()
+        when (randomNum) {
+            1 -> cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_red))
 
-        switch (randomNum) {
-            case 1:
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
-                break;
-            case 2:
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_green));
-                break;
-            case 3:
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_blue));
-                break;
-            case 4:
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_orange));
-                break;
-            case 5:
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_purple));
-                break;
+            2 -> cardView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.light_green
+                )
+            )
+
+            3 -> cardView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.light_blue
+                )
+            )
+
+            4 -> cardView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.light_orange
+                )
+            )
+
+            5 -> cardView.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.light_purple
+                )
+            )
         }
     }
 
-    public interface CallBack {
-
-        void onLongClicked();
-
-        void onItemsSelected(List<Long> selectedBatchIdList);
-
-        void onSelectedItemIsOne(Long batchId);
+    interface CallBack {
+        fun onLongClicked()
+        fun onItemsSelected(selectedBatchIdList: MutableList<Long>)
+        fun onSelectedItemIsOne(batchId: Long)
     }
 }

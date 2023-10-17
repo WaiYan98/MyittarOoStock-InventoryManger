@@ -9,7 +9,6 @@ import androidx.room.Update
 import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.entities.Item
-import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -32,9 +31,9 @@ interface Dao {
     @Query("SELECT * FROM Item")
     fun getAllItems(): LiveData<List<Item>>
 
-    @Query("SELECT * FROM Item")
+    @Query("SELECT * FROM Batch")
     @androidx.room.Transaction
-    fun getAllItemWithBatch(): LiveData<List<ItemWithBatch>>
+    fun getAllBatchWithItem(): LiveData<List<BatchWithItem>>
 
     @Delete
     fun deleteItem(item: Item): Completable
@@ -67,4 +66,12 @@ interface Dao {
     @androidx.room.Transaction
     @Query("SELECT * FROM Batch WHERE batch_id=:id ")
     fun findItemWithBatchById(id: Long): LiveData<BatchWithItem>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM Batch WHERE item_id IN(:itemIds)")
+    fun findBatchWithItemByIds(itemIds: List<Long>): LiveData<List<BatchWithItem>>
+
+    @Query("SELECT item_id FROM Item WHERE name LIKE :queryText")
+    fun findIdListByQueryText(queryText: String): LiveData<List<Long>>
+
 }

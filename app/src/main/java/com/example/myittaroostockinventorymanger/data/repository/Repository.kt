@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.entities.Item
-import com.example.myittaroostockinventorymanger.data.entities.ItemWithBatch
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
 import com.example.myittaroostockinventorymanger.data.local.Dao
 import com.example.myittaroostockinventorymanger.data.local.LocalDataBaseService
@@ -32,8 +31,8 @@ class Repository {
     }
 
     val allItem: LiveData<List<Item>> get() = dao.getAllItems()
-    val allStockWithBatch: LiveData<List<ItemWithBatch>>
-        get() = dao.getAllItemWithBatch()
+    val allBatchWithItem: LiveData<List<BatchWithItem>>
+        get() = dao.getAllBatchWithItem()
 
     fun deleteItem(item: Item): Completable {
         return dao.deleteItem(item)
@@ -70,7 +69,15 @@ class Repository {
         return dao.getItemById(id)
     }
 
-    fun findBatchWithItemById(batchId: Long): LiveData<BatchWithItem> {
+    fun findBatchWithItemByIds(batchId: Long): LiveData<BatchWithItem> {
         return dao.findItemWithBatchById(batchId)
+    }
+
+    fun findBatchWithItemByIds(idList: List<Long>): LiveData<List<BatchWithItem>> {
+        return dao.findBatchWithItemByIds(idList)
+    }
+
+    fun findIdListByQueryText(queryText: String): LiveData<List<Long>> {
+        return dao.findIdListByQueryText(queryText)
     }
 }

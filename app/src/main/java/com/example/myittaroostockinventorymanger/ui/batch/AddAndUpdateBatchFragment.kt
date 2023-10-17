@@ -207,7 +207,7 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
                 binding.edtQuantity,
                 binding.edtCostPrice,
                 binding.edtSalePrice,
-                true
+                binding.edtDate
             )
         }
         return false
