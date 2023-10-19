@@ -4,18 +4,23 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.databinding.AddAndUpdateItemDialogFragmentBinding
 import com.example.myittaroostockinventorymanger.enum.Option
 import com.example.myittaroostockinventorymanger.event.Event
+import com.example.myittaroostockinventorymanger.util.ImageShower
 
 class AddAndUpdateItemDialogFragment : DialogFragment() {
 
@@ -45,6 +50,16 @@ class AddAndUpdateItemDialogFragment : DialogFragment() {
     ): View? {
 
         val itemId = args.itemId
+        var uri = ""
+        //invoke after select photo from photoPicker
+        val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+            if (it != null) {
+                Log.d("myTag", "onCreateView: $it")
+                uri = it.toString()
+                //show preview in dialog
+                ImageShower.showImage(context, uri, binding.imgViewPicker)
+            }
+        }
 
         val option = if (itemId > 0) {
             // TODO: editing item
@@ -55,9 +70,11 @@ class AddAndUpdateItemDialogFragment : DialogFragment() {
             Option.NEW_ITEM
         }
 
+
         addAndUpdateItemViewModel.getItem()
             .observe(this) {
-                binding.edtStockName.setText(it.name)
+                binding.edtItemName.setText(it.name)
+                ImageShower.showImage(context, it.imagePath, binding.imgViewPicker)
                 this.item = it
             }
 
@@ -80,19 +97,34 @@ class AddAndUpdateItemDialogFragment : DialogFragment() {
                 }
             }
 
+        binding.imgViewPicker.setOnClickListener {
+            photoPicker.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia
+                        .ImageOnly
+                )
+            )
+        }
+
 
         binding.btnSave.setOnClickListener { v: View? ->
-            val itemName = binding.edtStockName.text.toString()
+            val itemName = binding.edtItemName.text.toString()
 
             this.item = when (option) {
 
-                Option.NEW_ITEM -> Item(itemName)
+                Option.NEW_ITEM -> Item(itemName, uri)
 
                 else -> {
                     this.item.name = itemName
+                    //update image
+                    if (uri.isEmpty()) {
+                        uri = this.item.imagePath
+                    }
+                    this.item.imagePath = uri
                     this.item
                 }
             }
+
 
             addAndUpdateItemViewModel.onClickDone(item)
         }

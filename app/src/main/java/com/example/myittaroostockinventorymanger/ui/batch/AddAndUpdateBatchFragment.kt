@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -22,19 +23,18 @@ import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.databinding.FragmentAddAndUpdateBatchBinding
 import com.example.myittaroostockinventorymanger.enum.Option
-import com.example.myittaroostockinventorymanger.util.TextWatcherTest
+import com.example.myittaroostockinventorymanger.util.ImageShower
+import com.example.myittaroostockinventorymanger.util.DateInputMask
 import java.text.SimpleDateFormat
 
 class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
 
-    //    var txtInputLayout: TextInputLayout
-//    private var addNewAndUpdateBatchViewModel: AddNewAndUpdateBatchViewModel
-//    private val stockNameList: List<String> = ArrayList()
     private lateinit var binding: FragmentAddAndUpdateBatchBinding
     private val args: AddAndUpdateBatchFragmentArgs by navArgs()
     private val viewModel: AddNewAndUpdateBatchViewModel by viewModels()
     private var option: String = ""
     private var batchId: Long = 0
+    private val context = Application.getContext()
 
 
     override fun onCreateView(
@@ -57,6 +57,9 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         viewModel.checkInsertOrUpdateBatch(batchId)
+
+        //for show default image
+        ImageShower.showImage(context, "", binding.imgViewItemBatch)
 
         viewModel.getAllItemNames()
             ?.observe(viewLifecycleOwner) {
@@ -98,14 +101,19 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
                     Toast.makeText(Application.getContext(), notify, Toast.LENGTH_SHORT).show()
                 }
             }
+//todo learn textWatcher future
+        DateInputMask(binding.edtDate)
 
-        TextWatcherTest(binding.edtDate)
-
-
-//        binding.actItemName.setOnTouchListener(OnTouchListener { v: View, motion: MotionEvent ->
-//            binding.actItemName.showDropDown()
-//            false
-//        })
+        binding.actItemName.onItemClickListener =
+            OnItemClickListener { p0, p1, p2, p3 ->
+                val itemName = binding.actItemName.text.toString()
+                viewModel.findItemByName(itemName)
+                    .observe(viewLifecycleOwner) {
+                        //after type load image to imageView
+                        Log.d("myTag", "onItemClick: $it")
+                        ImageShower.showImage(context, it.imagePath, binding.imgViewItemBatch)
+                    }
+            }
 
     }
 
@@ -119,69 +127,15 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
         binding.edtQuantity.setText(batch.quantity.toString())
         binding.edtCostPrice.setText(batch.originalPrice.toString())
         binding.edtSalePrice.setText(batch.salePrice.toString())
+        //load image to imageView
+        ImageShower.showImage(context, item.imagePath, binding.imgViewItemBatch)
     }
-
-//test
-//        edtDate.listen();
-
-
-//stockBatch batchId is always 0 so I request batchId from batchFragment for testing
-//        // TODO: 2/5/2022 need to check later
-//        val intent = intent
-//        if (intent != null) {
-//            option = intent.getStringExtra(EXTRA_OPTION)
-//            itemBatch = intent.getParcelableExtra(EXTRA_STOCK_BATCH)
-//            batchId = intent.getLongExtra(EXTRA_BATCH_ID, 0)
-//        }
-//        if (option == UPDATE) {
-//            val dateFormat: DateFormat = SimpleDateFormat("dd/MM/YYYY")
-//            val expDate = dateFormat.format(itemBatch!!.batch.expDate)
-//            actStockName.setText(itemBatch!!.item.name)
-//            //            edtDate.setText(expDate);
-//            edtAmount.setText(itemBatch!!.batch.quantity.toString())
-//            edtCostPrice.setText(itemBatch!!.batch.originalPrice.toString())
-//            edtSalePrice.setText(itemBatch!!.batch.salePrice.toString())
-//        }
-//        addNewAndUpdateBatchViewModel!!.getAllStockNames()
-//            .observe(
-//                this,
-//                Observer { stockNameList: List<String> -> setUpAutoCompleteTextView(stockNameList) })
-//        actStockName.setOnTouchListener(OnTouchListener { v: View?, event: MotionEvent? ->
-//            actStockName.showDropDown()
-//            false
-//        })
-//        toolBar.setNavigationOnClickListener(View.OnClickListener { v: View? -> goToMainActivity() })
-//        toolBar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item: MenuItem ->
-//            if (item.itemId == R.id.save) {
-//
-//                // TODO: 8/25/2023   handle edtExpDate
-//                addNewAndUpdateBatchViewModel!!.onClickSave(
-//                    option!!, batchId!!,
-//                    actStockName, null, edtAmount, edtCostPrice, edtSalePrice, true
-//                )
-//            }
-//            false
-//        })
-//        addNewAndUpdateBatchViewModel!!.getMessage()
-//            .observe(this, Observer<Event<String?>> { mEvent: Event<String?> ->
-//                val notify = mEvent.contentIfNotHandle
-//                if (notify != null) {
-//                    Toast.makeText(this, notify, Toast.LENGTH_SHORT).show()
-//                }
-//            })
-//        addNewAndUpdateBatchViewModel!!.getNavigateToMainActivity()
-//            .observe(this, Observer<Event<Boolean?>> { navigateEvent: Event<Boolean?> ->
-//                val navigate = navigateEvent.contentIfNotHandle
-//                if (navigate != null) {
-//                    goToMainActivity()
-//                }
-//            })
 
 
     //AutoCompleteTextView for item name
     private fun setUpAutoCompleteTextView(itemNameList: List<String>) {
         val adapter = ArrayAdapter(
-            Application.getContext(),
+            context,
             R.layout.simple_drop_down_layout,
             R.id.txt_name,
             itemNameList

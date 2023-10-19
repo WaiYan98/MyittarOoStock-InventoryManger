@@ -38,23 +38,23 @@
             android:text="Name"
             android:textColor="@color/black"
             android:textSize="@dimen/small_text_size"
-            app:layout_constraintBottom_toTopOf="@id/edt_stock_name"
-            app:layout_constraintStart_toStartOf="@id/edt_stock_name"
+            app:layout_constraintBottom_toTopOf="@id/edt_item_name"
+            app:layout_constraintStart_toStartOf="@id/edt_item_name"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/img_view"
+            android:id="@+id/img_view_picker"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/edt_stock_name"
-            app:layout_constraintBottom_toBottomOf="@id/edt_stock_name"
-            app:layout_constraintEnd_toStartOf="@id/edt_stock_name"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_save"/>
+            android:src="@drawable/import_photo"
+            app:layout_constraintBottom_toBottomOf="@id/edt_item_name"
+            app:layout_constraintEnd_toStartOf="@id/edt_item_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/edt_item_name" />
 
         <EditText
-            android:id="@+id/edt_stock_name"
+            android:id="@+id/edt_item_name"
             android:layout_width="0dp"
             android:layout_height="@dimen/edt_height"
             android:background="@drawable/rounded_rectangle_with_black_stroke"
@@ -64,7 +64,7 @@
             android:textColorHint="@color/grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/img_view"
+            app:layout_constraintStart_toEndOf="@id/img_view_picker"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

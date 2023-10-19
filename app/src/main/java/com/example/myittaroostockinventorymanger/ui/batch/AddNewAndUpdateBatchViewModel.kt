@@ -9,6 +9,7 @@ import androidx.lifecycle.switchMap
 import com.example.myittaroostockinventorymanger.event.Event
 import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
+import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.repository.Repository
 import com.example.myittaroostockinventorymanger.enum.Option
 import io.reactivex.Observable
@@ -62,14 +63,14 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
                 .flatMap {
                     batch.itemId = it
 
-                    Log.d("tag", "onClickSave: " + it)
+                    Log.d("tag", "onClickSave: $it")
 
                     if (option == Option.NEW_ITEM.name) {
-                        Log.d("tag", "onClickSave: " + batch)
+                        Log.d("tag", "onClickSave: $batch")
                         repository.insertBatch(batch)
                     } else {
                         batch.batchId = updateBatchId
-                        Log.d("tag", "onClickSave: " + batch)
+                        Log.d("tag", "onClickSave: $batch")
                         repository.updateBatch(batch)
                     }.andThen(Observable.just(Unit))
                 }
@@ -107,11 +108,11 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
         edtSalePrice: EditText, edtDate: EditText
     ): Boolean {
 
-        var isNameValid = false
-        var isDateValid = false
-        var isAmountValid = false
-        var isCostPriceValid = false
-        var isSalePriceValid = false
+        var isNameValid: Boolean
+        var isDateValid: Boolean
+        var isAmountValid: Boolean
+        var isCostPriceValid: Boolean
+        var isSalePriceValid: Boolean
         var errorMessage = ""
 
         //check stock name is valid
@@ -200,6 +201,10 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
         return Batch(0, costPrice, salePrice, amount, expDate);
 
+    }
+
+    fun findItemByName(itemName: String): LiveData<Item> {
+        return repository.findItemByName(itemName)
     }
 
     fun getMessage(): LiveData<Event<String>> {

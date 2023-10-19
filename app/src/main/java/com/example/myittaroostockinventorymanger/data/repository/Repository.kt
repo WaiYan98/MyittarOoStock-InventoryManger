@@ -80,4 +80,8 @@ class Repository {
     fun findIdListByQueryText(queryText: String): LiveData<List<Long>> {
         return dao.findIdListByQueryText(queryText)
     }
+
+    fun findItemByName(itemName: String): LiveData<Item> {
+        return dao.findItemByName(itemName)
+    }
 }

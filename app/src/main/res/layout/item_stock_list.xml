@@ -18,31 +18,20 @@
             android:id="@+id/linear_layout_batch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@drawable/card_view_selector">
+            android:background="@drawable/card_view_selector"
+            android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_view_item_name_container"
+            <ImageView
+                android:id="@+id/image_view_item"
                 android:layout_width="@dimen/oval_card_size"
                 android:layout_height="@dimen/oval_card_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/medium_margin"
                 android:layout_marginEnd="@dimen/medium_margin"
+                android:src="@drawable/ic_pill"
                 app:cardBackgroundColor="#90F188"
                 app:cardCornerRadius="104dp"
-                app:cardElevation="4dp">
-
-                <TextView
-                    android:id="@+id/txt_name_initial_word"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="EC"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/medium_text_size"
-                    android:textStyle="bold" />
-
-            </androidx.cardview.widget.CardView>
+                app:cardElevation="4dp" />
 
             <LinearLayout
                 android:layout_width="0dp"

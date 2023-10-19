@@ -35,6 +35,9 @@ interface Dao {
     @androidx.room.Transaction
     fun getAllBatchWithItem(): LiveData<List<BatchWithItem>>
 
+    @Query("SELECT * FROM Item WHERE name =:itemName")
+    fun findItemByName(itemName: String): LiveData<Item>
+
     @Delete
     fun deleteItem(item: Item): Completable
 

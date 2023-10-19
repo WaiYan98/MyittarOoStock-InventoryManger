@@ -1,15 +1,20 @@
 package com.example.myittaroostockinventorymanger.ui.item_name
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.myittaroostockinventorymanger.Application
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.Item
@@ -38,8 +43,10 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = itemList[position]
-        val initialWord = currentItem.name[0].toString().uppercase(Locale.getDefault())
         holder.txtStockName.text = currentItem.name
+
+        showItemImage(currentItem.imagePath, holder)
+        Log.d("myTag", "onBindViewHolder: ${currentItem.imagePath}")
 
         holder.linearLayoutItemName.setOnLongClickListener { v: View? ->
             isSelectedMode = true
@@ -72,7 +79,27 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
 
         holder.linearLayoutItemView.isSelected = selectedItemIdList.contains(currentItem.itemId)
 
-        holder.txtNameInitialWord.text = initialWord
+    }
+
+    //if imagePath empty show default image
+    // TODO: drawable to uri String
+    private fun showItemImage(imagePath: String, holder: ViewHolder) {
+
+        if (imagePath.isEmpty()) {
+            Glide
+                .with(context)
+                .load(R.drawable.no_img)
+                .circleCrop()
+                .into(holder.itemImageView)
+        } else {
+            Glide
+                .with(context)
+                .load(imagePath)
+                .circleCrop()
+                .into(holder.itemImageView)
+        }
+
+
     }
 
 
@@ -129,15 +156,15 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
         var linearLayoutItemName: LinearLayout
         var cardViewItem: CardView
         var txtStockName: TextView
-        var txtNameInitialWord: TextView
         var linearLayoutItemView: LinearLayout
+        var itemImageView: ImageView
 
         init {
             linearLayoutItemName = itemView.findViewById(R.id.linear_layout_stock_name)
             cardViewItem = itemView.findViewById(R.id.card_view_item)
             txtStockName = itemView.findViewById(R.id.txt_stock_name)
-            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word)
             linearLayoutItemView = itemView.findViewById(R.id.linear_layout_item_view)
+            itemImageView = itemView.findViewById(R.id.item_image_view)
         }
     }
 

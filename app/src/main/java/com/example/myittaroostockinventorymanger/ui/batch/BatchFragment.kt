@@ -1,13 +1,11 @@
 package com.example.myittaroostockinventorymanger.ui.batch
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -17,8 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myittaroostockinventorymanger.ui.ConfirmDialog
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.databinding.FragmentBatchBinding
-import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
-import com.example.myittaroostockinventorymanger.util.ListCreator
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 
 class BatchFragment : Fragment(),
@@ -26,27 +22,14 @@ class BatchFragment : Fragment(),
 
     private var batchId: Long = 0
     private lateinit var selectedBatchIdList: MutableList<Long>
-    private lateinit var searchView: SearchView
-
     lateinit var adapter: BatchListRecycleViewAdapter
-
-    lateinit var toolbar: Toolbar;
-
     private val batchViewModel: BatchViewModel by lazy { setUpViewModel() }
-    private lateinit var itemBatchList: List<ItemBatch>
 
-    private lateinit var actionMode: ActionMode
+    //actionMode is not null hide contextual action bar in fabBtn
+    private var actionMode: ActionMode? = null
     private lateinit var confirmDialog: ConfirmDialog
 
     private lateinit var binding: FragmentBatchBinding
-
-    companion object {
-        val EXTRA_STOCK_BATCH = "EXTRA_STOCK_BATCH"
-        val EXTRA_OPTION = "EXTRA_OPTION"
-        val EXTRA_BATCH_ID = "EXTRA_BATCH_ID"
-        val UPDATE = "UPDATE"
-        val ADD_NEW = "ADD_NEW"
-    }
 
     private val EXTRA_DELETE: String = "EXTRA_DELETE"
 
@@ -58,8 +41,6 @@ class BatchFragment : Fragment(),
 
         binding = FragmentBatchBinding.inflate(inflater, container, false)
 
-//        val menuItem = toolbar.menu.findItem(R.id.menu_search_view)
-//        searchView = menuItem.actionView as SearchView
 
         setUpRecycleView()
 
@@ -72,42 +53,9 @@ class BatchFragment : Fragment(),
         val menuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//
-//                batchViewModel.searchBatchByName(itemBatchList, newText)
-//
-//                return false
-//            }
-//        })
-
-//        val batch1 = Batch(1, 200.0, 300.0, 10, Date())
-//        val batch2 = Batch(2, 200.0, 300.0, 10, Date())
-//        val batch3 = Batch(4, 200.0, 300.0, 10, Date())
-//        batchViewModel.insertBatch(batch1)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//
-//            }
-//        batchViewModel.insertBatch(batch2)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//
-//            }
-//        batchViewModel.insertBatch(batch3)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe {
-//
-//            }
-
         binding.fabAddBatch.setOnClickListener {
+            //close contextual action bar
+            actionMode?.finish()
             findNavController().navigate(BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment())
         }
 
@@ -116,10 +64,6 @@ class BatchFragment : Fragment(),
                 adapter.insertItem(it)
             }
 
-//        batchViewModel.getSearchResult()
-//            .observe(viewLifecycleOwner) {
-//                adapter.insertItem(it)
-//            }
 
         binding.swipeRefreshLoading.setOnRefreshListener {
             batchViewModel.loadStockWithBatches()
@@ -142,13 +86,13 @@ class BatchFragment : Fragment(),
 
         batchViewModel.getContextualActionBarTitle()
             .observe(viewLifecycleOwner) {
-                actionMode.title = it
+                actionMode?.title = it
             }
 
         //manage rename button hide or show
         batchViewModel.isShowRenameButton()
             .observe(viewLifecycleOwner) {
-                actionMode.menu.findItem(R.id.edit).isVisible = it
+                actionMode?.menu?.findItem(R.id.edit)?.isVisible = it
             }
     }
 
@@ -159,18 +103,6 @@ class BatchFragment : Fragment(),
         binding.recyBatchList.adapter = adapter
         binding.recyBatchList.layoutManager = LinearLayoutManager(context)
         binding.recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))
-    }
-
-    private fun goToAddNewAndUpdateBatchActivity(
-        option: String,
-        itemBatch: ItemBatch?,
-        batchId: Long
-    ) {
-        val intent: Intent = Intent(context, AddAndUpdateBatchFragment::class.java)
-        intent.putExtra(EXTRA_OPTION, option)
-        intent.putExtra(EXTRA_STOCK_BATCH, itemBatch)
-        intent.putExtra(EXTRA_BATCH_ID, batchId)
-        startActivity(intent)
     }
 
     private fun setUpViewModel() = ViewModelProvider(this).get(BatchViewModel::class.java)
@@ -188,7 +120,7 @@ class BatchFragment : Fragment(),
                 return false
             }
 
-            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem?): Boolean {
 
                 setUpConfirmDialog()
 
@@ -196,12 +128,15 @@ class BatchFragment : Fragment(),
 
                     R.id.delete -> confirmDialog.show(childFragmentManager, "")
 
-                    R.id.edit -> findNavController()
-                        .navigate(
-                            BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment(
-                                batchId
+                    R.id.edit -> {
+                        mode.finish()
+                        findNavController()
+                            .navigate(
+                                BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment(
+                                    batchId
+                                )
                             )
-                        )
+                    }
 
                     R.id.select_all -> adapter.selectAllBatch()
 
@@ -229,6 +164,7 @@ class BatchFragment : Fragment(),
 
     override fun onSelectedItemIsOne(batchId: Long) {
         this.batchId = batchId
+        Log.d("myTag", "onSelectedItemIsOne: ${this.batchId}")
     }
 
     private fun setUpConfirmDialog() {
@@ -239,7 +175,7 @@ class BatchFragment : Fragment(),
 
     //This callBack is to delete selectedBatches
     override fun onClickedYes() {
-        batchViewModel.deleteBatches(selectedBatchIdList, actionMode)
+//        batchViewModel.deleteBatches(selectedBatchIdList, actionMode)
     }
 
     /**
@@ -253,7 +189,7 @@ class BatchFragment : Fragment(),
         batchViewModel.showRenameButton(num)
 
         if (selectedBatchIdList.isEmpty()) {
-            actionMode.finish()
+            actionMode?.finish()
         }
     }
 

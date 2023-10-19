@@ -22,24 +22,15 @@
             android:background="@drawable/card_view_selector"
             android:orientation="horizontal">
 
-            <androidx.cardview.widget.CardView
+            <ImageView
+                android:id="@+id/item_image_view"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_margin="@dimen/medium_margin"
+                android:src="@drawable/ic_pill"
                 app:cardBackgroundColor="@color/light_red"
-                app:cardCornerRadius="104dp">
+                app:cardCornerRadius="104dp" />
 
-                <TextView
-                    android:id="@+id/txt_name_initial_word"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="E"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/medium_text_size"
-                    android:textStyle="bold" />
-
-            </androidx.cardview.widget.CardView>
 
             <FrameLayout
                 android:layout_width="match_parent"

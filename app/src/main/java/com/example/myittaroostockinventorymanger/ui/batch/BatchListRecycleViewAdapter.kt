@@ -3,6 +3,7 @@ package com.example.myittaroostockinventorymanger.ui.batch
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -12,6 +13,7 @@ import com.example.myittaroostockinventorymanger.Application
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.util.AutoNumGenerator
+import com.example.myittaroostockinventorymanger.util.ImageShower
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,7 +24,7 @@ class BatchListRecycleViewAdapter() :
     private var isSelectedMode = false
     private val selectedBatchIdList: MutableList<Long> = mutableListOf()
     private lateinit var callBack: CallBack
-    private var holder: ViewHolder? = null
+    val context = Application.getContext()
     fun setCallBack(callBack: CallBack) {
         this.callBack = callBack
     }
@@ -38,14 +40,14 @@ class BatchListRecycleViewAdapter() :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        this.holder = holder
         val (batch, item) = batchWithItem[position]
         val curBatchId = batch.batchId
         val df = SimpleDateFormat("dd/MM/yy")
-        val cardView = holder.cardViewItemNameContainer
-        changeCardViewColor(cardView)
+
+        //To show Image
+        ImageShower.showImage(context, item.imagePath, holder.imgViewItem)
+
         holder.txtStockName.text = item.name
-        holder.txtNameInitialWord.text = item.name.substring(0, 1).uppercase(Locale.getDefault())
         holder.txtCostPrice.text = batch.originalPrice.toString()
         holder.txtSalePrice.text = batch.salePrice.toString()
         holder.txtExpDate.text = df.format(batch.expDate)
@@ -59,6 +61,9 @@ class BatchListRecycleViewAdapter() :
             holder.linearLayoutBatch.isSelected = isSelectedBatch(curBatchId)
             callBack.onItemsSelected(selectedBatchIdList)
             isSelectedMode = true
+            if (selectedBatchIdList.size == 1) {
+                callBack.onSelectedItemIsOne(selectedBatchIdList[0])
+            }
             true
         }
 
@@ -116,71 +121,24 @@ class BatchListRecycleViewAdapter() :
 
     private fun List<BatchWithItem>.toBatchIdList(): List<Long> = this.map { it.batch.batchId }
 
-    //    public void selectAllItems() {
-    //
-    //        boolean isAllSelected = false;
-    //
-    //        for (ItemBatch itemBatch : batchWithItem) {
-    //
-    //            if (!itemBatch.isSelected()) {
-    //                isAllSelected = false;
-    //                break;
-    //            } else {
-    //                isAllSelected = true;
-    //            }
-    //        }
-    //
-    //        if (isAllSelected) {
-    //            importSelectedFalse();
-    //            this.selectedBatchIdList.clear();
-    //        } else {
-    //            importSelectedTrue();
-    //            insertAllBatchId();
-    //        }
-    //        callBack.onItemsSelected(selectedBatchIdList);
-    //
-    //        notifyDataSetChanged();
-    //    }
-    //    private void insertAllBatchId() {
-    //
-    //        selectedBatchIdList.clear();
-    //
-    //        for (ItemBatch itemBatch : batchWithItem) {
-    //            this.selectedBatchIdList.add(itemBatch.getBatch().getBatchId());
-    //        }
-    //    }
-    //    private void importSelectedTrue() {
-    //        for (ItemBatch itemBatch : batchWithItem) {
-    //            itemBatch.setSelected(true);
-    //        }
-    //    }
-    //    private ItemBatch findStockBatchByBatchId(Long batchId) {
-    //        for (ItemBatch itemBatch : batchWithItem) {
-    //            if (batchId == itemBatch.getBatch().getBatchId()) {
-    //                return itemBatch;
-    //            }
-    //        }
-    //        return null;
-    //    }
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var linearLayoutBatch: LinearLayout
-        var cardViewItemNameContainer: CardView
         var txtStockName: TextView
         var txtCostPrice: TextView
         var txtSalePrice: TextView
         var txtExpDate: TextView
         var txtAmount: TextView
-        var txtNameInitialWord: TextView
+        var imgViewItem: ImageView
 
         init {
             linearLayoutBatch = itemView.findViewById(R.id.linear_layout_batch)
-            cardViewItemNameContainer = itemView.findViewById(R.id.card_view_item_name_container)
             txtStockName = itemView.findViewById(R.id.txt_stock_name)
             txtCostPrice = itemView.findViewById(R.id.txt_cost_price)
             txtSalePrice = itemView.findViewById(R.id.txt_sale_price)
             txtExpDate = itemView.findViewById(R.id.txt_exp_date)
             txtAmount = itemView.findViewById(R.id.txt_amount)
-            txtNameInitialWord = itemView.findViewById(R.id.txt_name_initial_word)
+            imgViewItem = itemView.findViewById(R.id.image_view_item)
         }
     }
 
@@ -190,50 +148,6 @@ class BatchListRecycleViewAdapter() :
         notifyDataSetChanged()
     }
 
-    //Assign allStockBatches isSelected property to false
-    //    private void importSelectedFalse() {
-    //
-    //        for (ItemBatch itemBatch : batchWithItem) {
-    //
-    //        }
-    //
-    //    }
-    //for change card view color by random
-    private fun changeCardViewColor(cardView: CardView) {
-        val randomNum = AutoNumGenerator.generateNum()
-        val context = Application.getContext()
-        when (randomNum) {
-            1 -> cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.light_red))
-
-            2 -> cardView.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.light_green
-                )
-            )
-
-            3 -> cardView.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.light_blue
-                )
-            )
-
-            4 -> cardView.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.light_orange
-                )
-            )
-
-            5 -> cardView.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    R.color.light_purple
-                )
-            )
-        }
-    }
 
     interface CallBack {
         fun onLongClicked()

@@ -28,7 +28,9 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
     private lateinit var adapter: ItemNameRecycleViewAdapter
     private var itemId: Long = 0
     private var selectItemIdList: List<Long> = ArrayList()
-    private lateinit var actionMode: ActionMode
+
+    //import for for show or hide action mode
+    private var actionMode: ActionMode? = null
     private lateinit var binding: FragmentItemNameBinding
 
     private val viewModel: ItemNameViewModel by viewModels()
@@ -83,6 +85,7 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
 
         //to add new Item
         binding.fabAddItem.setOnClickListener {
+            actionMode?.finish()
             val action =
                 ItemNameFragmentDirections.actionItemNameFragmentToAddAndUpdateItemDialogFragment()
             findNavController().navigate(action)
@@ -91,12 +94,12 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
 
         viewModel.getContextualActionBarTitle()
             .observe(viewLifecycleOwner)
-            { title: String? -> actionMode.title = title }
+            { title: String? -> actionMode?.title = title }
 
         viewModel.isShowRenameButton()
             .observe(viewLifecycleOwner)
             { isShow: Boolean ->
-                actionMode.menu.findItem(R.id.edit).isVisible = isShow
+                actionMode?.menu?.findItem(R.id.edit)?.isVisible = isShow
             }
     }
 
@@ -126,13 +129,15 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
                     R.id.select_all -> adapter.onClickSelectAll()
 
 
-                    R.id.edit ->
+                    R.id.edit -> {
+                        mode.finish()
                         findNavController()
                             .navigate(
                                 ItemNameFragmentDirections.actionItemNameFragmentToAddAndUpdateItemDialogFragment(
                                     this@ItemNameFragment.itemId
                                 )
                             )
+                    }
 
                     R.id.delete -> findNavController()
                         .navigate(
@@ -168,7 +173,7 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
         viewModel.setContextualActionBarTitle(num)
         viewModel.showAndHideRenameButton(num)
         if (selectedStockIdList.isEmpty()) {
-            actionMode.finish()
+            actionMode?.finish()
         }
     }
 
