@@ -64,6 +64,10 @@
             app:destination="@id/add_and_update_batch_fragment" />
         />
 
+        <action
+            android:id="@+id/acton_to_ConfirmDialogFragment"
+            app:destination="@id/confirm_dialog_fragment_batch" />
+
     </fragment>
 
     <fragment
@@ -96,5 +100,18 @@
         android:name="com.example.myittaroostockinventorymanger.ui.about.AboutFragment"
         android:label="@string/batch"
         tools:layout="@layout/fragment_about" />
+
+    <dialog
+        android:id="@+id/confirm_dialog_fragment_batch"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.ConfirmDialogFragment"
+        android:label="Delete Batch"
+        tools:layout="@layout/confirm_dialog_fragment">
+
+        <argument
+            android:name="selected_id_list"
+            app:argType="long[]"
+            app:nullable="false" />
+
+    </dialog>
 
 </navigation>

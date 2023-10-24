@@ -12,13 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myittaroostockinventorymanger.ui.ConfirmDialog
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.databinding.FragmentBatchBinding
 import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
 
 class BatchFragment : Fragment(),
-    BatchListRecycleViewAdapter.CallBack, ConfirmDialog.CallBack, MenuProvider {
+    BatchListRecycleViewAdapter.CallBack, MenuProvider {
 
     private var batchId: Long = 0
     private lateinit var selectedBatchIdList: MutableList<Long>
@@ -27,17 +26,14 @@ class BatchFragment : Fragment(),
 
     //actionMode is not null hide contextual action bar in fabBtn
     private var actionMode: ActionMode? = null
-    private lateinit var confirmDialog: ConfirmDialog
 
     private lateinit var binding: FragmentBatchBinding
-
-    private val EXTRA_DELETE: String = "EXTRA_DELETE"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentBatchBinding.inflate(inflater, container, false)
 
@@ -122,11 +118,16 @@ class BatchFragment : Fragment(),
 
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem?): Boolean {
 
-                setUpConfirmDialog()
-
                 when (item?.itemId) {
 
-                    R.id.delete -> confirmDialog.show(childFragmentManager, "")
+                    R.id.delete -> {
+                        findNavController()
+                            .navigate(
+                                BatchFragmentDirections.actonToConfirmDialogFragment(
+                                    selectedBatchIdList.toLongArray()
+                                )
+                            )
+                    }
 
                     R.id.edit -> {
                         mode.finish()
@@ -167,16 +168,6 @@ class BatchFragment : Fragment(),
         Log.d("myTag", "onSelectedItemIsOne: ${this.batchId}")
     }
 
-    private fun setUpConfirmDialog() {
-        confirmDialog = ConfirmDialog.getNewInstance(EXTRA_DELETE, selectedBatchIdList.size)
-        confirmDialog.setCallBack(this)
-        confirmDialog.setKey(EXTRA_DELETE)
-    }
-
-    //This callBack is to delete selectedBatches
-    override fun onClickedYes() {
-//        batchViewModel.deleteBatches(selectedBatchIdList, actionMode)
-    }
 
     /**
      *     to set contextual bar title and edit button visible or invisible

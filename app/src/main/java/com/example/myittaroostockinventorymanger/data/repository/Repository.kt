@@ -84,4 +84,12 @@ class Repository {
     fun findItemByName(itemName: String): LiveData<Item> {
         return dao.findItemByName(itemName)
     }
+
+    fun getAllItemIds(): LiveData<List<Long>> {
+        return dao.getAllItemIds()
+    }
+
+    fun deleteBatchesByItemIds(ids: List<Long>): Completable {
+        return dao.deleteBatchesByItemIds(ids)
+    }
 }

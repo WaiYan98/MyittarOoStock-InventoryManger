@@ -77,4 +77,10 @@ interface Dao {
     @Query("SELECT item_id FROM Item WHERE name LIKE :queryText")
     fun findIdListByQueryText(queryText: String): LiveData<List<Long>>
 
+    @Query("SELECT item_id FROM Batch")
+    fun getAllItemIds(): LiveData<List<Long>>
+
+    @Query("DELETE FROM Batch WHERE item_id IN(:ids)")
+    fun deleteBatchesByItemIds(ids: List<Long>): Completable
+
 }

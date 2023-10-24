@@ -6,16 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myittaroostockinventorymanger.Application
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
-import com.example.myittaroostockinventorymanger.util.AutoNumGenerator
 import com.example.myittaroostockinventorymanger.util.ImageShower
 import java.text.SimpleDateFormat
-import java.util.Locale
 
 class BatchListRecycleViewAdapter() :
     RecyclerView.Adapter<BatchListRecycleViewAdapter.ViewHolder>() {
@@ -48,8 +44,8 @@ class BatchListRecycleViewAdapter() :
         ImageShower.showImage(context, item.imagePath, holder.imgViewItem)
 
         holder.txtStockName.text = item.name
-        holder.txtCostPrice.text = batch.originalPrice.toString()
-        holder.txtSalePrice.text = batch.salePrice.toString()
+        holder.txtCostPrice.text = batch.basePrice.toString()
+        holder.txtSalePrice.text = batch.sellingPrice.toString()
         holder.txtExpDate.text = df.format(batch.expDate)
         holder.txtAmount.text = batch.quantity.toString()
 

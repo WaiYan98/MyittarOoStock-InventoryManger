@@ -76,6 +76,20 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
                 option = it
             }
 
+        viewModel.getIsValidBatch()
+            .observe(viewLifecycleOwner) {
+                val validBatch = it.contentIfNotHandle
+
+                if (validBatch != null) {
+
+                    when (option) {
+                        Option.NEW_ITEM.name -> viewModel.insertBatch(validBatch)
+
+                        else -> viewModel.updateBatch(validBatch)
+                    }
+                }
+            }
+
 
         viewModel.existingBatch
             .observe(viewLifecycleOwner) {
@@ -125,8 +139,8 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
         binding.actItemName.setText(item.name)
         binding.edtDate.setText(expDate)
         binding.edtQuantity.setText(batch.quantity.toString())
-        binding.edtCostPrice.setText(batch.originalPrice.toString())
-        binding.edtSalePrice.setText(batch.salePrice.toString())
+        binding.edtCostPrice.setText(batch.basePrice.toString())
+        binding.edtSalePrice.setText(batch.sellingPrice.toString())
         //load image to imageView
         ImageShower.showImage(context, item.imagePath, binding.imgViewItemBatch)
     }

@@ -13,13 +13,13 @@ data class Batch(
     @ColumnInfo(name = "item_id")
     var itemId: Long,
 
-    @ColumnInfo(name = "original_price")
-    var originalPrice: Double,
+    @ColumnInfo(name = "base_price")
+    var basePrice: Double,
 
-    @ColumnInfo(name = "sale_price")
-    var salePrice: Double,
+    @ColumnInfo(name = "selling_price")
+    var sellingPrice: Double,
 
-    @ColumnInfo(name = "total_stock")
+    @ColumnInfo(name = "quantity")
     var quantity: Int,
 
     @ColumnInfo(name = "exp_date")

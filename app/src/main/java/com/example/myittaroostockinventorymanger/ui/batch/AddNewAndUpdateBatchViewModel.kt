@@ -14,10 +14,13 @@ import com.example.myittaroostockinventorymanger.data.repository.Repository
 import com.example.myittaroostockinventorymanger.enum.Option
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.E
 
 class AddNewAndUpdateBatchViewModel : ViewModel() {
 
@@ -26,9 +29,10 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
     private var mutItemNames: LiveData<List<String>>? = null
     private var mutErrorMessage: MutableLiveData<Event<String>> = MutableLiveData()
     private var returnBack: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private lateinit var disposable: Disposable
+    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val option: MutableLiveData<String> = MutableLiveData()
     private val batchIdLiveData: MutableLiveData<Long> = MutableLiveData()
+    private val isValidBatch: MutableLiveData<Event<Batch>> = MutableLiveData()
 
     //Use switchMap when batchIdLiveData update switch return new LiveData related type
     var existingBatch: LiveData<BatchWithItem> = batchIdLiveData.switchMap {
@@ -59,30 +63,56 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
             val batch =
                 createBatch(actItemName, edtExpDate, edtQuantity, edtBasePrice, edtSellingPrice)
 
-            disposable = repository.findItemIdByName(actItemName.text.toString())
-                .flatMap {
-                    batch.itemId = it
-
-                    Log.d("tag", "onClickSave: $it")
-
-                    if (option == Option.NEW_ITEM.name) {
-                        Log.d("tag", "onClickSave: $batch")
-                        repository.insertBatch(batch)
-                    } else {
-                        batch.batchId = updateBatchId
-                        Log.d("tag", "onClickSave: $batch")
-                        repository.updateBatch(batch)
-                    }.andThen(Observable.just(Unit))
-                }
-                .subscribeOn(io())
+            val disposable = repository.findItemIdByName(actItemName.text.toString())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    mutErrorMessage.value = Event("Save")
-                    returnBack.value = Event(true)
+                    batch.itemId = it
+
+                    isValidBatch.value = Event(
+                        when (option) {
+                            Option.NEW_ITEM.name -> batch
+
+                            else -> {
+                                batch.batchId = updateBatchId
+                                batch
+                            }
+                        }
+                    )
+
                 }) {
-                    mutErrorMessage.value = Event("Cannot Save")
+                    Log.d("testTag", "insertBatch:  ")
                 }
+            compositeDisposable.add(disposable)
         }
+    }
+
+    fun getIsValidBatch(): LiveData<Event<Batch>> = isValidBatch
+
+    fun insertBatch(batch: Batch) {
+        val disposable = repository.insertBatch(batch)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                mutErrorMessage.value = Event("Save")
+                returnBack.value = Event(true)
+            }) {
+                mutErrorMessage.value = Event("Cannot Save")
+            }
+        compositeDisposable.add(disposable)
+    }
+
+    fun updateBatch(batch: Batch) {
+        val disposable = repository.updateBatch(batch)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                mutErrorMessage.value = Event("Save")
+                returnBack.value = Event(true)
+            }) {
+                mutErrorMessage.value = Event("Cannot Save")
+            }
+        compositeDisposable.add(disposable)
     }
 
 
@@ -217,5 +247,6 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        compositeDisposable.dispose()
     }
 }
