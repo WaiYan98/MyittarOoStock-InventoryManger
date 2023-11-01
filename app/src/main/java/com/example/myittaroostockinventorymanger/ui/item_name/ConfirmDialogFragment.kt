@@ -62,8 +62,6 @@ class ConfirmDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        hideView()
-
         //set up recyView
         setUpRecycleView(context)
 
@@ -125,11 +123,6 @@ class ConfirmDialogFragment : DialogFragment() {
     private fun showView() {
         binding.recyWarning.visibility = View.VISIBLE
         binding.txtWarningTitle.visibility = View.VISIBLE
-    }
-
-    private fun hideView() {
-        binding.recyWarning.visibility = View.GONE
-        binding.txtWarningTitle.visibility = View.GONE
     }
 
     private fun setUpRecycleView(context: Context) {

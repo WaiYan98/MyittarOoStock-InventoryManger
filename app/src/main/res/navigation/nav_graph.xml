@@ -114,4 +114,10 @@
 
     </dialog>
 
+    <fragment
+        android:id="@+id/selling_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.selling.SellingFragment"
+        android:label="Selling"
+        tools:layout="@layout/fragment_selling"/>
+
 </navigation>

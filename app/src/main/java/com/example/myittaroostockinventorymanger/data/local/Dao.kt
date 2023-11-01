@@ -12,6 +12,7 @@ import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface Dao {
@@ -23,7 +24,7 @@ interface Dao {
     fun insertItem(item: Item): Completable
 
     @Insert
-    fun insertBatch(batch: Batch): Completable
+    fun insertBatch(batch: Batch): Single<Long>
 
     @Insert
     fun insertTransaction(transaction: Transaction?): Completable
@@ -81,6 +82,25 @@ interface Dao {
     fun getAllItemIds(): LiveData<List<Long>>
 
     @Query("DELETE FROM Batch WHERE item_id IN(:ids)")
+
     fun deleteBatchesByItemIds(ids: List<Long>): Completable
+
+    @Update
+    fun updateTransaction(transaction: Transaction): Completable
+
+    @Query("SELECT * FROM `Transaction` WHERE batch_id=:batchId")
+    fun findTransactionByBatchId(batchId: Long): Observable<List<Transaction>>
+
+    @Query("SELECT name FROM Item WHERE item_id IN (:ids)")
+    fun findItemNameByIds(ids: List<Long>): LiveData<List<String>>
+
+    @Query("SELECT * FROM Batch WHERE item_id = :itemId")
+    fun findBatchByItemId(itemId: Long): LiveData<List<Batch>>
+
+    @Query("SELECT * FROM Batch WHERE batch_id =:batchId")
+    fun findBatchByBatchId(batchId: Long): Single<Batch>
+
+//    @Query("SELECT * FROM Batch")
+//    fun getAllItemNamesFromBatch()
 
 }

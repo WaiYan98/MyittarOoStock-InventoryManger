@@ -3,19 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@id/transaction_fragment"
-        android:icon="@drawable/ic_transaction"
-        android:title="Transactions" />
+        android:id="@id/batch_fragment"
+        android:icon="@drawable/ic_batch"
+        android:title="Batch" />
 
     <item
         android:id="@id/item_name_fragment"
-        android:icon="@drawable/ic_about"
+        android:icon="@drawable/ic_item_name"
         android:title="Item Name" />
 
     <item
-        android:id="@id/batch_fragment"
-        android:icon="@drawable/ic_home"
-        android:title="Batch" />
+        android:id="@id/selling_fragment"
+        android:icon="@drawable/ic_sale"
+        android:title="Selling" />
+
+    <item
+        android:id="@id/transaction_fragment"
+        android:icon="@drawable/ic_transaction"
+        android:title="Transactions" />
 
     <item
         android:id="@id/dashboard_fragment"

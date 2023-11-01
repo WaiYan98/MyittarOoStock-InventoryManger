@@ -9,6 +9,7 @@ import com.example.myittaroostockinventorymanger.data.local.Dao
 import com.example.myittaroostockinventorymanger.data.local.LocalDataBaseService
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class Repository {
     private val dao: Dao
@@ -22,7 +23,7 @@ class Repository {
         return dao.insertItem(item)
     }
 
-    fun insertBatch(batch: Batch): Completable {
+    fun insertBatch(batch: Batch): Single<Long> {
         return dao.insertBatch(batch)
     }
 
@@ -91,5 +92,25 @@ class Repository {
 
     fun deleteBatchesByItemIds(ids: List<Long>): Completable {
         return dao.deleteBatchesByItemIds(ids)
+    }
+
+    fun updateTransaction(transaction: Transaction): Completable {
+        return dao.updateTransaction(transaction)
+    }
+
+    fun findTransactionByBatchId(batchId: Long): Observable<List<Transaction>> {
+        return dao.findTransactionByBatchId(batchId)
+    }
+
+    fun findItemNameByIds(ids: List<Long>): LiveData<List<String>> {
+        return dao.findItemNameByIds(ids)
+    }
+
+    fun findBatchByItemId(itemId: Long): LiveData<List<Batch>> {
+        return dao.findBatchByItemId(itemId)
+    }
+
+    fun findBatchByBatchId(batchId: Long): Single<Batch> {
+        return dao.findBatchByBatchId(batchId)
     }
 }
