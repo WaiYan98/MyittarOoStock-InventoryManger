@@ -100,6 +100,13 @@ interface Dao {
     @Query("SELECT * FROM Batch WHERE batch_id =:batchId")
     fun findBatchByBatchId(batchId: Long): Single<Batch>
 
+    @Query("SELECT * FROM `Transaction`")
+    fun getAllTransaction(): LiveData<List<Transaction>>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM Batch WHERE batch_id IN (:batchIds)")
+    fun findBatchWithItemByBatchIds(batchIds: List<Long>): LiveData<List<BatchWithItem>>
+
 //    @Query("SELECT * FROM Batch")
 //    fun getAllItemNamesFromBatch()
 

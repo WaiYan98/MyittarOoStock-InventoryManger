@@ -113,4 +113,12 @@ class Repository {
     fun findBatchByBatchId(batchId: Long): Single<Batch> {
         return dao.findBatchByBatchId(batchId)
     }
+
+    fun getAllTransaction(): LiveData<List<Transaction>> {
+        return dao.getAllTransaction()
+    }
+
+    fun findBatchWithItemByBatchIds(batchIds: List<Long>):LiveData<List<BatchWithItem>> {
+        return dao.findBatchWithItemByBatchIds(batchIds)
+    }
 }

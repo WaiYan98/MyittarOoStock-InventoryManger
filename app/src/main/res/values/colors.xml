@@ -17,4 +17,6 @@
     <color name="light_red">#EE7575</color>
     <color name="red">#8DCF2929</color>
     <color name="light_Black">#73000000</color>
+    <color name="card_header_blue">#8062A9FB</color>
+    <color name="card_header_green">#80A0F991</color>
 </resources>

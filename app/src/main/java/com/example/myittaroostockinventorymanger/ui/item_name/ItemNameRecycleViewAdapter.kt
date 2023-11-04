@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.myittaroostockinventorymanger.Application
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.Item
+import com.example.myittaroostockinventorymanger.util.ImageShower
 import java.util.Locale
 
 class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAdapter.ViewHolder>() {
@@ -45,7 +46,8 @@ class ItemNameRecycleViewAdapter() : RecyclerView.Adapter<ItemNameRecycleViewAda
         val currentItem = itemList[position]
         holder.txtStockName.text = currentItem.name
 
-        showItemImage(currentItem.imagePath, holder)
+//        showItemImage(currentItem.imagePath, holder)
+        ImageShower.showImage(context, currentItem.imagePath, holder.itemImageView)
         Log.d("myTag", "onBindViewHolder: ${currentItem.imagePath}")
 
         holder.linearLayoutItemName.setOnLongClickListener { v: View? ->

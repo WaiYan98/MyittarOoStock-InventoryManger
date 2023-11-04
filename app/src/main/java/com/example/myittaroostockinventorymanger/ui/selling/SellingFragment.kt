@@ -97,6 +97,7 @@ class SellingFragment : Fragment(), SellingBatchListRecycleViewAdapter.ItemClick
                 viewModel.getItemByNames(itemName)
                     .observe(viewLifecycleOwner) {
                         ImageShower.showImage(context, it.imagePath, binding.imgItem)
+                        Log.d("image", "onViewCreated: ${it.imagePath}")
                         viewModel.findBatchByItemId(it.itemId)
                     }
             }

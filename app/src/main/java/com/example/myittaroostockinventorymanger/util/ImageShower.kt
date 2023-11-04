@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DataSource
@@ -24,11 +25,14 @@ class ImageShower {
 
         fun showImage(context: Context, path: String, view: ImageView) {
 
+            Log.d("Path", "showImage: $path ")
+
             if (path.isEmpty()) {
                 GlideApp.with(context)
                     .load(R.drawable.no_img)
                     .circleCrop()
                     .into(view)
+                    .clearOnDetach()
             } else {
 
                 GlideApp.with(context)
@@ -58,8 +62,17 @@ class ImageShower {
                     })
                     .circleCrop()
                     .into(view)
+                    .clearOnDetach()
             }
         }
 
+        fun showImage(fragment: Fragment, path: String, view: ImageView) {
+
+            GlideApp.with(fragment)
+                .load(path)
+                .into(view)
+                .clearOnDetach()
+
+        }
     }
 }

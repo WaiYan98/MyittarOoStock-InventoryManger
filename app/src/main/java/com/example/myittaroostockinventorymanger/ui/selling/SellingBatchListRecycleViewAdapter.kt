@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.data.entities.Batch
-import java.text.FieldPosition
 import java.text.SimpleDateFormat
 
 class SellingBatchListRecycleViewAdapter :

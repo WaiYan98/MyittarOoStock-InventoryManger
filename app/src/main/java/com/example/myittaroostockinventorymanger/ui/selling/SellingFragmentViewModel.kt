@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
 import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
@@ -99,8 +96,8 @@ class SellingFragmentViewModel : ViewModel() {
         val currentDate = Date(System.currentTimeMillis())
         return Transaction(
             batch.batchId,
-            itemIn = qty,
-            itemOut = 0,
+            itemIn = 0,
+            itemOut = qty,
             profit = qty * (batch.sellingPrice - batch.basePrice),
             currentDate
         )

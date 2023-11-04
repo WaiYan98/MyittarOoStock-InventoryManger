@@ -86,19 +86,19 @@
     <fragment
         android:id="@+id/transaction_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.transactions.TransactionFragment"
-        android:label="@string/batch"
+        android:label="@string/transaction"
         tools:layout="@layout/fragment_transaction" />
 
     <fragment
         android:id="@+id/dashboard_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.dashboard.DashboardFragment"
-        android:label="@string/batch"
+        android:label="@string/dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/about_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.about.AboutFragment"
-        android:label="@string/batch"
+        android:label="@string/about"
         tools:layout="@layout/fragment_about" />
 
     <dialog
