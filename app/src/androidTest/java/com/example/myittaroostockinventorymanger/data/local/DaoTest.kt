@@ -43,7 +43,7 @@ class DaoTest {
 
     @Test
     fun test_insertItem() {
-        val item = Item("Decogen")
+        val item = Item("Decogen", "")
 
         dao.insertItem(item).test().assertComplete()
         val itemList = dao.getAllItems().getOrAwaitValue()
@@ -61,9 +61,9 @@ class DaoTest {
 
     @Test
     fun test_getAllItems() {
-        val item1 = Item("Paracetermol")
-        val item2 = Item("Fluza")
-        val item3 = Item("C-Vit")
+        val item1 = Item("Paracetermol", "")
+        val item2 = Item("Fluza", "")
+        val item3 = Item("C-Vit", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -75,7 +75,7 @@ class DaoTest {
     @Test
     fun test_deleteItem() {
 
-        val item = Item("Decogen")
+        val item = Item("Decogen", "")
 
         dao.insertItem(item).test().assertComplete()
         var itemList = dao.getAllItems().getOrAwaitValue()
@@ -88,7 +88,7 @@ class DaoTest {
     @Test
     fun test_updateItemName() {
 
-        val item = Item("Decogen")
+        val item = Item("Decogen", "")
 
         dao.insertItem(item).test().assertComplete()
         var itemList = dao.getAllItems().getOrAwaitValue()
@@ -102,8 +102,8 @@ class DaoTest {
     @Test
     fun test_getAllItemNames() {
 
-        val item1 = Item("Decogen")
-        val item2 = Item("Fluza")
+        val item1 = Item("Decogen", "")
+        val item2 = Item("Fluza", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -117,8 +117,8 @@ class DaoTest {
     @Test
     fun test_findItemIdByName() {
 
-        val item1 = Item("Decogen")
-        val item2 = Item("Fluza")
+        val item1 = Item("Decogen", "")
+        val item2 = Item("Fluza", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -131,9 +131,9 @@ class DaoTest {
     @Test
     fun test_deleteItemsByIds() {
 
-        val item1 = Item("Decogen")
-        val item2 = Item("Fluza")
-        val item3 = Item("C_Vit")
+        val item1 = Item("Decogen", "")
+        val item2 = Item("Fluza", "")
+        val item3 = Item("C_Vit", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -148,9 +148,9 @@ class DaoTest {
     @Test
     fun test_searchItems() {
 
-        val item1 = Item("Decogen")
-        val item2 = Item("Enervon_C")
-        val item3 = Item("C_Vit")
+        val item1 = Item("Decogen", "")
+        val item2 = Item("Enervon_C", "")
+        val item3 = Item("C_Vit", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -163,9 +163,9 @@ class DaoTest {
     @Test
     fun test_getItemById() {
 
-        val item1 = Item("Decogen")
-        val item2 = Item("Enervon_C")
-        val item3 = Item("C_Vit")
+        val item1 = Item("Decogen", "")
+        val item2 = Item("Enervon_C", "")
+        val item3 = Item("C_Vit", "")
 
         dao.insertItem(item1).test().assertComplete()
         dao.insertItem(item2).test().assertComplete()
@@ -178,7 +178,7 @@ class DaoTest {
     @Test
     fun test_findItemWithBatchById() {
 
-        val item = Item("halogen")
+        val item = Item("halogen", "")
         val batch = Batch(1, 100.0, 200.0, 10, Date())
         item.itemId = 1
         batch.batchId = 1

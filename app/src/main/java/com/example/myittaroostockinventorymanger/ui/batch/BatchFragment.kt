@@ -1,218 +1,89 @@
 package com.example.myittaroostockinventorymanger.ui.batch
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import androidx.appcompat.widget.SearchView
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.view.MenuProvider
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.viewModels
 import com.example.myittaroostockinventorymanger.R
 import com.example.myittaroostockinventorymanger.databinding.FragmentBatchBinding
-import com.example.myittaroostockinventorymanger.util.VerticalSpaceItemDecoration
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import java.util.Calendar
 
-class BatchFragment : Fragment(),
-    BatchListRecycleViewAdapter.CallBack, MenuProvider {
-
-    private var batchId: Long = 0
-    private lateinit var selectedBatchIdList: MutableList<Long>
-    lateinit var adapter: BatchListRecycleViewAdapter
-    private val batchViewModel: BatchViewModel by lazy { setUpViewModel() }
-
-    //actionMode is not null hide contextual action bar in fabBtn
-    private var actionMode: ActionMode? = null
+class BatchFragment : Fragment() {
 
     private lateinit var binding: FragmentBatchBinding
+    private val viewModel: BatchFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentBatchBinding.inflate(inflater, container, false)
-
-
-        setUpRecycleView()
-
-        return binding.root;
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val menuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        binding.viewPager2.adapter = PagerAdapter(this)
 
-        binding.fabAddBatch.setOnClickListener {
-            //close contextual action bar
-            actionMode?.finish()
-            findNavController().navigate(BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment())
-        }
-
-        batchViewModel.getAllBatchWithItem()
-            ?.observe(viewLifecycleOwner) {
-                adapter.insertItem(it)
-            }
+        var expiredTab: TabLayout.Tab = binding.tabLayout.newTab()
+        var outOfStockTab: TabLayout.Tab =  binding.tabLayout.newTab()
 
 
-        binding.swipeRefreshLoading.setOnRefreshListener {
-            batchViewModel.loadStockWithBatches()
-        }
+        TabLayoutMediator(binding.tabLayout, binding.viewPager2) { tab, position ->
 
-        batchViewModel.isLoading()
-            .observe(viewLifecycleOwner) {
-                binding.swipeRefreshLoading.isRefreshing = it
-            }
-
-        batchViewModel.getMessage()
-            .observe(viewLifecycleOwner) {
-
-                val message = it?.contentIfNotHandle
-
-                if (message != null) {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            when (position) {
+                0 -> {
+                    tab.text = "All"
+                    tab.icon = ContextCompat.getDrawable(requireContext(),
+                        R.drawable.ic_batch)
                 }
-            }
-
-        batchViewModel.getContextualActionBarTitle()
-            .observe(viewLifecycleOwner) {
-                actionMode?.title = it
-            }
-
-        //manage rename button hide or show
-        batchViewModel.isShowRenameButton()
-            .observe(viewLifecycleOwner) {
-                actionMode?.menu?.findItem(R.id.edit)?.isVisible = it
-            }
-    }
-
-    private fun setUpRecycleView() {
-        adapter =
-            BatchListRecycleViewAdapter()
-        adapter.setCallBack(this)
-        binding.recyBatchList.adapter = adapter
-        binding.recyBatchList.layoutManager = LinearLayoutManager(context)
-        binding.recyBatchList.addItemDecoration(VerticalSpaceItemDecoration(8))
-    }
-
-    private fun setUpViewModel() = ViewModelProvider(this).get(BatchViewModel::class.java)
-
-    //get actionModeCallBack for Contextual action bar
-    private fun getCallBack(): ActionMode.Callback {
-
-        return object : ActionMode.Callback {
-            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                mode?.menuInflater?.inflate(R.menu.contextual_action_bar, menu)
-                return true
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode, item: MenuItem?): Boolean {
-
-                when (item?.itemId) {
-
-                    R.id.delete -> {
-                        findNavController()
-                            .navigate(
-                                BatchFragmentDirections.actonToConfirmDialogFragment(
-                                    selectedBatchIdList.toLongArray()
-                                )
-                            )
-                    }
-
-                    R.id.edit -> {
-                        mode.finish()
-                        findNavController()
-                            .navigate(
-                                BatchFragmentDirections.actionBatchFragmentToAddAndUpdateBatchFragment(
-                                    batchId
-                                )
-                            )
-                    }
-
-                    R.id.select_all -> adapter.selectAllBatch()
-
+                1 -> {
+                    tab.text = "Out Of Date"
+                    tab.icon = ContextCompat.getDrawable(requireContext(),
+                        R.drawable.ic_batch)
+                    expiredTab = tab
                 }
 
-                return false
+                2 -> {
+                    tab.text = "Out Of Stock"
+                    tab.icon = ContextCompat.getDrawable(requireContext(),
+                        R.drawable.ic_batch)
+                    outOfStockTab = tab
+                }
+            }
+        }.attach()
+
+        //currentDate+10days
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DAY_OF_MONTH, 10)
+        val currDateAfter10Days = cal.time.time
+
+
+        //check expired batch qty
+        viewModel.getExpiredBatchQty(currDateAfter10Days)
+            .observe(viewLifecycleOwner) {
+                Log.d("expired", "onViewCreated: $it")
+                expiredTab.orCreateBadge
+                    .number = it.toInt()
+
             }
 
-            override fun onDestroyActionMode(mode: ActionMode?) {
-                adapter.contextualActionBarClose()
-                Log.d("tag", "onDestroyActionMode: ")
+        //check outOfStock batch qty
+        viewModel.getOutOfStockBatchQty(10)
+            .observe(viewLifecycleOwner) {
+                outOfStockTab.orCreateBadge
+                    .number = it.toInt()
             }
-        }
     }
 
-    //When onLongClick to start action mode
-    override fun onLongClicked() {
-        actionMode = activity?.startActionMode(getCallBack())!!
-    }
-
-    //to select batch list item
-    override fun onItemsSelected(selectedBatchIdList: MutableList<Long>) {
-        setUpContextualBarSelection(selectedBatchIdList)
-    }
-
-    override fun onSelectedItemIsOne(batchId: Long) {
-        this.batchId = batchId
-        Log.d("myTag", "onSelectedItemIsOne: ${this.batchId}")
-    }
-
-
-    /**
-     *     to set contextual bar title and edit button visible or invisible
-     *     and If no selected item action mod close
-     */
-    private fun setUpContextualBarSelection(selectedBatchIdList: MutableList<Long>) {
-        this.selectedBatchIdList = selectedBatchIdList
-        val num = selectedBatchIdList.size
-        batchViewModel.setContextualActionBarTitle(num)
-        batchViewModel.showRenameButton(num)
-
-        if (selectedBatchIdList.isEmpty()) {
-            actionMode?.finish()
-        }
-    }
-
-    //create menu with menuProvider
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.main_app_bar_menu, menu)
-    }
-
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-
-        when (menuItem.itemId) {
-
-            R.id.menu_search_view -> {
-                val searchView = menuItem.actionView as SearchView
-                searchView.setOnQueryTextListener(object : OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        return false
-                    }
-
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        val queryText = "%$newText%"
-                        batchViewModel.searchFromDb(queryText)
-                            .observe(viewLifecycleOwner) {
-                                adapter.insertItem(it)
-                            }
-                        return false
-                    }
-
-                })
-
-            }
-        }
-        return false
-    }
 }

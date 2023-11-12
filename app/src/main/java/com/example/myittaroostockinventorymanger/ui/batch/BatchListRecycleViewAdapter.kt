@@ -40,6 +40,8 @@ class BatchListRecycleViewAdapter() :
         val curBatchId = batch.batchId
         val df = SimpleDateFormat("dd/MM/yy")
 
+        callBack.getHolder(holder)
+
         //To show Image
         ImageShower.showImage(context, item.imagePath, holder.imgViewItem)
 
@@ -51,6 +53,7 @@ class BatchListRecycleViewAdapter() :
 
         //when batch item onLongClicked show contextual action mode
         holder.linearLayoutBatch.setOnLongClickListener { v: View? ->
+            callBack.getHolder(holder)
             callBack.onLongClicked()
             checkSelectAndDeSelectBatches(curBatchId)
             //change color for selected and deselected batch
@@ -146,8 +149,11 @@ class BatchListRecycleViewAdapter() :
 
 
     interface CallBack {
+
+        fun getHolder(holder: ViewHolder)
         fun onLongClicked()
         fun onItemsSelected(selectedBatchIdList: MutableList<Long>)
         fun onSelectedItemIsOne(batchId: Long)
+
     }
 }

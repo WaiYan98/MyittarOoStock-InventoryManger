@@ -1,5 +1,6 @@
 package com.example.myittaroostockinventorymanger.ui.transactions
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +15,11 @@ import com.example.myittaroostockinventorymanger.databinding.ItemTransactionBind
 import com.example.myittaroostockinventorymanger.util.ImageShower
 import java.text.SimpleDateFormat
 
-class TransactionRecyclerViewAdapter :
+class TransactionRecyclerViewAdapter(val context: Context) :
     RecyclerView.Adapter<TransactionRecyclerViewAdapter.ViewHolder>() {
 
-    private val context = Application.getContext()
+
     private var transactionList = listOf<Transaction>()
-    private var batchWithItemList = listOf<BatchWithItem>()
     private lateinit var binding: ItemTransactionBinding
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -51,9 +51,10 @@ class TransactionRecyclerViewAdapter :
     }
 
     private fun bindData(curTransaction: Transaction) {
-        val batchId = curTransaction.batchId
+
         val sf = SimpleDateFormat("dd/MM/YYYY")
         val sfTime = SimpleDateFormat("hh:mm a")
+
         binding.txtDate.text = sf.format(curTransaction.date)
         binding.txtTime.text = sfTime.format(curTransaction.date)
 
@@ -64,7 +65,12 @@ class TransactionRecyclerViewAdapter :
             binding.txtHeader.text = "In"
             binding.txtInOutColumn.text = "In"
             binding.txtInOut.text = curTransaction.itemIn.toString()
-            binding.cardViewHeader.isSelected = true
+            binding.cardViewHeader.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.card_header_blue
+                )
+            )
         }
 
         if (curTransaction.itemOut != 0) {
@@ -74,40 +80,28 @@ class TransactionRecyclerViewAdapter :
             binding.txtHeader.text = "Out"
             binding.txtInOutColumn.text = "Out"
             binding.txtInOut.text = curTransaction.itemOut.toString()
-            binding.cardViewHeader.isSelected = false
             binding.txtProfit.text = curTransaction.profit.toString()
+            binding.cardViewHeader.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.card_header_green
+                )
+            )
+
         }
 
-        val item = batchWithItemList.filter { it.batch.batchId == batchId }[0].item
-
-        binding.txtItemName.text = item.name
+        binding.txtItemName.text = curTransaction.itemName
 
         ImageShower.showImage(
-            Application.getContext(),
-            item.imagePath,
+            context,
+            curTransaction.imagePath,
             binding.imgItem
         )
-
-        Log.d("image", "bindData: ${item.imagePath}")
     }
 
-    fun insertData(
-        transactionList: List<Transaction>,
-        batWithItemList: List<BatchWithItem>
-    ) {
+    fun insertData(transactionList: List<Transaction>) {
         this.transactionList = transactionList
-        this.batchWithItemList = batWithItemList
         notifyDataSetChanged()
     }
 
-
-//    fun insertBatchWithItemData() {
-//        this.batchWithItemList = batchWithItemList
-//        notifyDataSetChanged()
-//    }
-//
-//    fun insertTransactionData() {
-//        this.transactionList = transactionList
-//        notifyDataSetChanged()
-//    }
 }

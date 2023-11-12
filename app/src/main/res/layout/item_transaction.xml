@@ -24,7 +24,6 @@
                 android:id="@+id/card_view_header"
                 android:layout_width="32dp"
                 android:layout_height="0dp"
-                android:foreground="@drawable/card_view_header_color_state"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">

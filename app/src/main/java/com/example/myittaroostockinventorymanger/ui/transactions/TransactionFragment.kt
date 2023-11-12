@@ -18,12 +18,9 @@ class TransactionFragment : Fragment() {
 
     private lateinit var binding: FragmentTransactionBinding
     private lateinit var adapter: TransactionRecyclerViewAdapter
-    private lateinit var transactionList: List<Transaction>
     private val viewModel: TransactionFragmentViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentTransactionBinding.inflate(inflater)
         return binding.root
@@ -34,23 +31,20 @@ class TransactionFragment : Fragment() {
 
         setUpRecyclerView()
 
-        viewModel.getAllTransaction()
-            .observe(viewLifecycleOwner) {
-                transactionList = it
-                viewModel.setBatchIdList(it.map { it.batchId }
-                )
-            }
+        viewModel.getAllTransaction().observe(viewLifecycleOwner) {
+            //sorted
+            viewModel.sortedTransaction(it)
+        }
 
-        viewModel.batchWithItemList
+        viewModel.getSortedTransaction()
             .observe(viewLifecycleOwner) {
-                adapter.insertData(transactionList, it)
-                Log.d("BatchWithItem", "onViewCreated: $it")
+                adapter.insertData(it)
             }
 
     }
 
     private fun setUpRecyclerView() {
-        adapter = TransactionRecyclerViewAdapter()
+        adapter = TransactionRecyclerViewAdapter(requireContext())
         binding.recyTransaction.apply {
             adapter = this@TransactionFragment.adapter
             layoutManager = LinearLayoutManager(context)

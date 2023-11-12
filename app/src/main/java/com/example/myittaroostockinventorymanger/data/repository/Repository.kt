@@ -98,10 +98,6 @@ class Repository {
         return dao.updateTransaction(transaction)
     }
 
-    fun findTransactionByBatchId(batchId: Long): Observable<List<Transaction>> {
-        return dao.findTransactionByBatchId(batchId)
-    }
-
     fun findItemNameByIds(ids: List<Long>): LiveData<List<String>> {
         return dao.findItemNameByIds(ids)
     }
@@ -118,7 +114,27 @@ class Repository {
         return dao.getAllTransaction()
     }
 
-    fun findBatchWithItemByBatchIds(batchIds: List<Long>):LiveData<List<BatchWithItem>> {
+    fun findBatchWithItemByBatchIds(batchIds: List<Long>): LiveData<List<BatchWithItem>> {
         return dao.findBatchWithItemByBatchIds(batchIds)
+    }
+
+    fun findItemById(itemId: Long): LiveData<Item> {
+        return dao.findItemById(itemId)
+    }
+
+    fun getExpiredBatchRowCount(date: Long): LiveData<Long> {
+        return dao.getExpiredBatchRowCount(date)
+    }
+
+    fun getOutOfStockRowCount(num: Int): LiveData<Long> {
+        return dao.getOutOfStockBatchRowCount(num)
+    }
+
+    fun getExpiredBatchWithItem(date: Long): LiveData<List<BatchWithItem>> {
+        return dao.getExpiredBatchWithItem(date)
+    }
+
+    fun getOutOfStockBatchWithItem(num: Int): LiveData<List<BatchWithItem>> {
+        return dao.getOutOfStockBatchWithItem(num)
     }
 }

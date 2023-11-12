@@ -67,19 +67,16 @@ class SellingFragment : Fragment(), SellingBatchListRecycleViewAdapter.ItemClick
             .observe(viewLifecycleOwner) {
                 val batch = it.contentIfNotHandle
                 if (batch != null) {
-                    viewModel.updateBatch(batch, qty)
+                    viewModel.updateBatch(batch)
                     Log.d("isValid", "onViewCreated: $batch")
                 }
             }
 
-        //add transaction In
-        viewModel.getValidTransaction()
+        //add transaction Out
+        viewModel.soldBatchWithItem
             .observe(viewLifecycleOwner) {
-                val transaction = it.contentIfNotHandle
-                if (transaction != null) {
-                    viewModel.insertTransaction(transaction)
-                    Log.d("isValid", "onViewCreated: ${transaction}")
-                }
+                val transaction = viewModel.createTransaction(it, qty)
+                viewModel.insertTransaction(transaction)
             }
 
         viewModel.getIsReturnBack()

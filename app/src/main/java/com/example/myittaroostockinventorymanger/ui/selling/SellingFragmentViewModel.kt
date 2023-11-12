@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.example.myittaroostockinventorymanger.data.entities.Batch
+import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.data.entities.Item
 import com.example.myittaroostockinventorymanger.data.entities.Transaction
 import com.example.myittaroostockinventorymanger.data.repository.Repository
@@ -24,11 +25,15 @@ class SellingFragmentViewModel : ViewModel() {
     private val message: MutableLiveData<Event<String>> = MutableLiveData()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private var isValidBatch: MutableLiveData<Event<Batch>> = MutableLiveData()
-    private val isValidTransaction: MutableLiveData<Event<Transaction>> = MutableLiveData()
     private val isReturnBack: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    private val mutBatchId: MutableLiveData<Long> = MutableLiveData()
+
+    var soldBatchWithItem: LiveData<BatchWithItem> = mutBatchId.switchMap {
+        repository.findBatchWithItemByIds(it)
+    }
 
 
-    private val sellingBatchList: LiveData<List<Batch>> = mutItemId.switchMap {
+    private var sellingBatchList: LiveData<List<Batch>> = mutItemId.switchMap {
         repository.findBatchByItemId(it)
     }
 
@@ -51,22 +56,22 @@ class SellingFragmentViewModel : ViewModel() {
 
     fun getValidBatch(): LiveData<Event<Batch>> = isValidBatch
 
-    fun getValidTransaction(): LiveData<Event<Transaction>> = isValidTransaction
-
     private fun findBatchById(batchId: Long): Single<Batch> {
         return repository.findBatchByBatchId(batchId)
     }
 
     fun getIsReturnBack(): LiveData<Event<Boolean>> = isReturnBack
 
-    fun updateBatch(batch: Batch, qty: Int) {
+    fun updateBatch(batch: Batch) {
         val disposable = repository.updateBatch(batch)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 message.value = Event("Selling Done")
-                //transaction add
-                isValidTransaction.value = Event(createTransaction(batch, qty))
+
+                //to find BatchWithItem
+                mutBatchId.value = batch.batchId
+
             }) {
                 message.value = Event(it.message ?: "UnexpectedError")
             }
@@ -92,10 +97,13 @@ class SellingFragmentViewModel : ViewModel() {
         compositeDisposable.add(disposable)
     }
 
-    private fun createTransaction(batch: Batch, qty: Int): Transaction {
+    fun createTransaction(batchWithItem: BatchWithItem, qty: Int): Transaction {
         val currentDate = Date(System.currentTimeMillis())
+        val batch = batchWithItem.batch
+        val item = batchWithItem.item
         return Transaction(
-            batch.batchId,
+            itemName = item.name,
+            imagePath = item.imagePath,
             itemIn = 0,
             itemOut = qty,
             profit = qty * (batch.sellingPrice - batch.basePrice),

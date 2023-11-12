@@ -5,17 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
-import com.example.myittaroostockinventorymanger.data.entities.Batch
 import com.example.myittaroostockinventorymanger.data.entities.BatchWithItem
 import com.example.myittaroostockinventorymanger.event.Event
-import com.example.myittaroostockinventorymanger.data.entities.ItemBatch
 import com.example.myittaroostockinventorymanger.data.repository.Repository
-import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.Schedulers.io
 
-class BatchViewModel : ViewModel() {
+class AllBatchFragmentViewModel : ViewModel() {
 
     private val repository: Repository = Repository()
     private var BatchWithItem: LiveData<List<BatchWithItem>>? = null

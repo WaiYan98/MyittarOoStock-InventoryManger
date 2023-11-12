@@ -58,6 +58,11 @@ class ItemNameFragment : Fragment(), ItemNameRecycleViewAdapter.CallBack,
         viewModel.getAllItems()
             .observe(viewLifecycleOwner)
             { itemList: List<Item> ->
+                if (itemList.isEmpty()) {
+                    binding.txtEmptyItem.visibility = View.VISIBLE
+                } else {
+                    binding.txtEmptyItem.visibility = View.GONE
+                }
                 adapter.insertItem(itemList)
             }
 

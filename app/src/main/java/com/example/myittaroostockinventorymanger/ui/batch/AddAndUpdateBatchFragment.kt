@@ -90,6 +90,11 @@ class AddAndUpdateBatchFragment : Fragment(), MenuProvider {
                 }
             }
 
+        viewModel.insertedBatchWithItem
+            .observe(viewLifecycleOwner) {
+                val transaction = viewModel.createTransaction(it)
+                viewModel.insertTransaction(transaction)
+            }
 
         viewModel.existingBatch
             .observe(viewLifecycleOwner) {

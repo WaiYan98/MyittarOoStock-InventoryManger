@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@id/batch_fragment"
+        android:id="@id/all_batch_fragment"
         android:icon="@drawable/ic_batch"
         android:title="Batch" />
 

@@ -40,12 +40,16 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
     private val option: MutableLiveData<String> = MutableLiveData()
     private val batchIdLiveData: MutableLiveData<Long> = MutableLiveData()
     private val isValidBatch: MutableLiveData<Event<Batch>> = MutableLiveData()
+    private val mutBatchId: MutableLiveData<Long> = MutableLiveData()
 
     //Use switchMap when batchIdLiveData update switch return new LiveData related type
     var existingBatch: LiveData<BatchWithItem> = batchIdLiveData.switchMap {
         repository.findBatchWithItemByIds(it)
     }
 
+    var insertedBatchWithItem: LiveData<BatchWithItem> = mutBatchId.switchMap {
+        repository.findBatchWithItemByIds(it)
+    }
 
     fun getAllItemNames(): LiveData<List<String>>? {
 
@@ -80,7 +84,6 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
                         when (option) {
                             Option.NEW_ITEM.name -> batch
 
-
                             else -> {
                                 batch.batchId = updateBatchId
                                 batch
@@ -97,7 +100,7 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
 
     fun getIsValidBatch(): LiveData<Event<Batch>> = isValidBatch
 
-    private fun insertTransaction(transaction: Transaction) {
+    fun insertTransaction(transaction: Transaction) {
         val disposable = repository.insertTransaction(transaction)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -112,26 +115,26 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
     //find Transaction with batch id and update
     private fun updateTransactionNow(batch: Batch) {
 
-        val disposable = repository.findTransactionByBatchId(batch.batchId)
-            .flatMapCompletable {
-                val transactionList = it.filter { it.itemIn > 0 }
-                val updateTransaction = transactionList[0]
-                    .apply {
-                        date = Date(System.currentTimeMillis())
-                        itemIn = batch.quantity
-                    }
-                repository.updateTransaction(updateTransaction)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                mutErrorMessage.value = Event("Updated Transaction")
-            }) {
-                mutErrorMessage.value = Event("Can't Update")
-
-            }
-
-        compositeDisposable.add(disposable)
+//        val disposable = repository.findTransactionByBatchId(batch.batchId)
+//            .flatMapCompletable {
+//                val transactionList = it.filter { it.itemIn > 0 }
+//                val updateTransaction = transactionList[0]
+//                    .apply {
+//                        date = Date(System.currentTimeMillis())
+//                        itemIn = batch.quantity
+//                    }
+//                repository.updateTransaction(updateTransaction)
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                mutErrorMessage.value = Event("Updated Transaction")
+//            }) {
+//                mutErrorMessage.value = Event("Can't Update")
+//
+//            }
+//
+//        compositeDisposable.add(disposable)
     }
 
     fun insertBatch(batch: Batch) {
@@ -139,8 +142,10 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                //add transaction
-                insertTransaction(createTransaction(it, batch))
+
+                //to get batchWithItem
+                mutBatchId.value = it
+
                 mutErrorMessage.value = Event("Save")
                 returnBack.value = Event(true)
             }) {
@@ -150,10 +155,13 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
     }
 
     //create Transaction
-    private fun createTransaction(batchId: Long, batch: Batch): Transaction {
+    fun createTransaction(batchWithItem: BatchWithItem): Transaction {
         val date = Date(System.currentTimeMillis())
+        val item = batchWithItem.item
+        val batch = batchWithItem.batch
         return Transaction(
-            batchId,
+            itemName = item.name,
+            imagePath = item.imagePath,
             itemIn = batch.quantity,
             itemOut = 0,
             profit = 0.0,
@@ -167,7 +175,7 @@ class AddNewAndUpdateBatchViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 //update transaction
-                updateTransactionNow(batch)
+//                updateTransactionNow(batch)
                 mutErrorMessage.value = Event("Save")
                 returnBack.value = Event(true)
             }) {

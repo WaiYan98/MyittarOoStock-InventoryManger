@@ -88,9 +88,6 @@ interface Dao {
     @Update
     fun updateTransaction(transaction: Transaction): Completable
 
-    @Query("SELECT * FROM `Transaction` WHERE batch_id=:batchId")
-    fun findTransactionByBatchId(batchId: Long): Observable<List<Transaction>>
-
     @Query("SELECT name FROM Item WHERE item_id IN (:ids)")
     fun findItemNameByIds(ids: List<Long>): LiveData<List<String>>
 
@@ -106,6 +103,23 @@ interface Dao {
     @androidx.room.Transaction
     @Query("SELECT * FROM Batch WHERE batch_id IN (:batchIds)")
     fun findBatchWithItemByBatchIds(batchIds: List<Long>): LiveData<List<BatchWithItem>>
+
+    @Query("SELECT * FROM Item WHERE item_id = :itemId")
+    fun findItemById(itemId: Long): LiveData<Item>
+
+    @Query("SELECT COUNT(*)  FROM Batch WHERE exp_date <= :dateNow")
+    fun getExpiredBatchRowCount(dateNow: Long): LiveData<Long>
+
+    @Query("SELECT COUNT(*) FROM Batch WHERE quantity <=:num")
+    fun getOutOfStockBatchRowCount(num: Int): LiveData<Long>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM Batch WHERE exp_date <= :dateNow")
+    fun getExpiredBatchWithItem(dateNow: Long): LiveData<List<BatchWithItem>>
+
+    @androidx.room.Transaction
+    @Query("SELECT * FROM Batch WHERE quantity <=:num")
+    fun getOutOfStockBatchWithItem(num: Int): LiveData<List<BatchWithItem>>
 
 //    @Query("SELECT * FROM Batch")
 //    fun getAllItemNamesFromBatch()

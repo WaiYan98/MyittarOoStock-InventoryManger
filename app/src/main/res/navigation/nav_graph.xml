@@ -57,18 +57,36 @@
         android:id="@+id/batch_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.batch.BatchFragment"
         android:label="@string/batch"
-        tools:layout="@layout/fragment_batch">
+        tools:layout="@layout/fragment_batch" >
 
         <action
-            android:id="@+id/action_batchFragment_to_addAndUpdateBatchFragment"
+            android:id="@+id/action_to_addAndUpdateBatchFragment"
             app:destination="@id/add_and_update_batch_fragment" />
-        />
 
         <action
-            android:id="@+id/acton_to_ConfirmDialogFragment"
+            android:id="@+id/action_to_confirmDialogFragmentBatch"
             app:destination="@id/confirm_dialog_fragment_batch" />
 
     </fragment>
+
+
+    <fragment
+        android:id="@+id/all_batch_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.AllBatchFragment"
+        android:label="All Batch"
+        tools:layout="@layout/fragment_all_batch"/>
+
+    <fragment
+        android:id="@+id/outOfDate_batch_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.OutOfDateBatchFragment"
+        android:label="Out Of Date"
+        tools:layout="@layout/fragment_out_of_date_batch" />
+
+    <fragment
+        android:id="@+id/outOfStock_batch_fragment"
+        android:name="com.example.myittaroostockinventorymanger.ui.batch.OutOfStockBatchFragment"
+        android:label="Out Of Stock"
+        tools:layout="@layout/fragment_out_of_stock_batch" />
 
     <fragment
         android:id="@+id/add_and_update_batch_fragment"
@@ -118,6 +136,6 @@
         android:id="@+id/selling_fragment"
         android:name="com.example.myittaroostockinventorymanger.ui.selling.SellingFragment"
         android:label="Selling"
-        tools:layout="@layout/fragment_selling"/>
+        tools:layout="@layout/fragment_selling" />
 
 </navigation>

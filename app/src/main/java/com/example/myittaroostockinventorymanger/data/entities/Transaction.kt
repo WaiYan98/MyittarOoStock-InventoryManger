@@ -7,7 +7,8 @@ import java.util.Date
 
 @Entity(tableName = "Transaction")
 data class Transaction(
-    @ColumnInfo(name = "batch_id") var batchId: Long,
+    @ColumnInfo(name = "item_name") var itemName: String,
+    @ColumnInfo(name = "image_path") var imagePath: String,
     @ColumnInfo(name = "item_in") var itemIn: Int,
     @ColumnInfo(name = "item_out") var itemOut: Int,
     @ColumnInfo(name = "profit") var profit: Double,
